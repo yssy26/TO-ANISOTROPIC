@@ -96,7 +96,7 @@ int main(int argc, char *argv[])
 
         // Phase J: Save optimizer state for restart.
         // Always save, even on finalSolvedIteration, so that the state is
-        // available for restart.  The saved state reflects the current
+        // available for restart. The saved state reflects the current
         // solved design (pre-MMA-update on finalSolvedIteration, post-MMA
         // on normal iterations).
         #include "saveOptimizerState.H"
@@ -105,7 +105,11 @@ int main(int argc, char *argv[])
         #include "validateGradientChain.H"
         #include "validateFrozenGradient.H"
         #include "validateSSTDirection.H"
-        #include "validateGate6SST.H"
+        // Strict replacement for the legacy sign-only Gate 6. This version
+        // removes the duplicate pressure normalization, checks gradient
+        // magnitude, enforces a minimum number of valid directions and
+        // verifies full-SST repeatability before unlocking gradientValidated.
+        #include "validateGate6SSTStrict.H"
     }
 
     #include "finalize.H"
