@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "commit": "REPLACE_WITH_TESTED_COMMIT",
+    "openfoamVersion": "OpenFOAM-7",
+    "generatedBy": "Codex"
+  },
+  "isotropicRegression": {
+    "maxRelativeFieldError": null,
+    "filesCompared": 0
+  },
+  "axisConduction": [
+    {"axis": "x", "relativeFluxError": null, "temperatureLinearityR2": null},
+    {"axis": "y", "relativeFluxError": null, "temperatureLinearityR2": null},
+    {"axis": "z", "relativeFluxError": null, "temperatureLinearityR2": null}
+  ],
+  "threeLayerConduction": {
+    "relativeFluxError": null,
+    "maxInterfaceTemperatureJump": null
+  },
+  "directionality": {
+    "relativeConductivityRatioError": null,
+    "orderingPass": false
+  },
+  "boundarySensitivity": {
+    "maximumRelativeError": null,
+    "directions": 0
+  },
+  "thermalAdjointFD": {
+    "maximumRelativeError": null,
+    "directions": 0,
+    "fdPlateauPass": false
+  },
+  "serialParallelConsistency": {
+    "maxRelativeFieldError": null,
+    "objectiveRelativeError": null,
+    "gradientRelativeError": null
+  }
+}
