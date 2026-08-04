@@ -1,13 +1,18 @@
 
 ## Anisotropic Conductivity Implementation Status
 - Feature flag: useAnisotropicConductivity in optProperties (false=scalar ks, true=tensor solidK)
-- DTMolecular and DTEffective are always volSymmTensorField regardless of flag
-- Gate 0 (baseline): completed - 1_scalar_baseline/ directory
-- Gate 1 (compile + material): completed - wmake succeeds, field types verified
-- Gate 2 (isotropic regression): PASSED - all 51 field files bit-for-bit identical between tensor mode (solidK=19.1*I) and scalar mode (ks=19.1)
-- Gate 2.5 (boundary sensitivity): pending
-- Gate 3 (physical direction): pending
-- Gate 4 (adjoint FD): pending
-- Gate 5 (serial/parallel + transaction): pending
-- Gate 6 (full SST hard gate): optional, for MMA recovery
-- Note: E5 volume constraint validation failure (0.289912) is pre-existing, identical in both modes
+- DTMolecular, DTEffective and dDTDxh use volSymmTensorField
+- Production scope is currently restricted to axis-aligned diagonal solidK
+- Off-diagonal anisotropy is blocked by default pending rotated-tensor validation
+- MMA is blocked while anisotropicConductivityValidated=false
+- Stage A algebraic unit tests: implemented and locally PASS outside OpenFOAM
+- Stage A case-level suite: implemented; OpenFOAM-7 execution pending on the user's machine
+- Stage A checks: isotropic regression, x/y/z conduction, three-layer resistance,
+  physical directionality, boundary sensitivity FD, thermal-adjoint FD and
+  serial/parallel consistency
+- Strict Gate 6 replaces the legacy sign-only gate in MTO_HF.C
+- Strict Gate 6 fixes duplicate pressure normalization, requires magnitude
+  agreement, at least four valid directions and repeated-baseline consistency
+- Full k/omega/nut turbulence adjoints remain outside the implemented scope
+- Do not set anisotropicConductivityValidated=true until
+  STAGE_A_VALIDATION_REPORT.md reports PASS
