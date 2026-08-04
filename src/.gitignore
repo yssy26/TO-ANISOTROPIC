@@ -1,0 +1,10 @@
+.vscode/
+Make/linux64Gcc*/
+*.bak
+*.dep
+*.o
+*.obj
+*.exe
+*.foam
+log.*
+run.pid
