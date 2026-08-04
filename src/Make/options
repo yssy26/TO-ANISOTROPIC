@@ -1,0 +1,26 @@
+EXE_INC = \
+    -DOMPI_SKIP_MPICXX \
+    -I$(LIB_SRC)/TurbulenceModels/turbulenceModels/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/incompressible/lnInclude \
+    -I$(LIB_SRC)/TurbulenceModels/compressible/lnInclude \
+    -I$(LIB_SRC)/transportModels \
+    -I$(LIB_SRC)/transportModels/incompressible/singlePhaseTransportModel \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -IadjointOutletPressureHeat \
+    -IadjointOutletVelocityHeat \
+    -IadjointOutletPressurePower \
+    -IadjointOutletVelocityPower \
+    -IadjointOutletPressurePD \
+    -IadjointOutletVelocityPD \
+    -IadjointInletPressurePD \
+    -I$(shell gcc -print-file-name=include) \
+    $(shell mpicc --showme:compile)
+EXE_LIBS = \
+    -lturbulenceModels \
+    -lincompressibleTurbulenceModels \
+    -lincompressibleTransportModels \
+    -lfiniteVolume \
+    -lmeshTools \
+    -lfvOptions \
+    $(shell mpicc --showme:link)

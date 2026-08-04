@@ -1,0 +1,13 @@
+
+## Anisotropic Conductivity Implementation Status
+- Feature flag: useAnisotropicConductivity in optProperties (false=scalar ks, true=tensor solidK)
+- DTMolecular and DTEffective are always volSymmTensorField regardless of flag
+- Gate 0 (baseline): completed - 1_scalar_baseline/ directory
+- Gate 1 (compile + material): completed - wmake succeeds, field types verified
+- Gate 2 (isotropic regression): PASSED - all 51 field files bit-for-bit identical between tensor mode (solidK=19.1*I) and scalar mode (ks=19.1)
+- Gate 2.5 (boundary sensitivity): pending
+- Gate 3 (physical direction): pending
+- Gate 4 (adjoint FD): pending
+- Gate 5 (serial/parallel + transaction): pending
+- Gate 6 (full SST hard gate): optional, for MMA recovery
+- Note: E5 volume constraint validation failure (0.289912) is pre-existing, identical in both modes
