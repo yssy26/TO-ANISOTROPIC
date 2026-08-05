@@ -237,12 +237,8 @@ else
             mesh.deltaCoeffs().boundaryField()[patchi];
         const vectorField& pDelta = deltaSF.boundaryField()[patchi];
 
-        const scalarField& TbPatch = Tb.boundaryField()[patchi];
-        const scalarField& TPatch = T.boundaryField()[patchi];
         // snGrad() is only implemented for physical (non-coupled) patches;
-        // processor/cyclic patches use the face-difference form below.
-        // Calling it on a coupled patch aborts parallel runs
-        // ("coupledFvPatchField::snGrad() Not implemented"), so guard it.
+        // processor/cyclic patches use the local-cell/remote-cell difference.
         scalarField snGradTPatch;
         if (!patch.coupled())
         {
@@ -252,14 +248,19 @@ else
         const symmTensorField dDdxhPatch =
             dDTDxh.boundaryField()[patchi].patchInternalField();
 
-        // Use patch.coupled() instead of isA<processorFvPatch> to avoid
-        // additional header dependencies
         const bool isCoupled = patch.coupled();
 
-        // Precompute neighbour fields for coupled patches
-        scalarField TbNei, TNei;
+        // IMPORTANT: for processor/cyclic fields, boundaryField()[patchi]
+        // stores the communicated/evaluated patch value.  It is not the local
+        // adjacent-cell value.  Using it in a cell-to-cell jump loses part of
+        // the processor-face derivative (the A7 defect).  Always obtain the
+        // two cell-centre states explicitly via patchInternalField() and
+        // patchNeighbourField().
+        scalarField TbLocal, TLocal, TbNei, TNei;
         if (isCoupled)
         {
+            TbLocal = Tb.boundaryField()[patchi].patchInternalField();
+            TLocal = T.boundaryField()[patchi].patchInternalField();
             TbNei = Tb.boundaryField()[patchi].patchNeighbourField();
             TNei = T.boundaryField()[patchi].patchNeighbourField();
         }
@@ -277,9 +278,12 @@ else
 
             // zeroGradient: snGrad=0, contribution is zero
             if (!isCoupled && mag(snGradTPatch[facei]) < SMALL)
+            {
                 continue;
+            }
 
-            // Face unit direction (cell -> face)
+            // Face unit direction (local cell -> remote cell for coupled
+            // patches; cell -> face for physical boundaries).
             const vector e_f =
                 pDelta[facei]/Foam::max(mag(pDelta[facei]), SMALL);
 
@@ -289,23 +293,22 @@ else
 
             if (isCoupled)
             {
-                // processor/cyclic: same structure as internal faces.  The
-                // local cell receives only its OWN interpolation-weighted
-                // share (mesh.weights() on each side gives that side's
-                // weight), matching the serial internal-face split
-                // (fWeights / (1-fWeights)) so serial and parallel
-                // sensitivities are identical.
+                // processor/cyclic: identical cell-to-cell expression to an
+                // internal face.  Each rank assembles only the derivative of
+                // its local design cell.  OpenFOAM's coupled-patch weight is
+                // the local-cell interpolation share and is complementary on
+                // the opposite rank, reproducing the serial owner/neighbour
+                // split.
                 const scalar wLocal =
                     mesh.weights().boundaryField()[patchi][facei];
-                const scalar faceDerivative =
-                    dDnDxh
-                   *(TbPatch[facei] - TbNei[facei])
-                   *(TPatch[facei] - TNei[facei])
+                const scalar baseDerivative =
+                    (TbLocal[facei] - TbNei[facei])
+                   *(TLocal[facei] - TNei[facei])
                    *pDeltaCoeffs[facei]
                    *pMagSf[facei];
 
                 thermalDiffusionDerivativeDTCell[celli] -=
-                    wLocal*faceDerivative;
+                    wLocal*dDnDxh*baseDerivative;
             }
             else
             {
