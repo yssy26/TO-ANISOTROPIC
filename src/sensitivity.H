@@ -195,6 +195,28 @@ if (runTime.writeTime() || finalSolvedIteration)
     gsensPowerDiss.write();
     gsensPressureDrop.write();
     gsensVol.write();
+    // Stage A diagnostic: write the raw design-objective gradient dJ/dx.
+    // Instrumentation only; no equation or optimizer value is changed.
+    volScalarField dfdxField
+    (
+        IOobject
+        (
+            "dfdx",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroDfdx", dimless, 0.0)
+    );
+    forAll(activeDesignCells, activeI)
+    {
+        dfdxField.primitiveFieldRef()[activeDesignCells[activeI]] =
+            dfdx[activeI];
+    }
+    dfdxField.write();
+
 }
 
 if (mmaUpdateEnabled && !finalSolvedIteration)

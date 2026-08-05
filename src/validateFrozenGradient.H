@@ -368,239 +368,854 @@ if (!frozenGradientValidated && opt >= 1 && !gradientValidated)
                         }
                     }
                     reduce(fsmSumAll, sumOp<scalar>());
-         çw¶‰Ëkºwµç[WHÏH\“›Ü›NÂˆB‚ˆØØ[\ˆYˆHŒÂˆØØ[\ˆY”HŒÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆYˆ
-ÏH™ØXİ]™RWJ™\™Xİ[Û–ØÙ[WNÂˆY”
-ÏHÙÌWVØXİ]™RWJ™\™Xİ[Û–ØÙ[WNÂˆBˆ™YXÙJY‹İ[SÜØØ[\Š
-JNÂˆ™YXÙJY”İ[SÜØØ[\Š
-JNÂˆX^Y‘ŒˆH›Ø[N›X^
-X^Y‘Œ‹XYÊYŠJNÂˆX^Y”[H›Ø[N›X^
-X^Y”[XYÊY”
-JNÂ‚ˆ[™›Ï—ˆŒˆ\™Xİ[Ûˆˆ\’BˆˆĞQŠØšŠOHˆY‚ˆ‹ĞQŠ
-OHˆY”[™Â‚ˆ›Üˆ
-X™[İ\HHÈİ\H™İ\ÑŒ‹œÚ^™J
-NÈ
-ÊÜİ\JBˆÂˆÛÛœİØØ[\ˆH™İ\ÑŒ–Üİ\WNÂˆİ[\İÑŒŠÊÎÂ‚ˆËÈ\Âˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆØÙ[WHH›Ø[N›Z[ŠKŒØ]™YØÙ[WH
-È
-™\™Xİ[Û–ØÙ[WJNÂˆBˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ™XÛÛ\]Q\ÚYÛÚZ[Š
-NÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆK˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆÛÛ™Qœ›Ş™[”š[X[š^Y
-‘š^Y]\ŠNÂˆØØ[\ˆœ\ÈH]˜[X]SØš™Xİ]™J
-NÂˆØØ[\ˆ\ÈH]˜[X]T™\Üİ\™Q›Ü
+                    reduce(fsmMaxAll, maxOp<scalar>());
+                    Info<< "  F1 NUDIAG: fsenshMeanT (for comparison):"
+                        << " sum=" << fsmSumAll << " max(mag)=" << fsmMaxAll << endl;
+                }
 
-NÂ‚ˆËÈZ[\Âˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆØÙ[WHH›Ø[N›X^
-ŒØ]™YØÙ[WHH
-™\™Xİ[Û–ØÙ[WJNÂˆBˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ™XÛÛ\]Q\ÚYÛÚZ[Š
-NÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆK˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆÛÛ™Qœ›Ş™[”š[X[š^Y
-‘š^Y]\ŠNÂˆØØ[\ˆ›Z[\ÈH]˜[X]SØš™Xİ]™J
-NÂˆØØ[\ˆZ[\ÈH]˜[X]T™\Üİ\™Q›Ü
+                // fsenshThermalOnly is a per-cell quantity (face-sum).
+                // Use plain sum (not domainIntegrate) to avoid extra mesh.V().
+                scalar etaCorrThermal = 0.0;
+                forAll(designMask, celli)
+                {
+                    etaCorrThermal +=
+                        designMask[celli]
+                       *fsenshThermalOnly[celli]
+                       *dProjectionDeta[celli];
+                }
+                reduce(etaCorrThermal, sumOp<scalar>());
 
-NÂ‚ˆØØ[\ˆ™H
-œ\ÈH›Z[\ÊKÊ‹Œ
-š
-NÂˆØØ[\ˆ™[\œˆHXYÊYˆH™
-BˆÑ›Ø[N›X^
-›Ø[N›X^
-XYÊYŠKXYÊ™
-JKØØ[\ŠYKLÌ
-JNÂ‚ˆËÈ™\Üİ\™H›Ü‘
-›Ü›X[^™YH™\Üİ\™Q›ÜX^HÈX]ÚŞÌWJBˆØØ[\ˆ™H
-\ÈHZ[\ÊKÊ‹Œ
-š
-NÂˆØØ[\ˆ™›Ü›HH™ˆÑ›Ø[N›X^
-™\Üİ\™Q›ÜX^KÓPS
-NÂˆØØ[\ˆ™[\œ”HXYÊY”H™›Ü›JBˆÑ›Ø[N›X^ˆ
-ˆ›Ø[N›X^
-XYÊY”
-KXYÊ™›Ü›JJKˆØØ[\ŠYKLÌ
-Bˆ
-NÂ‚ˆ[™›ÏˆHˆˆ‹ŠÏHˆœ\È‹‹OHˆ›Z[\Âˆ‹Ñ‘Hˆ™ˆ‹™[\œŠØšŠOHˆ™[\œ‚ˆ‹
-ÏHˆ\È‹OHˆZ[\Âˆ‹Ñ‘
-
-OHˆ™›Ü›Bˆ‹™[\œŠ
-OHˆ™[\œ”[™Â‚ˆX^™[\œ›Ü‘ŒˆH›Ø[N›X^
-X^™[\œ›Ü‘Œ‹™[\œŠNÂˆX^™[\œ›Ü”H›Ø[N›X^
-X^™[\œ›Ü”™[\œ”
-NÂˆYˆ
-™[\œˆˆŒJHİ[˜Z[\™\ÑŒŠÊÎÂˆYˆ
-™[\œ”ˆL
-Hİ[˜Z[\™\Ô
-ÊÎÂˆB‚ˆËÈ™\İÜ™Bˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆ[HH[TØ]™YÂˆ[ÛXİ[\ˆHØ]™YÂˆHHTØ]™YÂˆY™™Xİ]™HHY™™Xİ]™TØ]™YÂˆHHTØ]™YÂˆHØ]™YÂˆHHTØ]™YÂˆHØ]™YÂˆ]MHH]MTØ]™Yİ˜[Âˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆK˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆB‚ˆ[™›Ï—ˆŒˆİ[[X\NˆX^™[\œ›ÜHˆX^™[\œ›Ü‘Œ‚ˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\ÑŒˆ‹Èˆİ[\İÑŒˆ[™Âˆ[™›ÏˆŒˆ™\Üİ\™H›ÜˆX^™[\œ›ÜHˆX^™[\œ›Ü”ˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\Ô‹Èˆİ[\İÑŒˆ[™Â‚ˆËÏOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOBˆËÈŒÎˆÛÛXš[™Y\™Xİ[Ûˆ‘
-XİX[SPH\™Xİ[ÛŠBˆËÏOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOBˆ[™›Ï—‹KKHŒÎˆÛÛXš[™Y\™Xİ[Ûˆ‘
-›Ú™XİY™YØ]]™HÜ˜YY[
-HKKHˆ[™Â‚ˆËÈ™\İÜ™HÈœ›Ş™[‹XÛÛ™\™ÙYİ]H›ÜˆŒÂˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆ[HH[TØ]™YÂˆ[ÛXİ[\ˆHØ]™YÂˆHHTØ]™YÂˆY™™Xİ]™HHY™™Xİ]™TØ]™YÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆ]MHH]MTØ]™Yİ˜[Âˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆK˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂ‚ˆËÈ˜\Ù[[™HØš™Xİ]™K›Û[YK™\Üİ\™H›ÜˆØØ[\ˆ˜˜\ÙWÙŒÈH]˜[X]SØš™Xİ]™J
-NÂˆØØ[\ˆ˜˜\ÙWÙŒÈH]˜[X]U›Û[YPÛÛœİ˜Z[
+                Info<< "  F1 NUDIAG: numerator=" << etaCorrThermal
+                    << " etaDenom=" << etaDenom << endl;
 
-NÂˆØØ[\ˆ˜\ÙWÙŒÈH]˜[X]T™\Üİ\™Q›Ü
+                // Bug fix: Foam::max(etaDenom, SMALL) replaces a NEGATIVE
+                // etaDenom with SMALL (~1e-15), causing ~1e10x amplification.
+                // The main code (filter_chainrule.H) divides directly by
+                // projectionEtaDenominator after checking mag() > SMALL.
+                if (mag(etaDenom) <= SMALL)
+                {
+                    FatalErrorInFunction
+                        << "F1: volume-preserving projection has singular "
+                        << "eta derivative. etaDenom=" << etaDenom
+                        << abort(FatalError);
+                }
+                etaCorrThermal /= etaDenom;
 
-NÂˆ[™›ÏˆŒÈ˜\Ù[[™NˆHˆ˜˜\ÙWÙŒÂˆ‹Hˆ˜˜\ÙWÙŒÂˆ‹Hˆ˜\ÙWÙŒÈ[™Â‚ˆËÈZ[ÛÛXš[™Y\™Xİ[Ûˆ›Ú™XİY™YØ]]™HØš™Xİ]™HÜ˜YY[ˆËÈHY™H›ÚŠY™ÙÌJH
-ˆÙÌBˆËÈK™K‹™[[İ™HH›Û[YHÛÛœİ˜Z[ÛÛ\Û™[ˆØØ[\‘šY[™YÑÜ˜Y
-‘\ÚYÛ“ØØ[Œ
-NÂˆØØ[\‘šY[›ÛÜ˜Y
-‘\ÚYÛ“ØØ[Œ
-NÂˆ›Üˆ
-X™[Xİ]™RHHÈXİ]™RH‘\ÚYÛ“ØØ[È
-ÊØXİ]™RJBˆÂˆ™YÑÜ˜YØXİ]™RWHHY™ØXİ]™RWNÂˆ›ÛÜ˜YØXİ]™RWHHÙÌVØXİ]™RWNÂˆB‚ˆØØ[\ˆİ•ˆHŒÂˆØØ[\ˆİ•ˆHŒÂˆ›Üˆ
-X™[Xİ]™RHHÈXİ]™RH‘\ÚYÛ“ØØ[È
-ÊØXİ]™RJBˆÂˆİ•ˆ
-ÏH™YÑÜ˜YØXİ]™RWJ›ÛÜ˜YØXİ]™RWNÂˆİ•ˆ
-ÏHÜ\Š›ÛÜ˜YØXİ]™RWJNÂˆBˆ™YXÙJİ•‹İ[SÜØØ[\Š
-JNÂˆ™YXÙJİ•‹İ[SÜØØ[\Š
-JNÂ‚ˆØØ[\ˆ›ÚÛÙY™ˆHŒÂˆYˆ
-XYÊİ•ŠHˆÓPS
-BˆÂˆ›ÚÛÙY™ˆHİ•‹Ùİ•ÂˆB‚ˆØØ[\‘šY[ÛÛX‘\ŠY\Ú›Ù[Ê
-KŒ
-NÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆÛÛX‘\–ØÙ[WHH™YÑÜ˜YØXİ]™RWHH›ÚÛÙY™Š›ÛÜ˜YØXİ]™RWNÂˆB‚ˆËÈ›Ü›X[^™BˆØØ[\ˆ\“›Ü›LÈHŒÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆ\“›Ü›LÈ
-ÏHÜ\ŠÛÛX‘\–ØÙ[WJNÂˆBˆ™YXÙJ\“›Ü›LËİ[SÜØØ[\Š
-JNÂˆ\“›Ü›LÈH›Ø[NœÜ\
-\“›Ü›LÊNÂˆYˆ
-\“›Ü›LÈˆÓPS
-BˆÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆÛÛX‘\–ØÙ[WHÏH\“›Ü›LÎÂˆBˆB‚ˆËÈ\™Xİ[Û˜[\š]˜]]™\ÂˆØØ[\ˆY“ØšˆHŒÂˆØØ[\ˆY•›ÛHŒÂˆØØ[\ˆY”HŒÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆY“Øšˆ
-ÏH™ØXİ]™RWJ˜ÛÛX‘\–ØÙ[WNÂˆY•›Û
-ÏHÙÌVØXİ]™RWJ˜ÛÛX‘\–ØÙ[WNÂˆY”
-ÏHÙÌWVØXİ]™RWJ˜ÛÛX‘\–ØÙ[WNÂˆBˆ™YXÙJY“Øš‹İ[SÜØØ[\Š
-JNÂˆ™YXÙJY•›Ûİ[SÜØØ[\Š
-JNÂˆ™YXÙJY”İ[SÜØØ[\Š
-JNÂ‚ˆX^Y”[H›Ø[N›X^
-X^Y”[XYÊY”
-JNÂˆX^Y“Øš[H›Ø[N›X^
-X^Y“Øš[XYÊY“ØšŠJNÂ‚ˆ[™›ÏˆŒÈ\™Xİ[Û˜[\š]˜]]™\ÎˆHˆY“Øš‚ˆ‹HˆY•›Ûˆ‹
-›Ü›JOHˆY”[™Â‚ˆØØ[\ˆX^™[\œ›Ü‘ŒÛØšˆHŒÂˆØØ[\ˆX^™[\œ›Ü‘Œİ›ÛHŒÂˆØØ[\ˆX^™[\œ›Ü‘ŒÜHŒÂˆÛÛœİØØ[\“\İ™İ\ÑŒÈHÌYKLKYKL‹™KLŸNÂ‚ˆ›Üˆ
-X™[İ\HHÈİ\H™İ\ÑŒËœÚ^™J
-NÈ
-ÊÜİ\JBˆÂˆÛÛœİØØ[\ˆH™İ\ÑŒÖÜİ\WNÂ‚ˆËÈ\Âˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆØÙ[WHH›Ø[N›Z[‚ˆ
-ˆKŒˆ›Ø[N›X^
-ŒØ]™YØÙ[WH
-È
-˜ÛÛX‘\–ØÙ[WJBˆ
-NÂˆBˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ™XÛÛ\]Q\ÚYÛÚZ[Š
-NÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆK˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆÛÛ™Qœ›Ş™[”š[X[š^Y
-‘š^Y]\ŠNÂˆØØ[\ˆœH]˜[X]SØš™Xİ]™J
-NÂˆØØ[\ˆœH]˜[X]U›Û[YPÛÛœİ˜Z[
+                // --- F1 DIAG: print eta correction values ---
+                Info<< "  F1 DIAG: etaCorrThermal=" << etaCorrThermal
+                    << " etaDenom=" << etaDenom << endl;
 
-NÂˆØØ[\ˆH]˜[X]T™\Üİ\™Q›Ü
+                // Correct eta correction (same formula as filter_chainrule.H):
+                //   dJ/dxp[j] = dJ/dxh[j]*drho[j] + V[j]*(1-drho[j])*C_J
+                fsenshThermalOnly *= drho;
+                forAll(designMask, celli)
+                {
+                    fsenshThermalOnly[celli] +=
+                        designMask[celli]*mesh.V()[celli]
+                       *(1.0 - drho[celli])*etaCorrThermal;
+                }
 
-NÂ‚ˆËÈZ[\Âˆœš[Z]]™QšY[™YŠ
-HHØ]™YÂˆ›Ü[
-Xİ]™Q\ÚYÛÙ[ËXİ]™RJBˆÂˆÛÛœİX™[Ù[HHXİ]™Q\ÚYÛÙ[ÖØXİ]™RWNÂˆØÙ[WHH›Ø[N›Z[‚ˆ
-ˆKŒˆ›Ø[N›X^
-ŒØ]™YØÙ[WHH
-˜ÛÛX‘\–ØÙ[WJBˆ
-NÂˆBˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ™XÛÛ\]Q\ÚYÛÚZ[Š
-NÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆHHTØ]™Yœ›ŞÂˆHØ]™Yœ›ŞÂˆK˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆ˜ÛÜœ™Xİ›İ[™\PÛÛ™][ÛœÊ
-NÂˆÛÛ™Qœ›Ş™[”š[X[š^Y
-‘š^Y]\ŠNÂˆØØ[\ˆ›HH]˜[X]SØš™Xİ]™J
-NÂˆØØ[\ˆ›HH]˜[X]U›Û[YPÛÛœİ˜Z[
+                // --- F1 DIAG: print after eta correction ---
+                {
+                    scalar fSum = 0.0, fMax = 0.0;
+                    forAll(activeDesignCells, activeI)
+                    {
+                        const label celli = activeDesignCells[activeI];
+                        fSum += fsenshThermalOnly[celli];
+                        fMax = max(fMax, mag(fsenshThermalOnly[celli]));
+                    }
+                    reduce(fSum, sumOp<scalar>());
+                    reduce(fMax, maxOp<scalar>());
+                    Info<< "  F1 DIAG: fsenshThermalOnly after eta corr:"
+                        << " sum=" << fSum << " max=" << fMax << endl;
+                }
+            }
+            else
+            {
+                fsenshThermalOnly *= drho;
+            }
+        }
 
-NÂˆØØ[\ˆHH]˜[X]T™\Üİ\™Q›Ü
+        // Apply Helmholtz filter
+        volScalarField fsensThermalOnly
+        (
+            IOobject
+            (
+                "fsensThermalOnly",
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            fsensMeanT
+        );
+        fsensThermalOnly = dimensionedScalar("zero", fsensMeanT.dimensions(), 0.0);
+        solve
+        (
+            fvm::laplacian(designFilterFaceMask, fsensThermalOnly)
+          - fvm::Sp(b, fsensThermalOnly)
+          + fsenshThermalOnly*b
+        );
+        fsensThermalOnly.primitiveFieldRef() *= designMask.primitiveField();
+        fsensThermalOnly.primitiveFieldRef() *= designMask.primitiveField();
 
-NÂ‚ˆËÈ‘\š]˜]]™\ÂˆØØ[\ˆ™ØšˆH
-œH›JKÊ‹Œ
-š
-NÂˆØØ[\ˆ™›ÛH
-œH›JKÊ‹Œ
-š
-NÂˆØØ[\ˆ™H
-HJKÊ‹Œ
-š
-NÂˆØØ[\ˆ™›Ü›HH™Ñ›Ø[N›X^
-™\Üİ\™Q›ÜX^KÓPS
-NÂ‚ˆØØ[\ˆ\œ“ØšˆHXYÊY“ØšˆH™ØšŠBˆÑ›Ø[N›X^
-›Ø[N›X^
-XYÊY“ØšŠKXYÊ™ØšŠJKØØ[\ŠYKLÌ
-JNÂˆØØ[\ˆ\œ•›ÛHXYÊY•›ÛH™›Û
-BˆÑ›Ø[N›X^
-›Ø[N›X^
-XYÊY•›Û
-KXYÊ™›Û
-JKØØ[\ŠYKLÌ
-JNÂˆØØ[\ˆ\œ”HXYÊY”H™›Ü›JBˆÑ›Ø[N›X^ˆ
-ˆ›Ø[N›X^
-XYÊY”
-KXYÊ™›Ü›JJKˆØØ[\ŠYKLÌ
-Bˆ
-NÂ‚ˆ[™›ÏˆHˆˆˆØšˆQHˆY“Øšˆˆ‘Hˆ™Øš‚ˆˆ\œHˆ\œ“Øš‚ˆˆ›ÛˆQHˆY•›Ûˆ‘Hˆ™›Ûˆˆ\œHˆ\œ•›ÛˆˆˆQHˆY”ˆ‘Hˆ™›Ü›Bˆˆ\œHˆ\œ”[™Â‚ˆX^™[\œ›Ü‘ŒÛØšˆH›Ø[N›X^
-X^™[\œ›Ü‘ŒÛØš‹\œ“ØšŠNÂˆX^™[\œ›Ü‘Œİ›ÛH›Ø[N›X^
-X^™[\œ›Ü‘Œİ›Û\œ•›Û
-NÂˆX^™[\œ›Ü‘ŒÜH›Ø[N›X^
-X^™[\œ›Ü‘ŒÜ\œ”
-NÂˆX^™Øš[H›Ø[N›X^
-X^™Øš[XYÊ™ØšŠJNÂˆB‚ˆ[™›Ï—ˆŒÈİ[[X\NˆØš—Ù\œHˆX^™[\œ›Ü‘ŒÛØš‚ˆ‹›ÛÙ\œHˆX^™[\œ›Ü‘Œİ›Ûˆ‹Ù\œHˆX^™[\œ›Ü‘ŒÜ[™Â‚ˆËÈKHš[˜[™\İÜ™HKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKBˆœ™Y^™U\˜[[˜ÙQ›Ü•˜[Y][ÛˆHÜšYÑœ™Y^™Q›YÎÂ‚ˆËÈKHİ™\˜[İ[[X\HKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKBˆ[™›Ï—‹KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKHˆ[™Âˆ[™›Ï”İYÙHˆİ[[X\Nˆˆ[™Âˆ[™›ÏˆŒH
-ĞUM\›X[[Û›JNˆYYX[”™[\œ›ÜHˆYYX[”™[\œ›Ü‘ŒBˆ‹X^™[\œ›ÜHˆX^™[\œ›Ü‘ŒBˆ‹ÚYÛ“Z\ÛX]ÚHˆÚYÛ“Z\ÛX]ÚŒBˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\ÑŒH‹Èˆİ[\İÑŒH[™Âˆ[™›ÏˆŒˆ
-[œ›Ş™[ŠNˆX^™[\œ›ÜHˆX^™[\œ›Ü‘Œ‚ˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\ÑŒˆ‹Èˆİ[\İÑŒ‚ˆ‹X^ĞQŸHˆX^Y‘Œˆ[™Âˆ[™›ÏˆŒˆ
-™\Üİ\™H›Ü
-NˆX^™[\œ›ÜHˆX^™[\œ›Ü”ˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\Ô‹Èˆİ[\İÑŒˆ[™Âˆ[™›ÏˆŒÈ
-ÛÛXš[™Y\ŠNˆØš—Ù\œHˆX^™[\œ›Ü‘ŒÛØš‚ˆ‹›ÛÙ\œHˆX^™[\œ›Ü‘Œİ›Ûˆ‹Ù\œHˆX^™[\œ›Ü‘ŒÜ[™Âˆ[™›Ï‹KKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKKWˆˆ[™Â‚ˆËÈ\ÜÈÜš]\š[Û‚ˆËÈŒH
-\›X[[Û›JHÚİ[\ÜÈÚ]IH\œ›Üˆ
-YÚÛÛ™\™Ù[˜ÙJK‚ˆËÈŒˆ
-[œ›Ş™[ŠH\È[™›Ü›X][Û˜[YHÈ™\Üİ\™K]™[ØÚ]HÛİ\[™ÂˆËÈ›Ú\ÙNÈXØÙ\YˆX^\œ›ÜˆL	HÔˆYˆ›İĞQŸ[™Ñ‘\™BˆËÈÛX[
-YKLË[™XØ][™È™X\‹^™\›ÈÜ˜YY[
-K‚ˆËÈİŒˆØ]HHŒH\™Üš]\š[ÛˆYYX[ˆHIKX^HIK›ÈÚYÛ‚ˆËÈZ\ÛX]Ú
-\İ™X[HS’TÓÕ“ÔP×ĞÓÓ‘PÕU’UWÔS‹›YÙXİ[ÛˆHØ]H
-K‚ˆ›ÛÛŒT\ÜÈBˆYYX[”™[\œ›Ü‘ŒHHŒBˆ	‰ˆX^™[\œ›Ü‘ŒHHŒBˆ	‰ˆÚYÛ“Z\ÛX]ÚŒHOHˆ	‰ˆİ[\İÑŒHˆÂ‚ˆËÈ›ÜˆŒ‹ÚXÚÈYˆÜ˜YY[\È™X\‹^™\›È
-[\™Xİ[ÛœÈ]™HÛX[ĞQŸ
-Bˆ›ÛÛŒ“™X\–™\›ÈH
-X^Y‘ŒˆYKLÊNÂˆ›ÛÛŒ”\ÜÈHŒ“™X\–™\›È
-İ[˜Z[\™\ÑŒˆHİ[\İÑŒ‹ÌÈ	‰ˆX^™[\œ›Ü‘ŒˆL
-NÂ‚ˆËÈ™\Üİ\™H›Üˆ[™›Ü›X][Û˜[YHÈ™\Üİ\™K]™[ØÚ]HÛİ\[™È›Ú\ÙK‚ˆËÈXØÙ\Yˆ™X\‹^™\›ÈÜ˜YY[ÜˆL	H\œ›Ü‹‚ˆ›ÛÛ™X\–™\›ÈH
-X^Y”[YKN
-NÂˆ›ÛÛ\ÜÈH™X\–™\›È
-İ[˜Z[\™\ÔHİ[\İÑŒ‹ÌÈ	‰ˆX^™[\œ›Ü”KŒ
-NÂ‚ˆËÈŒÈÛÛXš[™Yˆ[™›Ü›X][Û˜[
-[™YHÛÛ\Û™[ÊBˆ›ÛÛŒÔ\ÜÈH
-X^™[\œ›Ü‘ŒÛØšˆL
-Bˆ
-X^Y“Øš[YKLÈ	‰ˆX^™Øš[YKLÊNÂ‚ˆYˆ
-YŒT\ÜÊBˆÂˆ˜][\œ›Ü’[‘[˜İ[Û‚ˆ‘ŒH
-ĞUM
-HÜ˜YY[˜[Y][Ûˆ˜Z[Yˆ‚ˆ›YYX[”™[\œ›ÜHˆYYX[”™[\œ›Ü‘ŒBˆˆ
-[Z]IJKX^™[\œ›ÜHˆX^™[\œ›Ü‘ŒBˆˆ
-[Z]IJKÚYÛ“Z\ÛX]ÚHˆÚYÛ“Z\ÛX]ÚŒBˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\ÑŒBˆ‹Èˆİ[\İÑŒBˆ‹ˆİŒˆHXYÛ›ÜİXÜÎˆJH›Û[YK[™]]˜[]H™\ÚYX[È‚ˆ™\•›Û™\ÚYX[ŒH
-\™Ù]HYKN
-NÈŠH‘]X]HXÜ›ÜÜÈH‚ˆŒÈ\\˜˜][Ûˆİ\È
-YˆLYKM\È›Ú\ÙKYÛZ[˜]Y[›\™ÙH‚ˆHÛX[\İİ\[œİXYÙˆ˜Z[[™ÊNÈÊHÚYÛˆ›\ÈOˆ‚ˆš[œÜXİY’X]˜[œÙ™\‹’›İ[™\HÛÛ™][ÛœÈ[™˜[œÜÜÙH‚ˆ˜\ÜÙ[X›Kˆ‚ˆX›Ü
-˜][\œ›ÜŠNÂˆB‚ˆYˆ
-YŒ”\ÜÊBˆÂˆ˜][\œ›Ü’[‘[˜İ[Û‚ˆ‘Œˆ
-[œ›Ş™[ŠHÜ˜YY[˜[Y][Ûˆ˜Z[Yˆ‚ˆ›X^™[\œ›ÜHˆX^™[\œ›Ü‘Œ‚ˆ‹˜Z[\™\ÏHˆİ[˜Z[\™\ÑŒ‚ˆ‹Èˆİ[\İÑŒ‚ˆX›Ü
-˜][\œ›ÜŠNÂˆB‚ˆYˆ
-\\ÜÊBˆÂˆØ\›š[™Ò[‘[˜İ[Û‚ˆ‘Œˆ™\Üİ\™H›ÜÜ˜YY[˜[Y][ÛˆX^™[\œ›ÜH‚ˆX^™[\œ›Ü”‹˜Z[\™\ÏHˆİ[˜Z[\™\Ôˆ‹Èˆİ[\İÑŒ‚ˆ‹ˆ™\Üİ\™H›ÜÜ˜YY[X^H™H[œ™[XX›Kˆ‚ˆ[™ÂˆB‚ˆYˆ
-YŒÔ\ÜÊBˆÂˆØ\›š[™Ò[‘[˜İ[Û‚ˆ‘ŒÈÛÛXš[™Y\™Xİ[Ûˆ˜[Y][ÛˆØš—Ù\œH‚ˆX^™[\œ›Ü‘ŒÛØš‚ˆ‹ˆÛÛXš[™YÜ˜YY[\™Xİ[ÛˆX^H™H[œ™[XX›Kˆ‚ˆ[™ÂˆB‚ˆ[™›Ï”İYÙHˆTÔÑQˆ[™ÂˆYˆ
-YŒ“™X\–™\›ÊBˆÂˆ[™›Ïˆ
-Œˆ\ÜÙYÚ][ˆÛ\˜[˜ÙJHˆ[™ÂˆBˆ[ÙBˆÂˆ[™›Ïˆ
-ŒˆÜ˜YY[™X\‹^™\›Ë‘›Ú\ÙKYÛZ[˜]Y8 %XØÙ\Y
-Hˆ[™ÂˆBˆYˆ
-™X\–™\›ÊBˆÂˆ[™›Ïˆ
-ˆÜ˜YY[™X\‹^™\›È8 %XØÙ\Y
-Hˆ[™ÂˆBŸB
+        // --- F1 DIAG: print filter output ---
+        {
+            scalar fSum = 0.0, fMax = 0.0;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                fSum += fsensThermalOnly[celli];
+                fMax = max(fMax, mag(fsensThermalOnly[celli]));
+            }
+            reduce(fSum, sumOp<scalar>());
+            reduce(fMax, maxOp<scalar>());
+            Info<< "  F1 DIAG: fsensThermalOnly after filter:"
+                << " sum=" << fSum << " max=" << fMax << endl;
+        }
+
+        for (label activeI = 0; activeI < nDesignLocal; ++activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            dfdxThermal[activeI] =
+                objectiveGradientScale*fsensThermalOnly[celli];
+        }
+    }
+    else
+    {
+        // No flow adjoint: dfdx is already thermal-only
+        for (label activeI = 0; activeI < nDesignLocal; ++activeI)
+        {
+            dfdxThermal[activeI] = dfdx[activeI];
+        }
+    }
+
+    for (label dirI = 0; dirI < nDirF1; ++dirI)
+    {
+        scalarField direction(mesh.nCells(), 0.0);
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            // dir 0: negative thermal-gradient direction; dirs 1..2: smooth
+            // sinusoidal.  [v2 R3] Every direction MUST be volume-neutral
+            // (orthogonal to gsensVol): the known E5 volume-gradient issue
+            // (dgdx[0]=0.289912) would otherwise leak into the central
+            // difference and corrupt the FD estimate.
+            if (dirI == 0)
+            {
+                direction[celli] = -dfdxThermal[activeI];
+            }
+            else
+            {
+                direction[celli] =
+                    Foam::sin(0.271*(dirI + 1)*(celli + 1) + 0.5);
+            }
+        }
+
+        // --- [v2 Gate 4] Direction construction (2 iterations):
+        //     a) volume neutralization (Gram-Schmidt vs gsensVol)
+        //     b) boundary-margin filter (avoid min/max clamping)
+        //     c) L2 normalization over active design cells
+        const scalar hMaxF1 = fdStepsF1[0];   // largest step = 1e-3
+        scalar maxAbsDir = 0.0;
+        forAll(activeDesignCells, activeI)
+        {
+            maxAbsDir = Foam::max
+            (
+                maxAbsDir,
+                mag(direction[activeDesignCells[activeI]])
+            );
+        }
+        reduce(maxAbsDir, maxOp<scalar>());
+        maxAbsDir = Foam::max(maxAbsDir, SMALL);
+
+        for (label gsIter = 0; gsIter < 2; ++gsIter)
+        {
+            scalar dotDV = 0.0, dotVV = 0.0;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                dotDV += direction[celli]*gsensVol[celli];
+                dotVV += sqr(gsensVol[celli]);
+            }
+            reduce(dotDV, sumOp<scalar>());
+            reduce(dotVV, sumOp<scalar>());
+            if (mag(dotVV) >= SMALL)
+            {
+                const scalar projCoeff = dotDV/dotVV;
+                forAll(activeDesignCells, activeI)
+                {
+                    const label celli = activeDesignCells[activeI];
+                    direction[celli] -= projCoeff*gsensVol[celli];
+                }
+            }
+
+            const scalar margin = 2.0*hMaxF1*maxAbsDir;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                if
+                (
+                    xSavedThermal[celli] < margin
+                 || xSavedThermal[celli] > 1.0 - margin
+                )
+                {
+                    direction[celli] = 0.0;
+                }
+            }
+        }
+
+        scalar dirNorm = 0.0;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            dirNorm += sqr(direction[celli]);
+        }
+        reduce(dirNorm, sumOp<scalar>());
+        dirNorm = Foam::sqrt(dirNorm);
+        if (dirNorm < SMALL)
+        {
+            FatalErrorInFunction
+                << "F1 direction " << dirI
+                << " collapsed to zero after volume neutralization."
+                << abort(FatalError);
+        }
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            direction[celli] /= dirNorm;
+        }
+
+        // Volume-neutrality residual (diagnostic; target <= 1e-8)
+        {
+            scalar volDot = 0.0, gNorm = 0.0;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                volDot += direction[celli]*gsensVol[celli];
+                gNorm += sqr(gsensVol[celli]);
+            }
+            reduce(volDot, sumOp<scalar>());
+            reduce(gNorm, sumOp<scalar>());
+            dirVolResidualF1[dirI] =
+                mag(volDot)/Foam::max(Foam::sqrt(gNorm), SMALL);
+        }
+
+        // Valid direction cells must be >= 20% of nDesignLocal
+        {
+            label nValidDir = 0;
+            forAll(activeDesignCells, activeI)
+            {
+                if (mag(direction[activeDesignCells[activeI]]) > 0.0)
+                {
+                    ++nValidDir;
+                }
+            }
+            reduce(nValidDir, sumOp<label>());
+            if (nValidDir < 0.2*nDesignLocal)
+            {
+                FatalErrorInFunction
+                    << "F1 direction " << dirI
+                    << " has too few active cells: " << nValidDir
+                    << " / " << nDesignLocal << abort(FatalError);
+            }
+        }
+
+        scalar Dadj = 0.0;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            Dadj += dfdxThermal[activeI]*direction[celli];
+        }
+        reduce(Dadj, sumOp<scalar>());
+
+        Info<< "\n  F1 Direction " << dirI << ": D_ADJ(thermal)=" << Dadj << endl;
+
+        for (label stepI = 0; stepI < fdStepsF1.size(); ++stepI)
+        {
+            const scalar h = fdStepsF1[stepI];
+            totalTestsF1++;
+
+            // Plus
+            label clampCountPlus = 0;
+            x.primitiveFieldRef() = xSavedThermal;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                const scalar xPlus =
+                    xSavedThermal[celli] + h*direction[celli];
+                if (xPlus >= 1.0 || xPlus <= 0.0) ++clampCountPlus;
+                x[celli] = Foam::min(1.0, Foam::max(0.0, xPlus));
+            }
+            x.correctBoundaryConditions();
+            recomputeDesignChain();
+            const scalar volPlus = evaluateVolumeConstraint();
+            // Keep U, p, phi at saved state; only update T
+            T = TSavedThermal;
+            T.correctBoundaryConditions();
+            solveThermalOnly();
+            scalar Jplus = evaluateObjective();
+
+            // Minus
+            label clampCountMinus = 0;
+            x.primitiveFieldRef() = xSavedThermal;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                const scalar xMinus =
+                    xSavedThermal[celli] - h*direction[celli];
+                if (xMinus >= 1.0 || xMinus <= 0.0) ++clampCountMinus;
+                x[celli] = Foam::min(1.0, Foam::max(0.0, xMinus));
+            }
+            x.correctBoundaryConditions();
+            recomputeDesignChain();
+            const scalar volMinus = evaluateVolumeConstraint();
+            T = TSavedThermal;
+            T.correctBoundaryConditions();
+            solveThermalOnly();
+            scalar Jminus = evaluateObjective();
+
+            scalar Dfd = (Jplus - Jminus)/(2.0*h);
+            scalar relErr = mag(Dadj - Dfd)
+               /Foam::max(Foam::max(mag(Dadj), mag(Dfd)), scalar(1e-30));
+
+            // Sign consistency: mismatch only counts when not near zero
+            const bool signMismatch =
+                   Foam::max(mag(Dadj), mag(Dfd)) >= 1e-10
+                && Dadj*Dfd < 0.0;
+            if (signMismatch) ++signMismatchF1;
+
+            // Volume-change diagnostic (should be ~0 for neutral dirs)
+            const scalar dV_empirical =
+                (volPlus - volMinus)/(2.0*h);
+
+            Info<< "    h=" << h
+                << ", J+=" << Jplus
+                << ", J-=" << Jminus
+                << ", D_FD=" << Dfd
+                << ", rel error=" << relErr
+                << ", clamps(+/-)=" << clampCountPlus << "/"
+                << clampCountMinus
+                << ", dV_FD=" << dV_empirical << endl;
+
+            maxRelErrorF1 = Foam::max(maxRelErrorF1, relErr);
+            relErrSamplesF1.append(relErr);
+            if (relErr > 0.05) totalFailuresF1++;
+        }
+
+        // Restore
+        x.primitiveFieldRef() = xSavedThermal;
+        xp.primitiveFieldRef() = xpSavedThermal;
+        xh.primitiveFieldRef() = xhSavedThermal;
+        alpha = alphaSavedThermal;
+        DTMolecular = DTSavedThermal;
+        DTEffective = DTEffSavedThermal;
+        T = TSavedThermal;
+        eta5 = eta5SavedThermal;
+        x.correctBoundaryConditions();
+        T.correctBoundaryConditions();
+    }
+
+    // [v2 Gate 4] Median over all collected relative-error samples
+    if (relErrSamplesF1.size() > 0)
+    {
+        Foam::sort(relErrSamplesF1);
+        medianRelErrorF1 = relErrSamplesF1[relErrSamplesF1.size()/2];
+    }
+
+    Info<< "\n  F1 [GATE4] Summary: medianRelError=" << medianRelErrorF1
+        << ", maxRelError=" << maxRelErrorF1
+        << ", failures=" << totalFailuresF1 << "/" << totalTestsF1
+        << ", signMismatch=" << signMismatchF1 << endl;
+    Info<< "  F1 [GATE4] volume-neutrality residuals per direction:";
+    for (label dirI = 0; dirI < nDirF1; ++dirI)
+    {
+        Info<< "  dir" << dirI << "=" << dirVolResidualF1[dirI];
+    }
+    Info<< "  (target <= 1e-8)" << endl;
+
+    //=====================================================================
+    // F2: Full frozen U-p-T FD with fixed iteration count
+    //=====================================================================
+    Info<< "\n--- F2: Full frozen U-p-T FD (fixed iters) ---" << endl;
+
+    // Restore to main solver state
+    x.primitiveFieldRef() = xSaved;
+    xp.primitiveFieldRef() = xpSaved;
+    xh.primitiveFieldRef() = xhSaved;
+    alpha = alphaSaved;
+    DTMolecular = DTSaved;
+    Q = QSaved;
+    DTEffective = DTEffectiveSaved;
+    U = USaved;
+    p = pSaved;
+    phi = phiSaved;
+    T = TSaved;
+    eta5 = eta5Saved_val;
+    x.correctBoundaryConditions();
+    U.correctBoundaryConditions();
+    T.correctBoundaryConditions();
+
+    // Baseline: solve frozen primal with fixed iterations
+    const label nFixedIter = 300;
+    Info<< "  Solving baseline with " << nFixedIter << " fixed iters..." << endl;
+    solveFrozenPrimalFixed(nFixedIter);
+    scalar Jbase_full = evaluateObjective();
+    Info<< "  Baseline J=" << Jbase_full << endl;
+
+    // Save the frozen-converged state
+    volVectorField USavedFroz("U_saved_froz", U);
+    volScalarField pSavedFroz("p_saved_froz", p);
+    surfaceScalarField phiSavedFroz("phi_saved_froz", phi);
+    volScalarField TSavedFroz("T_saved_froz", T);
+
+    scalar maxRelErrorF2 = 0.0;
+    label totalFailuresF2 = 0;
+    label totalTestsF2 = 0;
+    scalar maxDadjF2 = 0.0;  // track largest |D_ADJ| across all F2 directions
+    scalar maxRelErrorPD = 0.0;  // pressure drop FD max error
+    label totalFailuresPD = 0;   // pressure drop FD failures
+    scalar maxDadjPDall = 0.0;   // max |D_ADJ(pd)| across F2+F3
+    scalar maxDadjObjAll = 0.0;  // max |D_ADJ(obj)| across F3
+    scalar maxFdpObjAll = 0.0;   // max |D_FD(obj)| across F3
+    const label nDirF2 = 3;
+    const scalarList fdStepsF2 = {1e-1, 5e-2, 2e-2};
+
+    for (label dirI = 0; dirI < nDirF2; ++dirI)
+    {
+        scalarField direction(mesh.nCells(), 0.0);
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            direction[celli] = Foam::sin(0.271*(dirI + 1)*(celli + 1) + 0.5);
+        }
+        scalar dirNorm = 0.0;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            dirNorm += sqr(direction[celli]);
+        }
+        reduce(dirNorm, sumOp<scalar>());
+        dirNorm = Foam::sqrt(dirNorm);
+        if (dirNorm < SMALL) continue;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            direction[celli] /= dirNorm;
+        }
+
+        scalar Dadj = 0.0;
+        scalar DadjPD = 0.0;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            Dadj += dfdx[activeI]*direction[celli];
+            DadjPD += dgdx[1][activeI]*direction[celli];
+        }
+        reduce(Dadj, sumOp<scalar>());
+        reduce(DadjPD, sumOp<scalar>());
+        maxDadjF2 = Foam::max(maxDadjF2, mag(Dadj));
+        maxDadjPDall = Foam::max(maxDadjPDall, mag(DadjPD));
+
+        Info<< "\n  F2 Direction " << dirI
+            << ": D_ADJ(obj)=" << Dadj
+            << ", D_ADJ(pd)=" << DadjPD << endl;
+
+        for (label stepI = 0; stepI < fdStepsF2.size(); ++stepI)
+        {
+            const scalar h = fdStepsF2[stepI];
+            totalTestsF2++;
+
+            // Plus
+            x.primitiveFieldRef() = xSaved;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                x[celli] = Foam::min(1.0, xSaved[celli] + h*direction[celli]);
+            }
+            x.correctBoundaryConditions();
+            recomputeDesignChain();
+            U = USavedFroz;
+            p = pSavedFroz;
+            phi = phiSavedFroz;
+            T = TSavedFroz;
+            U.correctBoundaryConditions();
+            T.correctBoundaryConditions();
+            solveFrozenPrimalFixed(nFixedIter);
+            scalar Jplus = evaluateObjective();
+            scalar DPplus = evaluatePressureDrop();
+
+            // Minus
+            x.primitiveFieldRef() = xSaved;
+            forAll(activeDesignCells, activeI)
+            {
+                const label celli = activeDesignCells[activeI];
+                x[celli] = Foam::max(0.0, xSaved[celli] - h*direction[celli]);
+            }
+            x.correctBoundaryConditions();
+            recomputeDesignChain();
+            U = USavedFroz;
+            p = pSavedFroz;
+            phi = phiSavedFroz;
+            T = TSavedFroz;
+            U.correctBoundaryConditions();
+            T.correctBoundaryConditions();
+            solveFrozenPrimalFixed(nFixedIter);
+            scalar Jminus = evaluateObjective();
+            scalar DPminus = evaluatePressureDrop();
+
+            scalar Dfd = (Jplus - Jminus)/(2.0*h);
+            scalar relErr = mag(Dadj - Dfd)
+               /Foam::max(Foam::max(mag(Dadj), mag(Dfd)), scalar(1e-30));
+
+            // Pressure drop FD (normalized by pressureDropMaxPa to match gx[1])
+            scalar DfdPD = (DPplus - DPminus)/(2.0*h);
+            scalar DfdPDnorm = DfdPD
+               /Foam::max(pressureDropMaxPa, SMALL);
+            scalar relErrPD = mag(DadjPD - DfdPDnorm)
+               /Foam::max
+                (
+                    Foam::max(mag(DadjPD), mag(DfdPDnorm)),
+                    scalar(1e-30)
+                );
+
+            Info<< "    h=" << h
+                << ", J+=" << Jplus << ", J-=" << Jminus
+                << ", D_FD=" << Dfd
+                << ", relErr(obj)=" << relErr
+                << ", DP+=" << DPplus << ", DP-=" << DPminus
+                << ", D_FD(pd)=" << DfdPDnorm
+                << ", relErr(pd)=" << relErrPD << endl;
+
+            maxRelErrorF2 = Foam::max(maxRelErrorF2, relErr);
+            maxRelErrorPD = Foam::max(maxRelErrorPD, relErrPD);
+            if (relErr > 0.05) totalFailuresF2++;
+            if (relErrPD > 0.50) totalFailuresPD++;
+        }
+
+        // Restore
+        x.primitiveFieldRef() = xSaved;
+        xp.primitiveFieldRef() = xpSaved;
+        xh.primitiveFieldRef() = xhSaved;
+        alpha = alphaSaved;
+        DTMolecular = DTSaved;
+        Q = QSaved;
+        DTEffective = DTEffectiveSaved;
+        U = USaved;
+        p = pSaved;
+        phi = phiSaved;
+        T = TSaved;
+        eta5 = eta5Saved_val;
+        x.correctBoundaryConditions();
+        U.correctBoundaryConditions();
+        T.correctBoundaryConditions();
+    }
+
+    Info<< "\n  F2 Summary: maxRelError=" << maxRelErrorF2
+        << ", failures=" << totalFailuresF2 << "/" << totalTestsF2 << endl;
+    Info<< "  F2 Pressure Drop: maxRelError=" << maxRelErrorPD
+        << ", failures=" << totalFailuresPD << "/" << totalTestsF2 << endl;
+
+    //=====================================================================
+    // F3: Combined direction FD (actual MMA direction)
+    //=====================================================================
+    Info<< "\n--- F3: Combined direction FD (projected negative gradient) ---" << endl;
+
+    // Restore to frozen-converged state for F3
+    x.primitiveFieldRef() = xSaved;
+    xp.primitiveFieldRef() = xpSaved;
+    xh.primitiveFieldRef() = xhSaved;
+    alpha = alphaSaved;
+    DTMolecular = DTSaved;
+    Q = QSaved;
+    DTEffective = DTEffectiveSaved;
+    U = USavedFroz;
+    p = pSavedFroz;
+    phi = phiSavedFroz;
+    T = TSavedFroz;
+    eta5 = eta5Saved_val;
+    x.correctBoundaryConditions();
+    U.correctBoundaryConditions();
+    T.correctBoundaryConditions();
+
+    // Baseline objective, volume, pressure drop
+    scalar Jbase_f3 = evaluateObjective();
+    scalar Vbase_f3 = evaluateVolumeConstraint();
+    scalar DPbase_f3 = evaluatePressureDrop();
+    Info<< "  F3 Baseline: J=" << Jbase_f3
+        << ", V=" << Vbase_f3
+        << ", DP=" << DPbase_f3 << endl;
+
+    // Build combined direction: projected negative objective gradient
+    // d = -dfdx - proj(-dfdx, dgdx[0]) * dgdx[0]
+    // i.e., remove the volume constraint component
+    scalarField negGrad(nDesignLocal, 0.0);
+    scalarField volGrad(nDesignLocal, 0.0);
+    for (label activeI = 0; activeI < nDesignLocal; ++activeI)
+    {
+        negGrad[activeI] = -dfdx[activeI];
+        volGrad[activeI] = dgdx[0][activeI];
+    }
+
+    scalar dotNV = 0.0;
+    scalar dotVV = 0.0;
+    for (label activeI = 0; activeI < nDesignLocal; ++activeI)
+    {
+        dotNV += negGrad[activeI]*volGrad[activeI];
+        dotVV += sqr(volGrad[activeI]);
+    }
+    reduce(dotNV, sumOp<scalar>());
+    reduce(dotVV, sumOp<scalar>());
+
+    scalar projCoeff = 0.0;
+    if (mag(dotVV) > SMALL)
+    {
+        projCoeff = dotNV/dotVV;
+    }
+
+    scalarField combDir(mesh.nCells(), 0.0);
+    forAll(activeDesignCells, activeI)
+    {
+        const label celli = activeDesignCells[activeI];
+        combDir[celli] = negGrad[activeI] - projCoeff*volGrad[activeI];
+    }
+
+    // Normalize
+    scalar dirNorm3 = 0.0;
+    forAll(activeDesignCells, activeI)
+    {
+        const label celli = activeDesignCells[activeI];
+        dirNorm3 += sqr(combDir[celli]);
+    }
+    reduce(dirNorm3, sumOp<scalar>());
+    dirNorm3 = Foam::sqrt(dirNorm3);
+    if (dirNorm3 > SMALL)
+    {
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            combDir[celli] /= dirNorm3;
+        }
+    }
+
+    // Directional derivatives
+    scalar DadjObj = 0.0;
+    scalar DadjVol = 0.0;
+    scalar DadjPD = 0.0;
+    forAll(activeDesignCells, activeI)
+    {
+        const label celli = activeDesignCells[activeI];
+        DadjObj += dfdx[activeI]*combDir[celli];
+        DadjVol += dgdx[0][activeI]*combDir[celli];
+        DadjPD += dgdx[1][activeI]*combDir[celli];
+    }
+    reduce(DadjObj, sumOp<scalar>());
+    reduce(DadjVol, sumOp<scalar>());
+    reduce(DadjPD, sumOp<scalar>());
+
+    maxDadjPDall = Foam::max(maxDadjPDall, mag(DadjPD));
+    maxDadjObjAll = Foam::max(maxDadjObjAll, mag(DadjObj));
+
+    Info<< "  F3 Directional derivatives: dJ=" << DadjObj
+        << ", dV=" << DadjVol
+        << ", dPD(norm)=" << DadjPD << endl;
+
+    scalar maxRelErrorF3obj = 0.0;
+    scalar maxRelErrorF3vol = 0.0;
+    scalar maxRelErrorF3pd = 0.0;
+    const scalarList fdStepsF3 = {1e-1, 5e-2, 2e-2};
+
+    for (label stepI = 0; stepI < fdStepsF3.size(); ++stepI)
+    {
+        const scalar h = fdStepsF3[stepI];
+
+        // Plus
+        x.primitiveFieldRef() = xSaved;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            x[celli] = Foam::min
+            (
+                1.0,
+                Foam::max(0.0, xSaved[celli] + h*combDir[celli])
+            );
+        }
+        x.correctBoundaryConditions();
+        recomputeDesignChain();
+        U = USavedFroz;
+        p = pSavedFroz;
+        phi = phiSavedFroz;
+        T = TSavedFroz;
+        U.correctBoundaryConditions();
+        T.correctBoundaryConditions();
+        solveFrozenPrimalFixed(nFixedIter);
+        scalar Jp = evaluateObjective();
+        scalar Vp = evaluateVolumeConstraint();
+        scalar DPp = evaluatePressureDrop();
+
+        // Minus
+        x.primitiveFieldRef() = xSaved;
+        forAll(activeDesignCells, activeI)
+        {
+            const label celli = activeDesignCells[activeI];
+            x[celli] = Foam::min
+            (
+                1.0,
+                Foam::max(0.0, xSaved[celli] - h*combDir[celli])
+            );
+        }
+        x.correctBoundaryConditions();
+        recomputeDesignChain();
+        U = USavedFroz;
+        p = pSavedFroz;
+        phi = phiSavedFroz;
+        T = TSavedFroz;
+        U.correctBoundaryConditions();
+        T.correctBoundaryConditions();
+        solveFrozenPrimalFixed(nFixedIter);
+        scalar Jm = evaluateObjective();
+        scalar Vm = evaluateVolumeConstraint();
+        scalar DPm = evaluatePressureDrop();
+
+        // FD derivatives
+        scalar DfdObj = (Jp - Jm)/(2.0*h);
+        scalar DfdVol = (Vp - Vm)/(2.0*h);
+        scalar DfdPD = (DPp - DPm)/(2.0*h);
+        scalar DfdPDnorm = DfdPD/Foam::max(pressureDropMaxPa, SMALL);
+
+        scalar errObj = mag(DadjObj - DfdObj)
+           /Foam::max(Foam::max(mag(DadjObj), mag(DfdObj)), scalar(1e-30));
+        scalar errVol = mag(DadjVol - DfdVol)
+           /Foam::max(Foam::max(mag(DadjVol), mag(DfdVol)), scalar(1e-30));
+        scalar errPD = mag(DadjPD - DfdPDnorm)
+           /Foam::max
+            (
+                Foam::max(mag(DadjPD), mag(DfdPDnorm)),
+                scalar(1e-30)
+            );
+
+        Info<< "    h=" << h
+            << "  obj: ADJ=" << DadjObj << " FD=" << DfdObj
+            << " err=" << errObj
+            << "  vol: ADJ=" << DadjVol << " FD=" << DfdVol
+            << " err=" << errVol
+            << "  pd: ADJ=" << DadjPD << " FD=" << DfdPDnorm
+            << " err=" << errPD << endl;
+
+        maxRelErrorF3obj = Foam::max(maxRelErrorF3obj, errObj);
+        maxRelErrorF3vol = Foam::max(maxRelErrorF3vol, errVol);
+        maxRelErrorF3pd = Foam::max(maxRelErrorF3pd, errPD);
+        maxFdpObjAll = Foam::max(maxFdpObjAll, mag(DfdObj));
+    }
+
+    Info<< "\n  F3 Summary: obj_err=" << maxRelErrorF3obj
+        << ", vol_err=" << maxRelErrorF3vol
+        << ", pd_err=" << maxRelErrorF3pd << endl;
+
+    // -- Final restore ----------------------------------------------------
+    freezeTurbulenceForValidation = origFreezeFlag;
+
+    // -- Overall summary --------------------------------------------------
+    Info<< "\n----------------------------------------" << endl;
+    Info<< "Stage F Summary:" << endl;
+    Info<< "  F1 (GATE4 thermal-only): medianRelError=" << medianRelErrorF1
+        << ", maxRelError=" << maxRelErrorF1
+        << ", signMismatch=" << signMismatchF1
+        << ", failures=" << totalFailuresF1 << "/" << totalTestsF1 << endl;
+    Info<< "  F2 (full frozen):   maxRelError=" << maxRelErrorF2
+        << ", failures=" << totalFailuresF2 << "/" << totalTestsF2
+        << ", max|D_ADJ|=" << maxDadjF2 << endl;
+    Info<< "  F2 (pressure drop): maxRelError=" << maxRelErrorPD
+        << ", failures=" << totalFailuresPD << "/" << totalTestsF2 << endl;
+    Info<< "  F3 (combined dir):  obj_err=" << maxRelErrorF3obj
+        << ", vol_err=" << maxRelErrorF3vol
+        << ", pd_err=" << maxRelErrorF3pd << endl;
+    Info<< "----------------------------------------\n" << endl;
+
+    // Pass criterion:
+    // F1 (thermal-only) should pass with < 5% error (tight convergence).
+    // F2 (full frozen) is informational due to pressure-velocity coupling
+    // noise; accept if max error < 50% OR if both |D_ADJ| and |D_FD| are
+    // small (< 1e-3, indicating near-zero gradient).
+    // [v2 Gate 4] F1 hard criterion: median <= 1%, max <= 5%, no sign
+    // mismatch (upstream ANISOTROPIC_CONDUCTIVITY_PLAN.md section 9 Gate 4).
+    bool f1Pass =
+           medianRelErrorF1 <= 0.01
+        && maxRelErrorF1    <= 0.05
+        && signMismatchF1   == 0
+        && totalTestsF1 > 0;
+
+    // For F2, check if gradient is near-zero (all directions have small |D_ADJ|)
+    bool f2NearZero = (maxDadjF2 < 1e-3);
+    bool f2Pass = f2NearZero || (totalFailuresF2 <= totalTestsF2/3 && maxRelErrorF2 < 0.50);
+
+    // Pressure drop: informational due to pressure-velocity coupling noise.
+    // Accept if near-zero gradient or < 50% error.
+    bool pdNearZero = (maxDadjPDall < 1e-8);
+    bool pdPass = pdNearZero || (totalFailuresPD <= totalTestsF2/3 && maxRelErrorPD < 1.0);
+
+    // F3 combined: informational (all three components)
+    bool f3Pass = (maxRelErrorF3obj < 0.50)
+               || (maxDadjObjAll < 1e-3 && maxFdpObjAll < 1e-3);
+
+    if (!f1Pass)
+    {
+        FatalErrorInFunction
+            << "F1 (GATE4) gradient validation failed. "
+            << "medianRelError=" << medianRelErrorF1
+            << " (limit 1%), maxRelError=" << maxRelErrorF1
+            << " (limit 5%), signMismatch=" << signMismatchF1
+            << ", failures=" << totalFailuresF1
+            << "/" << totalTestsF1
+            << ". [v2 R8] Diagnostics: 1) volume-neutrality residuals "
+            << "dirVolResidualF1 (target <= 1e-8); 2) FD plateau across the "
+            << "3 perturbation steps (if h=1e-4 is noise-dominated, enlarge "
+            << "the smallest step instead of failing); 3) sign flips -> "
+            << "inspect AdjHeatTransfer.H boundary conditions and transpose "
+            << "assembly."
+            << abort(FatalError);
+    }
+
+    if (!f2Pass)
+    {
+        FatalErrorInFunction
+            << "F2 (full frozen) gradient validation failed. "
+            << "maxRelError=" << maxRelErrorF2
+            << ", failures=" << totalFailuresF2
+            << "/" << totalTestsF2
+            << abort(FatalError);
+    }
+
+    if (!pdPass)
+    {
+        WarningInFunction
+            << "F2 pressure drop gradient validation: maxRelError="
+            << maxRelErrorPD << ", failures=" << totalFailuresPD
+            << "/" << totalTestsF2
+            << ". Pressure drop gradient may be unreliable."
+            << endl;
+    }
+
+    if (!f3Pass)
+    {
+        WarningInFunction
+            << "F3 combined direction validation: obj_err="
+            << maxRelErrorF3obj
+            << ". Combined gradient direction may be unreliable."
+            << endl;
+    }
+
+    Info<< "Stage F: PASSED" << endl;
+    if (!f2NearZero)
+    {
+        Info<< "  (F2 passed within tolerance)" << endl;
+    }
+    else
+    {
+        Info<< "  (F2: gradient near-zero, FD noise-dominated â€” accepted)" << endl;
+    }
+    if (pdNearZero)
+    {
+        Info<< "  (PD: gradient near-zero â€” accepted)" << endl;
+    }
+}

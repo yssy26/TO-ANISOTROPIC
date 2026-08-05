@@ -427,290 +427,838 @@ forAll(mesh.boundary(), patchi)
            *discreteExternalFaceFluxAdjoint[patchStart + facei];
         for (direction cmpt = 0; cmpt < 3; ++cmpt)
         {
-            discreteExternã^»¶‰žËkºwµçZWKœÚ^™J
-NÂŸBœ™YXÙJ\ØÜ™]P\™XTØØ[KÝ[SÜØØ[\Š
-JNÂœ™YXÙJ\ØÜ™]Q˜XÙPÛÝ[Ý[SÜX™[Š
-JNÂ™\ØÜ™]P\™XTØØ[HÏH›Ø[NŽ›X^
-ØØ[\Š\ØÜ™]Q˜XÙPÛÝ[
-KØØ[\ŠKŒ
-JNÂ™\ØÜ™]P\™XTØØ[HH›Ø[NŽ›X^
-\ØÜ™]P\™XTØØ[KØØ[\ŠÓPS
-JNÂ‚œØØ[\‘šY[\ØÜ™]TšÊ\ØÜ™]S•[šÛ›ÝÛœËŒ
-NÂ™›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBžÂˆ›Üˆ
-\™XÝ[ÛˆÛ\HÈÛ\ÎÈ
-ÊØÛ\
-BˆÂˆ\ØÜ™]TšÖÙ\ØÜ™]UR[™^
-Ù[KÛ\
-WHBˆ\ØÜ™]Q›ÝÕ™[ØÚ]TšÖØÙ[WK˜ÛÛ\Û™[
-Û\
-BˆÙ\ØÜ™]S[ÛY[[TØØ[NÂˆBˆ\ØÜ™]TšÖÙ\ØÜ™]T[™^
-Ù[JWHBˆ\ØÜ™]Q›ÝÔ™\ÜÝ\™TšÖØÙ[WKÙ\ØÜ™]P\™XTØØ[NÂŸB‚˜]]È\TØØ[Y\ØÜ™]Q›ÝÒ•B–É—JÛÛœÝØØ[\‘šY[	ˆ[œ]ØØ[\‘šY[	ˆÝ]]
-BžÂˆØØ[\‘šY[\ÚXØ[[œ]
-[œ]
-NÂˆ›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBˆÂˆ\ÚXØ[[œ]Ù\ØÜ™]T[™^
-Ù[JWH
-Bˆ\ØÜ™]S[ÛY[[TØØ[KÙ\ØÜ™]P\™XTØØ[NÂˆB‚ˆØØ[\‘šY[\ÚXØ[Ý]]
-\ØÜ™]S•[šÛ›ÝÛœËŒ
-NÂˆ\Q\ØÜ™]Q›ÝÒ•
-\ÚXØ[[œ]\ÚXØ[Ý]]
-NÂ‚ˆ›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBˆÂˆ›Üˆ
-\™XÝ[ÛˆÛ\HÈÛ\ÎÈ
-ÊØÛ\
-BˆÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KÛ\
-WHBˆ\ÚXØ[Ý]]Ù\ØÜ™]UR[™^
-Ù[KÛ\
-WBˆÙ\ØÜ™]S[ÛY[[TØØ[NÂˆBˆÝ]]Ù\ØÜ™]T[™^
-Ù[JWHBˆ\ÚXØ[Ý]]Ù\ØÜ™]T[™^
-Ù[JWKÙ\ØÜ™]P\™XTØØ[NÂˆBŸNÂ‚˜ÛÛœÝX™[\ØÜ™]SX^]\˜][ÛœÈBˆÜ›Ü\Y\Ë›ÛÚÝ\Ü‘Y˜][X™[Š™\ØÜ™]Q›ÝÐY›Ú[X^]\ˆ‹Œ
-NÂ˜ÛÛœÝØØ[\ˆ\ØÜ™]UÛ\˜[˜ÙHBˆÜ›Ü\Y\Ë›ÛÚÝ\Ü‘Y˜][ØØ[\Š™\ØÜ™]Q›ÝÐY›Ú[Û\˜[˜ÙH‹YKNJNÂ‚œØØ[\‘šY[\ØÜ™]TÛÛ][ÛŠ\ØÜ™]S•[šÛ›ÝÛœËŒ
-NÂœØØ[\‘šY[\ØÜ™]T™\ÚYX[
-\ØÜ™]S•[šÛ›ÝÛœËŒ
-NÂœØØ[\‘šY[\ØÜ™]SÜ\˜]Ü”ÛÛ][ÛŠ\ØÜ™]S•[šÛ›ÝÛœËŒ
-NÂ‚˜ÛÛœÝØØ[\ˆ\ØÜ™]TšÓ›Ü›HH›Ø[NŽœÜ\Šˆ›Ø[NŽ›X^
-\ØÜ™]QÛØ˜[Ý
-\ØÜ™]TšË\ØÜ™]TšÊKØØ[\ŠYKLÌ
-JBŠNÂ‚œØØ[\‘šY[\ØÜ™]TØÚ\‘XYÊ\ØÜ™]SÙ[ËYKN
-NÂ™›Ü[
-\ØÜ™]U\\‹˜XÙZJBžÂˆÛÛœÝX™[ÝÛˆH\ØÜ™]SÝÛ™\–Ù˜XÙZWNÂˆÛÛœÝX™[™ZHH\ØÜ™]S™ZYÚ›Ý\–Ù˜XÙZWNÂˆÛÛœÝØØ[\ˆÙZYÚH\ØÜ™]UÙZYÚÖÙ˜XÙZWNÂˆÛÛœÝ™XÝÜˆÙ”ØØ[YH\ØÜ™]TÙ–Ù˜XÙZWKÙ\ØÜ™]P\™XTØØ[NÂˆÛÛœÝØØ[\ˆÝÛ™\ÛÛšX][ÛˆHÜ\ŠÙZYÚ
-Bˆ
-ŠˆÜ\ŠÙ”ØØ[Yž
+            discreteExternalFluxTranspose[discreteUIndex(celli, cmpt)] +=
+                faceTranspose.component(cmpt);
+        }
+    }
+}
+applyPressureFluxCorrectionTranspose
+(
+    discreteExternalFaceFluxAdjoint,
+    discreteExternalFluxTranspose
+);
+for (label celli = 0; celli < discreteNCells; ++celli)
+{
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        discreteFlowVelocityRhs[celli].component(cmpt) +=
+            discreteExternalFluxTranspose[discreteUIndex(celli, cmpt)];
+    }
+    discreteFlowPressureRhs[celli] +=
+        discreteExternalFluxTranspose[discretePIndex(celli)];
+}
+auto applyDiscreteFlowJ =
+[&](const scalarField& input, scalarField& output)
+{
+    output = scalar(0.0);
+    scalarField pressureFluxCorrection(mesh.nFaces(), 0.0);
+    applyPressureFluxCorrection(input, pressureFluxCorrection);
+    if (ransFlowModel)
+    {
+        volVectorField discreteDeltaU
+        (
+            IOobject
+            (
+                "U",
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE,
+                false
+            ),
+            U
+        );
 
-JBˆÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖÛÝÛ—KÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-Bˆ
-ÈÜ\ŠÙ”ØØ[YžJ
-JBˆÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖVÛÝÛ—KÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-Bˆ
-ÈÜ\ŠÙ”ØØ[YžŠ
-JBˆÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖ–ÛÝÛ—KÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-Bˆ
-NÂˆÛÛœÝØØ[\ˆ™ZYÚ›Ý\ÛÛšX][ÛˆHÜ\ŠKŒHÙZYÚ
-Bˆ
-ŠˆÜ\ŠÙ”ØØ[Yž
+        for (label celli = 0; celli < discreteNCells; ++celli)
+        {
+            discreteDeltaU[celli] = vector
+            (
+                input[discreteUIndex(celli, 0)],
+                input[discreteUIndex(celli, 1)],
+                input[discreteUIndex(celli, 2)]
+            );
+        }
+        forAll(mesh.boundary(), patchi)
+        {
+            if (U.boundaryField()[patchi].fixesValue())
+            {
+                discreteDeltaU.boundaryFieldRef()[patchi] == vector::zero;
+            }
+        }
+        discreteDeltaU.correctBoundaryConditions();
 
-JBˆÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖÛ™ZWKÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-Bˆ
-ÈÜ\ŠÙ”ØØ[YžJ
-JBˆÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖVÛ™ZWKÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-Bˆ
-ÈÜ\ŠÙ”ØØ[YžŠ
-JBˆÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖ–Û™ZWKÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-Bˆ
-NÂˆÛÛœÝØØ[\ˆ˜XÙPÛÛšX][ÛˆBˆ›Ø[NŽ›X^
-ÝÛ™\ÛÛšX][Ûˆ
-È™ZYÚ›Ý\ÛÛšX][Û‹ØØ[\ŠYKLLŠJNÂˆ\ØÜ™]TØÚ\‘XYÖÛÝÛ—H
-ÏH˜XÙPÛÛšX][ÛŽÂˆ\ØÜ™]TØÚ\‘XYÖÛ™ZWH
-ÏH˜XÙPÛÛšX][ÛŽÂŸB‚˜]]È\Q\ØÜ™]P›ØÚÔ™XÛÛ™][Û™\ˆB–É—JÛÛœÝØØ[\‘šY[	ˆ[œ]ØØ[\‘šY[	ˆÝ]]
-BžÂˆØØ[\‘šY[[™\œÙQXYÖ
-\ØÜ™]SÙ[ËŒ
-NÂˆØØ[\‘šY[[™\œÙQXYÖJ\ØÜ™]SÙ[ËŒ
-NÂˆØØ[\‘šY[[™\œÙQXYÖŠ\ØÜ™]SÙ[ËŒ
-NÂ‚ˆ›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBˆÂˆ[™\œÙQXYÖØÙ[WHHKŒÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖØÙ[WKÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-NÂˆ[™\œÙQXYÖVØÙ[WHHKŒÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖVØÙ[WKÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-NÂˆ[™\œÙQXYÖ–ØÙ[WHHKŒÑ›Ø[NŽ›X^ˆ
-ˆXYÊ\ØÜ™]QXYÖ–ØÙ[WKÙ\ØÜ™]S[ÛY[[TØØ[JKˆØØ[\ŠYKLLŠBˆ
-NÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[K
-WHBˆ[™\œÙQXYÖØÙ[WJš[œ]Ù\ØÜ™]UR[™^
-Ù[K
-WNÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KJWHBˆ[™\œÙQXYÖVØÙ[WJš[œ]Ù\ØÜ™]UR[™^
-Ù[KJWNÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KŠWHBˆ[™\œÙQXYÖ–ØÙ[WJš[œ]Ù\ØÜ™]UR[™^
-Ù[KŠWNÂˆB‚ˆØØ[\‘šY[™\ÜÝ\™T™\ÚYX[
-\ØÜ™]SÙ[ËŒ
-NÂˆ›Ü[
-\ØÜ™]U\\‹˜XÙZJBˆÂˆÛÛœÝX™[ÝÛˆH\ØÜ™]SÝÛ™\–Ù˜XÙZWNÂˆÛÛœÝX™[™ZHH\ØÜ™]S™ZYÚ›Ý\–Ù˜XÙZWNÂˆ™XÝÜˆ[]]™SÝÛ‚ˆ
-ˆÝ]]Ù\ØÜ™]UR[™^
-ÝÛ‹
-WKˆÝ]]Ù\ØÜ™]UR[™^
-ÝÛ‹JWKˆÝ]]Ù\ØÜ™]UR[™^
-ÝÛ‹ŠWBˆ
-NÂˆ™XÝÜˆ[]]™S™ZBˆ
-ˆÝ]]Ù\ØÜ™]UR[™^
-™ZK
-WKˆÝ]]Ù\ØÜ™]UR[™^
-™ZKJWKˆÝ]]Ù\ØÜ™]UR[™^
-™ZKŠWBˆ
-NÂˆÛÛœÝØØ[\ˆ™\ÜÝ\™U˜[œÜÜÙHBˆ
-\ØÜ™]TÙ–Ù˜XÙZWKÙ\ØÜ™]P\™XTØØ[JBˆ	ˆ
-[]]™SÝÛˆH[]]™S™ZJNÂˆ™\ÜÝ\™T™\ÚYX[ÛÝÛ—H
-ÏBˆ\ØÜ™]UÙZYÚÖÙ˜XÙZWJœ™\ÜÝ\™U˜[œÜÜÙNÂˆ™\ÜÝ\™T™\ÚYX[Û™ZWH
-ÏBˆ
-KŒH\ØÜ™]UÙZYÚÖÙ˜XÙZWJJœ™\ÜÝ\™U˜[œÜÜÙNÂˆBˆ›Ü[
-Y\Ú˜›Ý[™\žJ
-K]ÚJBˆÂˆYˆ
-˜›Ý[™\žQšY[
+        tmp<volVectorField> tDeviatoricResidual = -fvc::div
+        (
+            nuEffFrozen
+           *dev2
+            (
+                Foam::T(fvc::grad(discreteDeltaU, "grad(U)"))
+            ),
+            "div((nuEffFrozen*dev2(T(grad(U)))))"
+        );
+        const vectorField& deviatoricResidual =
+            tDeviatoricResidual().primitiveField();
+        for (label celli = 0; celli < discreteNCells; ++celli)
+        {
+            for (direction cmpt = 0; cmpt < 3; ++cmpt)
+            {
+                output[discreteUIndex(celli, cmpt)] +=
+                    mesh.V()[celli]
+                   *deviatoricResidual[celli].component(cmpt);
+            }
+        }
+    }
 
-VÜ]ÚWK™š^\Õ˜[YJ
-JBˆÂˆÛÛ[YNÂˆBˆÛÛœÝX™[S\Ý	ˆ]ÚÙ[ÈHY\Ú˜›Ý[™\žJ
-VÜ]ÚWK™˜XÙPÙ[Ê
-NÂˆÛÛœÝ™XÝÜ‘šY[	ˆ]ÚÙˆHY\Ú”ÙŠ
-K˜›Ý[™\žQšY[
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        output[discreteUIndex(celli, 0)] +=
+            discreteDiagX[celli]*input[discreteUIndex(celli, 0)];
+        output[discreteUIndex(celli, 1)] +=
+            discreteDiagY[celli]*input[discreteUIndex(celli, 1)];
+        output[discreteUIndex(celli, 2)] +=
+            discreteDiagZ[celli]*input[discreteUIndex(celli, 2)];
+    }
 
-VÜ]ÚWNÂˆ›Ü[
-]ÚÙ[Ë˜XÙZJBˆÂˆÛÛœÝX™[Ù[HH]ÚÙ[ÖÙ˜XÙZWNÂˆ™XÝÜˆ[]]™PÙ[ˆ
-ˆÝ]]Ù\ØÜ™]UR[™^
-Ù[K
-WKˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KJWKˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KŠWBˆ
-NÂˆ™\ÜÝ\™T™\ÚYX[ØÙ[WH
-ÏBˆ
-]ÚÙ–Ù˜XÙZWKÙ\ØÜ™]P\™XTØØ[JH	ˆ[]]™PÙ[ÂˆBˆB‚ˆ›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBˆÂˆÝ]]Ù\ØÜ™]T[™^
-Ù[JWHBˆ
-[œ]Ù\ØÜ™]T[™^
-Ù[JWHH™\ÜÝ\™T™\ÚYX[ØÙ[WJBˆÙ\ØÜ™]TØÚ\‘XYÖØÙ[WNÂˆB‚ˆ™XÝÜ‘šY[™\ÜÝ\™PÛÝ\[™Ê\ØÜ™]SÙ[Ë™XÝÜŽŽž™\›ÊNÂˆ›Ü[
-\ØÜ™]U\\‹˜XÙZJBˆÂˆÛÛœÝX™[ÝÛˆH\ØÜ™]SÝÛ™\–Ù˜XÙZWNÂˆÛÛœÝX™[™ZHH\ØÜ™]S™ZYÚ›Ý\–Ù˜XÙZWNÂˆÛÛœÝØØ[\ˆ™\ÜÝ\™QY™™\™[˜ÙHBˆÝ]]Ù\ØÜ™]T[™^
-ÝÛŠWBˆHÝ]]Ù\ØÜ™]T[™^
-™ZJWNÂˆÛÛœÝ™XÝÜˆ˜XÙPÛÝ\[™ÈBˆ
-\ØÜ™]TÙ–Ù˜XÙZWKÙ\ØÜ™]P\™XTØØ[JJœ™\ÜÝ\™QY™™\™[˜ÙNÂˆ™\ÜÝ\™PÛÝ\[™ÖÛÝÛ—H
-ÏBˆ\ØÜ™]UÙZYÚÖÙ˜XÙZWJ™˜XÙPÛÝ\[™ÎÂˆ™\ÜÝ\™PÛÝ\[™ÖÛ™ZWH
-ÏBˆ
-KŒH\ØÜ™]UÙZYÚÖÙ˜XÙZWJJ™˜XÙPÛÝ\[™ÎÂˆBˆ›Ü[
-Y\Ú˜›Ý[™\žJ
-K]ÚJBˆÂˆYˆ
-K˜›Ý[™\žQšY[
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
 
-VÜ]ÚWK™š^\Õ˜[YJ
-JBˆÂˆÛÛ[YNÂˆBˆÛÛœÝX™[S\Ý	ˆ]ÚÙ[ÈHY\Ú˜›Ý[™\žJ
-VÜ]ÚWK™˜XÙPÙ[Ê
-NÂˆÛÛœÝ™XÝÜ‘šY[	ˆ]ÚÙˆHY\Ú”ÙŠ
-K˜›Ý[™\žQšY[
+        vector deltaUOwn
+        (
+            input[discreteUIndex(own, 0)],
+            input[discreteUIndex(own, 1)],
+            input[discreteUIndex(own, 2)]
+        );
+        vector deltaUNei
+        (
+            input[discreteUIndex(nei, 0)],
+            input[discreteUIndex(nei, 1)],
+            input[discreteUIndex(nei, 2)]
+        );
 
-VÜ]ÚWNÂˆ›Ü[
-]ÚÙ[Ë˜XÙZJBˆÂˆÛÛœÝX™[Ù[HH]ÚÙ[ÖÙ˜XÙZWNÂˆ™\ÜÝ\™PÛÝ\[™ÖØÙ[WH
-ÏBˆ
-]ÚÙ–Ù˜XÙZWKÙ\ØÜ™]P\™XTØØ[JBˆ
-›Ý]]Ù\ØÜ™]T[™^
-Ù[JWNÂˆBˆB‚ˆ›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBˆÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[K
-WHH[™\œÙQXYÖØÙ[WBˆ
-Šˆ[œ]Ù\ØÜ™]UR[™^
-Ù[K
-WBˆH™\ÜÝ\™PÛÝ\[™ÖØÙ[WKž
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[discreteUIndex(own, cmpt)] +=
+                discreteUpper[facei]
+               *input[discreteUIndex(nei, cmpt)];
+            output[discreteUIndex(nei, cmpt)] +=
+                discreteLower[facei]
+               *input[discreteUIndex(own, cmpt)];
+        }
 
-Bˆ
-NÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KJWHH[™\œÙQXYÖVØÙ[WBˆ
-Šˆ[œ]Ù\ØÜ™]UR[™^
-Ù[KJWBˆH™\ÜÝ\™PÛÝ\[™ÖØÙ[WKžJ
-Bˆ
-NÂˆÝ]]Ù\ØÜ™]UR[™^
-Ù[KŠWHH[™\œÙQXYÖ–ØÙ[WBˆ
-Šˆ[œ]Ù\ØÜ™]UR[™^
-Ù[KŠWBˆH™\ÜÝ\™PÛÝ\[™ÖØÙ[WKžŠ
-Bˆ
-NÂˆBŸNÂ‚˜ÛÛœÝX™[\ØÜ™]QÛ\™\Ô™\Ý\BˆÜ›Ü\Y\Ë›ÛÚÝ\Ü‘Y˜][X™[Š™\ØÜ™]Q›ÝÑÛ\™\Ô™\Ý\‹
-NÂšYˆ
-\ØÜ™]QÛ\™\Ô™\Ý\ŠBžÂˆ˜][\œ›Ü’[‘[˜Ý[Û‚ˆ™\ØÜ™]Q›ÝÑÛ\™\Ô™\Ý\]\Ý™H]X\Ý‹ˆ‚ˆX›Ü
-˜][\œ›ÜŠNÂŸB‚œÝŽ™XÝÜØØ[\‘šY[ˆ\ØÜ™]P˜\Ú\ÂŠˆ\ØÜ™]QÛ\™\Ô™\Ý\
-ÈKˆØØ[\‘šY[
-\ØÜ™]S•[šÛ›ÝÛœËŒ
-BŠNÂœÝŽ™XÝÜØØ[\‘šY[ˆ\ØÜ™]T™XÛÛ™][Û™Y˜\Ú\ÂŠˆ\ØÜ™]QÛ\™\Ô™\Ý\ˆØØ[\‘šY[
-\ØÜ™]S•[šÛ›ÝÛœËŒ
-BŠNÂœÝŽ™XÝÜÝŽ™XÝÜØØ[\ˆ\ØÜ™]R\ÜÙ[˜™\™ÂŠˆ\ØÜ™]QÛ\™\Ô™\Ý\
-ÈKˆÝŽ™XÝÜØØ[\Š\ØÜ™]QÛ\™\Ô™\Ý\Œ
-BŠNÂœÝŽ™XÝÜØØ[\ˆ\ØÜ™]PÛÜÚ[™J\ØÜ™]QÛ\™\Ô™\Ý\Œ
-NÂœÝŽ™XÝÜØØ[\ˆ\ØÜ™]TÚ[™J\ØÜ™]QÛ\™\Ô™\Ý\Œ
-NÂœÝŽ™XÝÜØØ[\ˆ\ØÜ™]QÊ\ØÜ™]QÛ\™\Ô™\Ý\
-ÈKŒ
-NÂœÝŽ™XÝÜØØ[\ˆ\ØÜ™]VJ\ØÜ™]QÛ\™\Ô™\Ý\Œ
-NÂ‚›X™[\ØÜ™]R]\˜][ÛˆHÂœØØ[\ˆ\ØÜ™]T™[]]™T™\ÚYX[HÔ‘PUÂ‚Ú[BŠˆ\ØÜ™]R]\˜][Ûˆ\ØÜ™]SX^]\˜][ÛœÂˆ	‰ˆ\ØÜ™]T™[]]™T™\ÚYX[ˆ\ØÜ™]UÛ\˜[˜ÙBŠBžÂˆ\TØØ[Y\ØÜ™]Q›ÝÒ•ˆ
-ˆ\ØÜ™]TÛÛ][Û‹ˆ\ØÜ™]SÜ\˜]Ü”ÛÛ][Û‚ˆ
-NÂˆ\ØÜ™]T™\ÚYX[H\ØÜ™]TšÈH\ØÜ™]SÜ\˜]Ü”ÛÛ][ÛŽÂˆÛÛœÝØØ[\ˆ\ØÜ™]T™\ÚYX[›Ü›HH›Ø[NŽœÜ\ˆ
-ˆ\ØÜ™]QÛØ˜[Ý
-\ØÜ™]T™\ÚYX[\ØÜ™]T™\ÚYX[
-Bˆ
-NÂˆ\ØÜ™]T™[]]™T™\ÚYX[H\ØÜ™]T™\ÚYX[›Ü›KÙ\ØÜ™]TšÓ›Ü›NÂˆYˆ
-\ØÜ™]T™[]]™T™\ÚYX[H\ØÜ™]UÛ\˜[˜ÙJBˆÂˆœ™XZÎÂˆB‚ˆ\ØÜ™]P˜\Ú\ÖÌHH\ØÜ™]T™\ÚYX[Ù\ØÜ™]T™\ÚYX[›Ü›NÂˆ›Üˆ
-X™[›ÝÚHHÈ›ÝÚHH\ØÜ™]QÛ\™\Ô™\Ý\È
-ÊÜ›ÝÚJBˆÂˆ\ØÜ™]QÖÜ›ÝÚWHHŒÂˆ›Üˆ
-X™[ÛÛHHÈÛÛH\ØÜ™]QÛ\™\Ô™\Ý\È
-ÊØÛÛJBˆÂˆ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›ÝÚWVØÛÛWHHŒÂˆBˆBˆ\ØÜ™]QÖÌHH\ØÜ™]T™\ÚYX[›Ü›NÂ‚ˆX™[\ØÜ™]R[›™\ÛÝ[HÂˆ›Ü‚ˆ
-ˆX™[[›™\’HHÂˆ[›™\’H\ØÜ™]QÛ\™\Ô™\Ý\ˆ	‰ˆ\ØÜ™]R]\˜][Ûˆ\ØÜ™]SX^]\˜][ÛœÎÂˆ
-ÊÚ[›™\’K
-ÊÙ\ØÜ™]R]\˜][Û‚ˆ
-BˆÂˆ\ØÜ™]R[›™\ÛÝ[H[›™\’H
-ÈNÂˆ\Q\ØÜ™]P›ØÚÔ™XÛÛ™][Û™\‚ˆ
-ˆ\ØÜ™]P˜\Ú\ÖÚ[›™\’WKˆ\ØÜ™]T™XÛÛ™][Û™Y˜\Ú\ÖÚ[›™\’WBˆ
-NÂ‚ˆØØ[\‘šY[\››ÛU™XÝÜŠ\ØÜ™]S•[šÛ›ÝÛœËŒ
-NÂˆ\TØØ[Y\ØÜ™]Q›ÝÒ•ˆ
-ˆ\ØÜ™]T™XÛÛ™][Û™Y˜\Ú\ÖÚ[›™\’WKˆ\››ÛU™XÝÜ‚ˆ
-NÂ‚ˆ›Üˆ
-X™[˜\Ú\ÒHHÈ˜\Ú\ÒHH[›™\’NÈ
-ÊØ˜\Ú\ÒJBˆÂˆ\ØÜ™]R\ÜÙ[˜™\™ÖØ˜\Ú\ÒWVÚ[›™\’WHBˆ\ØÜ™]QÛØ˜[Ý
-\››ÛU™XÝÜ‹\ØÜ™]P˜\Ú\ÖØ˜\Ú\ÒWJNÂˆ\››ÛU™XÝÜˆOBˆ\ØÜ™]R\ÜÙ[˜™\™ÖØ˜\Ú\ÒWVÚ[›™\’WBˆ
-™\ØÜ™]P˜\Ú\ÖØ˜\Ú\ÒWNÂˆB‚ˆ\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’H
-ÈWVÚ[›™\’WHH›Ø[NŽœÜ\ˆ
-ˆ\ØÜ™]QÛØ˜[Ý
-\››ÛU™XÝÜ‹\››ÛU™XÝÜŠBˆ
-NÂˆYˆ
-\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’H
-ÈWVÚ[›™\’WHˆ”ÓPS
-BˆÂˆ\ØÜ™]P˜\Ú\ÖÚ[›™\’H
-ÈWHBˆ\››ÛU™XÝÜ‹Ù\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’H
-ÈWVÚ[›™\’WNÂˆB‚ˆ›Üˆ
-X™[›Ý][Û’HHÈ›Ý][Û’H[›™\’NÈ
-ÊÜ›Ý][Û’JBˆÂˆÛÛœÝØØ[\ˆ\\‘[žHBˆ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›Ý][Û’WVÚ[›™\’WNÂˆÛÛœÝØØ[\ˆÝÙ\‘[žHBˆ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›Ý][Û’H
-ÈWVÚ[›™\’WNÂˆ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›Ý][Û’WVÚ[›™\’WHBˆ\ØÜ™]PÛÜÚ[™VÜ›Ý][Û’WJ\\‘[žBˆ
-È\ØÜ™]TÚ[™VÜ›Ý][Û’WJ›ÝÙ\‘[žNÂˆ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›Ý][Û’H
-ÈWVÚ[›™\’WHBˆY\ØÜ™]TÚ[™VÜ›Ý][Û’WJ\\‘[žBˆ
-È\ØÜ™]PÛÜÚ[™VÜ›Ý][Û’WJ›ÝÙ\‘[žNÂˆB‚ˆÛÛœÝØØ[\ˆ›Ý][Û“›Ü›HH›Ø[NŽœÜ\ˆ
-ˆÜ\Š\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’WVÚ[›™\’WJBˆ
-ÈÜ\Š\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’H
-ÈWVÚ[›™\’WJBˆ
-NÂˆYˆ
-›Ý][Û“›Ü›HH”ÓPS
-BˆÂˆ˜][\œ›Ü’[‘[˜Ý[Û‚ˆ‘ÓT‘TÈ\››ÛHœ™XZÙÝÛˆ[ˆˆ\ØÜ™]PY›Ú[X™[ˆˆ]]\˜][Ûˆˆ\ØÜ™]R]\˜][Û‚ˆX›Ü
-˜][\œ›ÜŠNÂˆB‚ˆ\ØÜ™]PÛÜÚ[™VÚ[›™\’WHBˆ\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’WVÚ[›™\’WKÜ›Ý][Û“›Ü›NÂˆ\ØÜ™]TÚ[™VÚ[›™\’WHBˆ\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’H
-ÈWVÚ[›™\’WKÜ›Ý][Û“›Ü›NÂˆ\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’WVÚ[›™\’WHH›Ý][Û“›Ü›NÂˆ\ØÜ™]R\ÜÙ[˜™\™ÖÚ[›™\’H
-ÈWVÚ[›™\’WHHŒÂ‚ˆÛÛœÝØØ[\ˆÛÈH\ØÜ™]QÖÚ[›™\’WNÂˆ\ØÜ™]QÖÚ[›™\’WHH\ØÜ™]PÛÜÚ[™VÚ[›™\’WJ›ÛÎÂˆ\ØÜ™]QÖÚ[›™\’H
-ÈWHHY\ØÜ™]TÚ[™VÚ[›™\’WJ›ÛÎÂˆ\ØÜ™]T™[]]™T™\ÚYX[BˆXYÊ\ØÜ™]QÖÚ[›™\’H
-ÈWJKÙ\ØÜ™]TšÓ›Ü›NÂ‚ˆYˆ
-\ØÜ™]T™[]]™T™\ÚYX[H\ØÜ™]UÛ\˜[˜ÙJBˆÂˆ
-ÊÙ\ØÜ™]R]\˜][ÛŽÂˆœ™XZÎÂˆBˆB‚ˆ›Üˆ
-X™[›ÝÚHH\ØÜ™]R[›™\ÛÝ[HNÈ›ÝÚHHÈK\›ÝÚJBˆÂˆØØ[\ˆšÑ[žHH\ØÜ™]QÖÜ›ÝÚWNÂˆ›Üˆ
-X™[ÛÛHH›ÝÚH
-ÈNÈÛÛH\ØÜ™]R[›™\ÛÝ[È
-ÊØÛÛJBˆÂˆšÑ[žHOBˆ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›ÝÚWVØÛÛWJ™\ØÜ™]VVØÛÛWNÂˆBˆ\ØÜ™]VVÜ›ÝÚWHBˆšÑ[žKÙ\ØÜ™]R\ÜÙ[˜™\™ÖÜ›ÝÚWVÜ›ÝÚWNÂˆB‚ˆ›Üˆ
-X™[˜\Ú\ÒHHÈ˜\Ú\ÒH\ØÜ™]R[›™\ÛÝ[È
-ÊØ˜\Ú\ÒJBˆÂˆ\ØÜ™]TÛÛ][Ûˆ
-ÏBˆ\ØÜ™]VVØ˜\Ú\ÒWJ™\ØÜ™]T™XÛÛ™][Û™Y˜\Ú\ÖØ˜\Ú\ÒWNÂˆ\ØÜ™]VVØ˜\Ú\ÒWHHŒÂˆBŸB‚˜\TØØ[Y\ØÜ™]Q›ÝÒ•
-\ØÜ™]TÛÛ][Û‹\ØÜ™]SÜ\˜]Ü”ÛÛ][ÛŠNÂ™\ØÜ™]T™\ÚYX[H\ØÜ™]TšÈH\ØÜ™]SÜ\˜]Ü”ÛÛ][ÛŽÂ™\ØÜ™]T™[]]™T™\ÚYX[H›Ø[NŽœÜ\Šˆ\ØÜ™]QÛØ˜[Ý
-\ØÜ™]T™\ÚYX[\ØÜ™]T™\ÚYX[
-BŠKÙ\ØÜ™]TšÓ›Ü›NÂ‚’[™›Ï”™YXÙY\ØÜ™]H›ÝÈY›Ú[ˆ\ØÜ™]PY›Ú[X™[ˆŽˆÓT‘TÈ]\˜][ÛœÏHˆ\ØÜ™]R]\˜][Û‚ˆ‹™[]]™H™\ÚYX[Hˆ\ØÜ™]T™[]]™T™\ÚYX[[™Â‚šYˆ
-\ØÜ™]T™[]]™T™\ÚYX[ˆ\ØÜ™]UÛ\˜[˜ÙJBžÂˆ˜][\œ›Ü’[‘[˜Ý[Û‚ˆ”™YXÙY\ØÜ™]H›ÝÈY›Ú[Y›ÝÛÛ™\™ÙH›Üˆ‚ˆ\ØÜ™]PY›Ú[X™[Žˆ™\ÚYX[H‚ˆ\ØÜ™]T™[]]™T™\ÚYX[‹Û\˜[˜ÙOHˆ\ØÜ™]UÛ\˜[˜ÙBˆX›Ü
-˜][\œ›ÜŠNÂŸB™›Üˆ
-X™[Ù[HHÈÙ[H\ØÜ™]SÙ[ÎÈ
-ÊØÙ[JBžÂˆ\ØÜ™]PY›Ú[™[ØÚ]VØÙ[WHH™XÝÜ‚ˆ
-ˆ\ØÜ™]TÛÛ][Û–Ù\ØÜ™]UR[™^
-Ù[K
-WKˆ\ØÜ™]TÛÛ][Û–Ù\ØÜ™]UR[™^
-Ù[KJWKˆ\ØÜ™]TÛÛ][Û–Ù\ØÜ™]UR[™^
-Ù[KŠWBˆ
-NÂˆ\ØÜ™]PY›Ú[™\ÜÝ\™VØÙ[WHBˆ\ØÜ™]TÛÛ][Û–Ù\ØÜ™]T[™^
-Ù[JWBˆ
-™\ØÜ™]S[ÛY[[TØØ[KÙ\ØÜ™]P\™XTØØ[NÂŸB™\ØÜ™]PY›Ú[™[ØÚ]K˜ÛÜœ™XÝ›Ý[™\žPÛÛ™][ÛœÊ
-NÂ™\ØÜ™]PY›Ú[™\ÜÝ\™K˜ÛÜœ™XÝ›Ý[™\žPÛÛ™][ÛœÊ
-N
+        const vector deltaUFace =
+            discreteWeights[facei]*deltaUOwn
+          + (1.0 - discreteWeights[facei])*deltaUNei;
+        const scalar deltaPhiFace =
+            (discreteSf[facei] & deltaUFace)
+          + pressureFluxCorrection[facei];
+        const vector velocityJump = U[nei] - U[own];
+        const label downwind = discretePhi[facei] >= 0.0 ? nei : own;
+
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[discreteUIndex(downwind, cmpt)] +=
+                deltaPhiFace*velocityJump.component(cmpt);
+        }
+
+        output[discretePIndex(own)] += deltaPhiFace;
+        output[discretePIndex(nei)] -= deltaPhiFace;
+
+        const scalar deltaPFace =
+            discreteWeights[facei]*input[discretePIndex(own)]
+          + (1.0 - discreteWeights[facei])
+           *input[discretePIndex(nei)];
+        const vector pressureContribution =
+            discreteSf[facei]*deltaPFace;
+
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[discreteUIndex(own, cmpt)] +=
+                pressureContribution.component(cmpt);
+            output[discreteUIndex(nei, cmpt)] -=
+                pressureContribution.component(cmpt);
+        }
+    }
+
+    forAll(mesh.boundary(), patchi)
+    {
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        const label patchStart = mesh.boundary()[patchi].start();
+        const bool velocityFixed = U.boundaryField()[patchi].fixesValue();
+        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
+
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+
+            if (!velocityFixed)
+            {
+                vector deltaUCell
+                (
+                    input[discreteUIndex(celli, 0)],
+                    input[discreteUIndex(celli, 1)],
+                    input[discreteUIndex(celli, 2)]
+                );
+                output[discretePIndex(celli)] +=
+                    (patchSf[facei] & deltaUCell)
+                  + pressureFluxCorrection[patchStart + facei];
+            }
+
+            if (!pressureFixed)
+            {
+                const vector pressureContribution =
+                    patchSf[facei]*input[discretePIndex(celli)];
+                for (direction cmpt = 0; cmpt < 3; ++cmpt)
+                {
+                    output[discreteUIndex(celli, cmpt)] +=
+                        pressureContribution.component(cmpt);
+                }
+            }
+        }
+    }
+};
+
+auto applyDiscreteFlowJT =
+[&](const scalarField& input, scalarField& output)
+{
+    output = scalar(0.0);
+    scalarField fluxAdjoint(mesh.nFaces(), 0.0);
+
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        output[discreteUIndex(celli, 0)] +=
+            discreteDiagX[celli]*input[discreteUIndex(celli, 0)];
+        output[discreteUIndex(celli, 1)] +=
+            discreteDiagY[celli]*input[discreteUIndex(celli, 1)];
+        output[discreteUIndex(celli, 2)] +=
+            discreteDiagZ[celli]*input[discreteUIndex(celli, 2)];
+    }
+
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+
+        vector lambdaOwn
+        (
+            input[discreteUIndex(own, 0)],
+            input[discreteUIndex(own, 1)],
+            input[discreteUIndex(own, 2)]
+        );
+        vector lambdaNei
+        (
+            input[discreteUIndex(nei, 0)],
+            input[discreteUIndex(nei, 1)],
+            input[discreteUIndex(nei, 2)]
+        );
+
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[discreteUIndex(own, cmpt)] +=
+                discreteLower[facei]
+               *input[discreteUIndex(nei, cmpt)];
+            output[discreteUIndex(nei, cmpt)] +=
+                discreteUpper[facei]
+               *input[discreteUIndex(own, cmpt)];
+        }
+
+        const vector velocityJump = U[nei] - U[own];
+        const scalar convectionMultiplier =
+            discretePhi[facei] >= 0.0
+          ? (lambdaNei & velocityJump)
+          : (lambdaOwn & velocityJump);
+        const vector fluxTranspose =
+            discreteSf[facei]*convectionMultiplier;
+
+        const scalar pressureDifference =
+            input[discretePIndex(own)] - input[discretePIndex(nei)];
+        const vector continuityTranspose =
+            discreteSf[facei]*pressureDifference;
+        fluxAdjoint[facei] =
+            convectionMultiplier + pressureDifference;
+
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[discreteUIndex(own, cmpt)] +=
+                discreteWeights[facei]
+               *(
+                    fluxTranspose.component(cmpt)
+                  + continuityTranspose.component(cmpt)
+                );
+            output[discreteUIndex(nei, cmpt)] +=
+                (1.0 - discreteWeights[facei])
+               *(
+                    fluxTranspose.component(cmpt)
+                  + continuityTranspose.component(cmpt)
+                );
+        }
+
+        const scalar pressureTranspose =
+            discreteSf[facei] & (lambdaOwn - lambdaNei);
+        output[discretePIndex(own)] +=
+            discreteWeights[facei]*pressureTranspose;
+        output[discretePIndex(nei)] +=
+            (1.0 - discreteWeights[facei])*pressureTranspose;
+    }
+
+    forAll(mesh.boundary(), patchi)
+    {
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        const label patchStart = mesh.boundary()[patchi].start();
+        const bool velocityFixed = U.boundaryField()[patchi].fixesValue();
+        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
+
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+
+            if (!velocityFixed)
+            {
+                fluxAdjoint[patchStart + facei] =
+                    input[discretePIndex(celli)];
+                const vector continuityTranspose =
+                    patchSf[facei]*input[discretePIndex(celli)];
+                for (direction cmpt = 0; cmpt < 3; ++cmpt)
+                {
+                    output[discreteUIndex(celli, cmpt)] +=
+                        continuityTranspose.component(cmpt);
+                }
+            }
+
+            if (!pressureFixed)
+            {
+                vector lambdaCell
+                (
+                    input[discreteUIndex(celli, 0)],
+                    input[discreteUIndex(celli, 1)],
+                    input[discreteUIndex(celli, 2)]
+                );
+                output[discretePIndex(celli)] +=
+                    patchSf[facei] & lambdaCell;
+            }
+        }
+    }
+    applyPressureFluxCorrectionTranspose(fluxAdjoint, output);
+    applyFrozenDeviatoricJT(input, output);
+};
+
+auto discreteGlobalDot = [&](const scalarField& a, const scalarField& bField)
+{
+    scalar result = sum(a*bField);
+    reduce(result, sumOp<scalar>());
+    return result;
+};
+
+scalar discreteMaxDotError = 0.0;
+for (label testI = 0; testI < 3; ++testI)
+{
+    scalarField delta(discreteNUnknowns, 0.0);
+    scalarField lambda(discreteNUnknowns, 0.0);
+    scalarField Jdelta(discreteNUnknowns, 0.0);
+    scalarField JTlambda(discreteNUnknowns, 0.0);
+
+    forAll(delta, dofi)
+    {
+        delta[dofi] = Foam::sin((0.013 + 0.002*testI)*(dofi + 1));
+        lambda[dofi] = Foam::cos((0.017 + 0.003*testI)*(dofi + 1));
+    }
+
+    applyDiscreteFlowJ(delta, Jdelta);
+    applyDiscreteFlowJT(lambda, JTlambda);
+    const scalar left = discreteGlobalDot(lambda, Jdelta);
+    const scalar right = discreteGlobalDot(delta, JTlambda);
+    const scalar error =
+        mag(left - right)
+       /Foam::max(Foam::max(mag(left), mag(right)), scalar(1e-30));
+    discreteMaxDotError = Foam::max(discreteMaxDotError, error);
+}
+
+Info<< "Reduced cold-flow operator transpose dot-test ("
+    << discreteAdjointLabel << ") max relative error="
+    << discreteMaxDotError << endl;
+
+if (discreteMaxDotError > 1e-7)
+{
+    FatalErrorInFunction
+        << "Reduced cold-flow transpose dot test failed for "
+        << discreteAdjointLabel << " with error " << discreteMaxDotError
+        << abort(FatalError);
+}
+
+scalar discreteMomentumScale =
+    (
+        sum(mag(discreteDiagX))
+      + sum(mag(discreteDiagY))
+      + sum(mag(discreteDiagZ))
+    )/Foam::max(3.0*discreteNCells, scalar(1.0));
+reduce(discreteMomentumScale, sumOp<scalar>());
+discreteMomentumScale = Foam::max(discreteMomentumScale, scalar(SMALL));
+
+scalar discreteAreaScale = sum(mesh.magSf().primitiveField());
+label discreteFaceCount = mesh.nInternalFaces();
+forAll(mesh.boundary(), patchi)
+{
+    discreteAreaScale += sum(mesh.magSf().boundaryField()[patchi]);
+    discreteFaceCount += mesh.boundary()[patchi].size();
+}
+reduce(discreteAreaScale, sumOp<scalar>());
+reduce(discreteFaceCount, sumOp<label>());
+discreteAreaScale /= Foam::max(scalar(discreteFaceCount), scalar(1.0));
+discreteAreaScale = Foam::max(discreteAreaScale, scalar(SMALL));
+
+scalarField discreteRhs(discreteNUnknowns, 0.0);
+for (label celli = 0; celli < discreteNCells; ++celli)
+{
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        discreteRhs[discreteUIndex(celli, cmpt)] =
+            discreteFlowVelocityRhs[celli].component(cmpt)
+           /discreteMomentumScale;
+    }
+    discreteRhs[discretePIndex(celli)] =
+        discreteFlowPressureRhs[celli]/discreteAreaScale;
+}
+
+auto applyScaledDiscreteFlowJT =
+[&](const scalarField& input, scalarField& output)
+{
+    scalarField physicalInput(input);
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        physicalInput[discretePIndex(celli)] *=
+            discreteMomentumScale/discreteAreaScale;
+    }
+
+    scalarField physicalOutput(discreteNUnknowns, 0.0);
+    applyDiscreteFlowJT(physicalInput, physicalOutput);
+
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[discreteUIndex(celli, cmpt)] =
+                physicalOutput[discreteUIndex(celli, cmpt)]
+               /discreteMomentumScale;
+        }
+        output[discretePIndex(celli)] =
+            physicalOutput[discretePIndex(celli)]/discreteAreaScale;
+    }
+};
+
+const label discreteMaxIterations =
+    optProperties.lookupOrDefault<label>("discreteFlowAdjointMaxIter", 2000);
+const scalar discreteTolerance =
+    optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-9);
+
+scalarField discreteSolution(discreteNUnknowns, 0.0);
+scalarField discreteResidual(discreteNUnknowns, 0.0);
+scalarField discreteOperatorSolution(discreteNUnknowns, 0.0);
+
+const scalar discreteRhsNorm = Foam::sqrt
+(
+    Foam::max(discreteGlobalDot(discreteRhs, discreteRhs), scalar(1e-300))
+);
+
+scalarField discreteSchurDiag(discreteNCells, 1e-8);
+forAll(discreteUpper, facei)
+{
+    const label own = discreteOwner[facei];
+    const label nei = discreteNeighbour[facei];
+    const scalar weight = discreteWeights[facei];
+    const vector sfScaled = discreteSf[facei]/discreteAreaScale;
+    const scalar ownerContribution = sqr(weight)
+       *(
+            sqr(sfScaled.x())
+           /Foam::max
+            (
+                mag(discreteDiagX[own]/discreteMomentumScale),
+                scalar(1e-12)
+            )
+          + sqr(sfScaled.y())
+           /Foam::max
+            (
+                mag(discreteDiagY[own]/discreteMomentumScale),
+                scalar(1e-12)
+            )
+          + sqr(sfScaled.z())
+           /Foam::max
+            (
+                mag(discreteDiagZ[own]/discreteMomentumScale),
+                scalar(1e-12)
+            )
+        );
+    const scalar neighbourContribution = sqr(1.0 - weight)
+       *(
+            sqr(sfScaled.x())
+           /Foam::max
+            (
+                mag(discreteDiagX[nei]/discreteMomentumScale),
+                scalar(1e-12)
+            )
+          + sqr(sfScaled.y())
+           /Foam::max
+            (
+                mag(discreteDiagY[nei]/discreteMomentumScale),
+                scalar(1e-12)
+            )
+          + sqr(sfScaled.z())
+           /Foam::max
+            (
+                mag(discreteDiagZ[nei]/discreteMomentumScale),
+                scalar(1e-12)
+            )
+        );
+    const scalar faceContribution =
+        Foam::max(ownerContribution + neighbourContribution, scalar(1e-12));
+    discreteSchurDiag[own] += faceContribution;
+    discreteSchurDiag[nei] += faceContribution;
+}
+
+auto applyDiscreteBlockPreconditioner =
+[&](const scalarField& input, scalarField& output)
+{
+    scalarField inverseDiagX(discreteNCells, 0.0);
+    scalarField inverseDiagY(discreteNCells, 0.0);
+    scalarField inverseDiagZ(discreteNCells, 0.0);
+
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        inverseDiagX[celli] = 1.0/Foam::max
+        (
+            mag(discreteDiagX[celli]/discreteMomentumScale),
+            scalar(1e-12)
+        );
+        inverseDiagY[celli] = 1.0/Foam::max
+        (
+            mag(discreteDiagY[celli]/discreteMomentumScale),
+            scalar(1e-12)
+        );
+        inverseDiagZ[celli] = 1.0/Foam::max
+        (
+            mag(discreteDiagZ[celli]/discreteMomentumScale),
+            scalar(1e-12)
+        );
+        output[discreteUIndex(celli, 0)] =
+            inverseDiagX[celli]*input[discreteUIndex(celli, 0)];
+        output[discreteUIndex(celli, 1)] =
+            inverseDiagY[celli]*input[discreteUIndex(celli, 1)];
+        output[discreteUIndex(celli, 2)] =
+            inverseDiagZ[celli]*input[discreteUIndex(celli, 2)];
+    }
+
+    scalarField pressureResidual(discreteNCells, 0.0);
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+        vector tentativeOwn
+        (
+            output[discreteUIndex(own, 0)],
+            output[discreteUIndex(own, 1)],
+            output[discreteUIndex(own, 2)]
+        );
+        vector tentativeNei
+        (
+            output[discreteUIndex(nei, 0)],
+            output[discreteUIndex(nei, 1)],
+            output[discreteUIndex(nei, 2)]
+        );
+        const scalar pressureTranspose =
+            (discreteSf[facei]/discreteAreaScale)
+          & (tentativeOwn - tentativeNei);
+        pressureResidual[own] +=
+            discreteWeights[facei]*pressureTranspose;
+        pressureResidual[nei] +=
+            (1.0 - discreteWeights[facei])*pressureTranspose;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (p.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            vector tentativeCell
+            (
+                output[discreteUIndex(celli, 0)],
+                output[discreteUIndex(celli, 1)],
+                output[discreteUIndex(celli, 2)]
+            );
+            pressureResidual[celli] +=
+                (patchSf[facei]/discreteAreaScale) & tentativeCell;
+        }
+    }
+
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        output[discretePIndex(celli)] =
+            (input[discretePIndex(celli)] - pressureResidual[celli])
+           /discreteSchurDiag[celli];
+    }
+
+    vectorField pressureCoupling(discreteNCells, vector::zero);
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+        const scalar pressureDifference =
+            output[discretePIndex(own)]
+          - output[discretePIndex(nei)];
+        const vector faceCoupling =
+            (discreteSf[facei]/discreteAreaScale)*pressureDifference;
+        pressureCoupling[own] +=
+            discreteWeights[facei]*faceCoupling;
+        pressureCoupling[nei] +=
+            (1.0 - discreteWeights[facei])*faceCoupling;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (U.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            pressureCoupling[celli] +=
+                (patchSf[facei]/discreteAreaScale)
+               *output[discretePIndex(celli)];
+        }
+    }
+
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        output[discreteUIndex(celli, 0)] = inverseDiagX[celli]
+           *(
+                input[discreteUIndex(celli, 0)]
+              - pressureCoupling[celli].x()
+            );
+        output[discreteUIndex(celli, 1)] = inverseDiagY[celli]
+           *(
+                input[discreteUIndex(celli, 1)]
+              - pressureCoupling[celli].y()
+            );
+        output[discreteUIndex(celli, 2)] = inverseDiagZ[celli]
+           *(
+                input[discreteUIndex(celli, 2)]
+              - pressureCoupling[celli].z()
+            );
+    }
+};
+
+const label discreteGmresRestart =
+    optProperties.lookupOrDefault<label>("discreteFlowGmresRestart", 40);
+if (discreteGmresRestart < 2)
+{
+    FatalErrorInFunction
+        << "discreteFlowGmresRestart must be at least 2."
+        << abort(FatalError);
+}
+
+std::vector<scalarField> discreteBasis
+(
+    discreteGmresRestart + 1,
+    scalarField(discreteNUnknowns, 0.0)
+);
+std::vector<scalarField> discretePreconditionedBasis
+(
+    discreteGmresRestart,
+    scalarField(discreteNUnknowns, 0.0)
+);
+std::vector<std::vector<scalar>> discreteHessenberg
+(
+    discreteGmresRestart + 1,
+    std::vector<scalar>(discreteGmresRestart, 0.0)
+);
+std::vector<scalar> discreteCosine(discreteGmresRestart, 0.0);
+std::vector<scalar> discreteSine(discreteGmresRestart, 0.0);
+std::vector<scalar> discreteG(discreteGmresRestart + 1, 0.0);
+std::vector<scalar> discreteY(discreteGmresRestart, 0.0);
+
+label discreteIteration = 0;
+scalar discreteRelativeResidual = GREAT;
+
+while
+(
+    discreteIteration < discreteMaxIterations
+ && discreteRelativeResidual > discreteTolerance
+)
+{
+    applyScaledDiscreteFlowJT
+    (
+        discreteSolution,
+        discreteOperatorSolution
+    );
+    discreteResidual = discreteRhs - discreteOperatorSolution;
+    const scalar discreteResidualNorm = Foam::sqrt
+    (
+        discreteGlobalDot(discreteResidual, discreteResidual)
+    );
+    discreteRelativeResidual = discreteResidualNorm/discreteRhsNorm;
+    if (discreteRelativeResidual <= discreteTolerance)
+    {
+        break;
+    }
+
+    discreteBasis[0] = discreteResidual/discreteResidualNorm;
+    for (label rowi = 0; rowi <= discreteGmresRestart; ++rowi)
+    {
+        discreteG[rowi] = 0.0;
+        for (label coli = 0; coli < discreteGmresRestart; ++coli)
+        {
+            discreteHessenberg[rowi][coli] = 0.0;
+        }
+    }
+    discreteG[0] = discreteResidualNorm;
+
+    label discreteInnerCount = 0;
+    for
+    (
+        label innerI = 0;
+        innerI < discreteGmresRestart
+     && discreteIteration < discreteMaxIterations;
+        ++innerI, ++discreteIteration
+    )
+    {
+        discreteInnerCount = innerI + 1;
+        applyDiscreteBlockPreconditioner
+        (
+            discreteBasis[innerI],
+            discretePreconditionedBasis[innerI]
+        );
+
+        scalarField arnoldiVector(discreteNUnknowns, 0.0);
+        applyScaledDiscreteFlowJT
+        (
+            discretePreconditionedBasis[innerI],
+            arnoldiVector
+        );
+
+        for (label basisI = 0; basisI <= innerI; ++basisI)
+        {
+            discreteHessenberg[basisI][innerI] =
+                discreteGlobalDot(arnoldiVector, discreteBasis[basisI]);
+            arnoldiVector -=
+                discreteHessenberg[basisI][innerI]
+               *discreteBasis[basisI];
+        }
+
+        discreteHessenberg[innerI + 1][innerI] = Foam::sqrt
+        (
+            discreteGlobalDot(arnoldiVector, arnoldiVector)
+        );
+        if (discreteHessenberg[innerI + 1][innerI] > VSMALL)
+        {
+            discreteBasis[innerI + 1] =
+                arnoldiVector/discreteHessenberg[innerI + 1][innerI];
+        }
+
+        for (label rotationI = 0; rotationI < innerI; ++rotationI)
+        {
+            const scalar upperEntry =
+                discreteHessenberg[rotationI][innerI];
+            const scalar lowerEntry =
+                discreteHessenberg[rotationI + 1][innerI];
+            discreteHessenberg[rotationI][innerI] =
+                discreteCosine[rotationI]*upperEntry
+              + discreteSine[rotationI]*lowerEntry;
+            discreteHessenberg[rotationI + 1][innerI] =
+               -discreteSine[rotationI]*upperEntry
+              + discreteCosine[rotationI]*lowerEntry;
+        }
+
+        const scalar rotationNorm = Foam::sqrt
+        (
+            sqr(discreteHessenberg[innerI][innerI])
+          + sqr(discreteHessenberg[innerI + 1][innerI])
+        );
+        if (rotationNorm <= VSMALL)
+        {
+            FatalErrorInFunction
+                << "GMRES Arnoldi breakdown in " << discreteAdjointLabel
+                << " at iteration " << discreteIteration
+                << abort(FatalError);
+        }
+
+        discreteCosine[innerI] =
+            discreteHessenberg[innerI][innerI]/rotationNorm;
+        discreteSine[innerI] =
+            discreteHessenberg[innerI + 1][innerI]/rotationNorm;
+        discreteHessenberg[innerI][innerI] = rotationNorm;
+        discreteHessenberg[innerI + 1][innerI] = 0.0;
+
+        const scalar oldG = discreteG[innerI];
+        discreteG[innerI] = discreteCosine[innerI]*oldG;
+        discreteG[innerI + 1] = -discreteSine[innerI]*oldG;
+        discreteRelativeResidual =
+            mag(discreteG[innerI + 1])/discreteRhsNorm;
+
+        if (discreteRelativeResidual <= discreteTolerance)
+        {
+            ++discreteIteration;
+            break;
+        }
+    }
+
+    for (label rowi = discreteInnerCount - 1; rowi >= 0; --rowi)
+    {
+        scalar rhsEntry = discreteG[rowi];
+        for (label coli = rowi + 1; coli < discreteInnerCount; ++coli)
+        {
+            rhsEntry -=
+                discreteHessenberg[rowi][coli]*discreteY[coli];
+        }
+        discreteY[rowi] =
+            rhsEntry/discreteHessenberg[rowi][rowi];
+    }
+
+    for (label basisI = 0; basisI < discreteInnerCount; ++basisI)
+    {
+        discreteSolution +=
+            discreteY[basisI]*discretePreconditionedBasis[basisI];
+        discreteY[basisI] = 0.0;
+    }
+}
+
+applyScaledDiscreteFlowJT(discreteSolution, discreteOperatorSolution);
+discreteResidual = discreteRhs - discreteOperatorSolution;
+discreteRelativeResidual = Foam::sqrt
+(
+    discreteGlobalDot(discreteResidual, discreteResidual)
+)/discreteRhsNorm;
+
+Info<< "Reduced discrete flow adjoint " << discreteAdjointLabel
+    << ": GMRES iterations=" << discreteIteration
+    << ", relative residual=" << discreteRelativeResidual << endl;
+
+if (discreteRelativeResidual > discreteTolerance)
+{
+    FatalErrorInFunction
+        << "Reduced discrete flow adjoint did not converge for "
+        << discreteAdjointLabel << ": residual="
+        << discreteRelativeResidual << ", tolerance=" << discreteTolerance
+        << abort(FatalError);
+}
+for (label celli = 0; celli < discreteNCells; ++celli)
+{
+    discreteAdjointVelocity[celli] = vector
+    (
+        discreteSolution[discreteUIndex(celli, 0)],
+        discreteSolution[discreteUIndex(celli, 1)],
+        discreteSolution[discreteUIndex(celli, 2)]
+    );
+    discreteAdjointPressure[celli] =
+        discreteSolution[discretePIndex(celli)]
+       *discreteMomentumScale/discreteAreaScale;
+}
+discreteAdjointVelocity.correctBoundaryConditions();
+discreteAdjointPressure.correctBoundaryConditions();

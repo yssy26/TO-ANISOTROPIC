@@ -14,6 +14,12 @@ IOdictionary thermalProperties
 dimensionedScalar rhoc(thermalProperties.lookup("rhoc"));
 dimensionedScalar kf(thermalProperties.lookup("kf"));
 
+// mmaUpdateEnabled is assigned from optProperties in
+// createFrozenHotRegionFields.H; declare it here (top-level) so the
+// anisotropic MMA gate in this file can reference the case value.
+Switch mmaUpdateEnabled =
+    optProperties.lookupOrDefault<Switch>("mmaUpdateEnabled", true);
+
 // --- Feature flag and validation gates for anisotropic conductivity ---
 const Switch useAnisotropicConductivity =
     optProperties.lookupOrDefault<Switch>("useAnisotropicConductivity", false);
