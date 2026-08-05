@@ -5,14 +5,21 @@
 - Production scope is currently restricted to axis-aligned diagonal solidK
 - Off-diagonal anisotropy is blocked by default pending rotated-tensor validation
 - MMA is blocked while anisotropicConductivityValidated=false
-- Stage A algebraic unit tests: implemented and locally PASS outside OpenFOAM
-- Stage A case-level suite: implemented; OpenFOAM-7 execution pending on the user's machine
-- Stage A checks: isotropic regression, x/y/z conduction, three-layer resistance,
-  physical directionality, boundary sensitivity FD, thermal-adjoint FD and
-  serial/parallel consistency
+- Stage A run at commit 5ed272c7da0a35b4d99de8c4653dc2437bf07109:
+  A1-A6 PASS; A7 FAIL
+- A5 boundary FD: maximum relative error 3.940e-02, 3 directions, PASS
+- A6 full thermal-adjoint FD: maximum relative error 9.525e-03,
+  4 directions, plateau PASS
+- A7 failure was isolated to processor-patch thermal sensitivity assembly;
+  forward pure-conduction fields and objective were serial/parallel consistent
+- AdjHeatTransfer.H now uses explicit patchInternalField/patchNeighbourField
+  cell-centre jumps on coupled patches; complete A1-A7 rerun is pending
+- harmonicSymmTensor is compiled for the A3 layered-conduction/forward test;
+  it is not approved for adjoint topology optimization because the current
+  sensitivity differentiates the standard linear tensor interpolation
 - Strict Gate 6 replaces the legacy sign-only gate in MTO_HF.C
 - Strict Gate 6 fixes duplicate pressure normalization, requires magnitude
   agreement, at least four valid directions and repeated-baseline consistency
 - Full k/omega/nut turbulence adjoints remain outside the implemented scope
-- Do not set anisotropicConductivityValidated=true until
+- Do not set anisotropicConductivityValidated=true until a new-commit
   STAGE_A_VALIDATION_REPORT.md reports PASS
