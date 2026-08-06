@@ -56,7 +56,8 @@ def evaluate(payload: Dict[str, Any]) -> Tuple[bool, List[str]]:
             case_pass = flux_error <= 0.01 and linearity >= 0.999
             axis_pass &= case_pass
             axis_details.append(
-                f"{axis}: flux={flux_error:.3e}, R2={linearity:.6f}"
+                f"{axis}: relative flux error={flux_error:.3e}, "
+                f"R2={linearity:.6f}"
             )
         except ValueError:
             axis_pass = False

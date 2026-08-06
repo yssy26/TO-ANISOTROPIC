@@ -490,6 +490,37 @@ if (!frozenGradientValidated && opt >= 1 && !gradientValidated)
         }
     }
 
+    // Partition-invariant synthetic FD directions. Local cell labels
+    // restart on every MPI rank and therefore cannot define a serial/parallel
+    // comparison direction. Normalize physical cell-centre coordinates by
+    // the global mesh bounds so the same physical cell receives the same
+    // value for every decomposition.
+    const boundBox fdDirectionBounds(mesh.points(), true);
+    const vector fdDirectionMin = fdDirectionBounds.min();
+    const vector fdDirectionSpan =
+        fdDirectionBounds.max() - fdDirectionMin;
+
+    auto partitionInvariantFDValue =
+        [&](const label celli, const label dirI) -> scalar
+    {
+        const vector& centre = mesh.C()[celli];
+        const scalar xi =
+            (centre.x() - fdDirectionMin.x())
+           /Foam::max(mag(fdDirectionSpan.x()), SMALL);
+        const scalar eta =
+            (centre.y() - fdDirectionMin.y())
+           /Foam::max(mag(fdDirectionSpan.y()), SMALL);
+        const scalar zeta =
+            (centre.z() - fdDirectionMin.z())
+           /Foam::max(mag(fdDirectionSpan.z()), SMALL);
+        const scalar mode = scalar(dirI + 1);
+
+        return Foam::sin
+        (
+            mode*(2.137*xi + 3.071*eta + 4.113*zeta) + 0.5
+        );
+    };
+
     for (label dirI = 0; dirI < nDirF1; ++dirI)
     {
         scalarField direction(mesh.nCells(), 0.0);
@@ -508,7 +539,7 @@ if (!frozenGradientValidated && opt >= 1 && !gradientValidated)
             else
             {
                 direction[celli] =
-                    Foam::sin(0.271*(dirI + 1)*(celli + 1) + 0.5);
+                    partitionInvariantFDValue(celli, dirI);
             }
         }
 
@@ -787,7 +818,7 @@ if (!frozenGradientValidated && opt >= 1 && !gradientValidated)
         forAll(activeDesignCells, activeI)
         {
             const label celli = activeDesignCells[activeI];
-            direction[celli] = Foam::sin(0.271*(dirI + 1)*(celli + 1) + 0.5);
+            direction[celli] = partitionInvariantFDValue(celli, dirI);
         }
         scalar dirNorm = 0.0;
         forAll(activeDesignCells, activeI)
