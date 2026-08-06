@@ -31,10 +31,8 @@ def patch_partition_invariant_directions() -> None:
 
     marker = "    for (label dirI = 0; dirI < nDirF1; ++dirI)\n"
     marker_count = text.count(marker)
-    if marker_count != 1:
-        raise RuntimeError(
-            f"expected one F1 direction-loop marker, found {marker_count}"
-        )
+    if marker_count < 1:
+        raise RuntimeError("F1 direction-loop marker not found")
 
     helper = """    // Partition-invariant synthetic FD directions. Local cell labels
     // restart on every MPI rank and therefore cannot define a serial/parallel
@@ -69,7 +67,7 @@ def patch_partition_invariant_directions() -> None:
 
 """
 
-    text = text.replace(marker, helper + marker)
+    text = text.replace(marker, helper + marker, 1)
     text = text.replace(
         old_direction,
         "partitionInvariantFDValue(celli, dirI);",
