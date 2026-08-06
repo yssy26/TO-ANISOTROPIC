@@ -4,16 +4,20 @@
 - DTMolecular, DTEffective and dDTDxh use volSymmTensorField
 - Production scope is currently restricted to axis-aligned diagonal solidK
 - Off-diagonal anisotropy is blocked by default pending rotated-tensor validation
-- MMA is blocked while anisotropicConductivityValidated=false
-- Stage A run at commit 5ed272c7da0a35b4d99de8c4653dc2437bf07109:
-  A1-A6 PASS; A7 FAIL
+- Stage A A1-A7 PASSED at commit eb3f11573400d0c9359cac4683a372a982603c33
+  in OpenFOAM Foundation v7
 - A5 boundary FD: maximum relative error 3.940e-02, 3 directions, PASS
-- A6 full thermal-adjoint FD: maximum relative error 9.525e-03,
+- A6 full thermal-adjoint raw-x FD: maximum relative error 9.525e-03,
   4 directions, plateau PASS
-- A7 failure was isolated to processor-patch thermal sensitivity assembly;
-  forward pure-conduction fields and objective were serial/parallel consistent
-- AdjHeatTransfer.H now uses explicit patchInternalField/patchNeighbourField
-  cell-centre jumps on coupled patches; complete A1-A7 rerun is pending
+- A7 serial/parallel consistency: field error 2.624e-11,
+  objective error 0.000e+00, gradient error 4.859e-12, PASS
+- Processor-patch sensitivity and Helmholtz-filter coupling defects are fixed
+- Validated cases may set anisotropicConductivityValidated=true;
+  the source default remains false as a safety gate for new cases
+- The Stage A report generator labels A2 values as relative flux error,
+  not physical heat flux
+- F1/F2 synthetic finite-difference directions are generated from normalized
+  physical cell-centre coordinates and are independent of MPI local cell labels
 - harmonicSymmTensor is compiled for the A3 layered-conduction/forward test;
   it is not approved for adjoint topology optimization because the current
   sensitivity differentiates the standard linear tensor interpolation
@@ -21,5 +25,6 @@
 - Strict Gate 6 fixes duplicate pressure normalization, requires magnitude
   agreement, at least four valid directions and repeated-baseline consistency
 - Full k/omega/nut turbulence adjoints remain outside the implemented scope
-- Do not set anisotropicConductivityValidated=true until a new-commit
-  STAGE_A_VALIDATION_REPORT.md reports PASS
+- Post-Stage-A diagnostic cleanup must receive one OpenFOAM-7 clean rebuild
+  before relying on parallel F1/F2 output; it does not alter the validated PDE,
+  material interpolation, thermal adjoint, or A1-A7 acceptance result
