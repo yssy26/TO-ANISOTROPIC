@@ -1,0 +1,121 @@
+name: One-time Stage A cleanup
+
+on:
+  push:
+    branches:
+      - agent/stage-a-anisotropic-validation
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    if: github.event.head_commit.message == 'Trigger one-time Stage A cleanup patch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out validation branch
+        uses: actions/checkout@v4
+        with:
+          ref: agent/stage-a-anisotropic-validation
+          fetch-depth: 0
+
+      - name: Apply deterministic validation cleanup
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          report_script = Path('src/tests/stage_a_acceptance.py')
+          report_text = report_script.read_text(encoding='utf-8')
+          old_report = 'f"{axis}: flux={flux_error:.3e}, R2={linearity:.6f}"'
+          new_report = (
+              'f"{axis}: relative flux error={flux_error:.3e}, "\n'
+              '                f"R2={linearity:.6f}"'
+          )
+          if report_text.count(old_report) != 1:
+              raise SystemExit(
+                  f'expected one report label occurrence, found '
+                  f'{report_text.count(old_report)}'
+              )
+          report_script.write_text(
+              report_text.replace(old_report, new_report),
+              encoding='utf-8',
+          )
+
+          gradient_file = Path('src/validateFrozenGradient.H')
+          gradient_text = gradient_file.read_text(encoding='utf-8')
+          old_direction = (
+              'Foam::sin(0.271*(dirI + 1)*(celli + 1) + 0.5);'
+          )
+          if gradient_text.count(old_direction) != 2:
+              raise SystemExit(
+                  f'expected two local-cell direction occurrences, found '
+                  f'{gradient_text.count(old_direction)}'
+              )
+
+          marker = '    for (label dirI = 0; dirI < nDirF1; ++dirI)\n'
+          if gradient_text.count(marker) != 1:
+              raise SystemExit(
+                  f'expected one F1 direction-loop marker, found '
+                  f'{gradient_text.count(marker)}'
+              )
+
+          helper = '''    // Partition-invariant synthetic FD directions.  Local cell labels
+    // restart on every MPI rank and therefore cannot define a serial/parallel
+    // comparison direction.  Normalize physical cell-centre coordinates by
+    // the global mesh bounds so the same physical cell receives the same
+    // value for every decomposition.
+    const boundBox fdDirectionBounds(mesh.points(), true);
+    const vector fdDirectionMin = fdDirectionBounds.min();
+    const vector fdDirectionSpan =
+        fdDirectionBounds.max() - fdDirectionMin;
+
+    auto partitionInvariantFDValue =
+        [&](const label celli, const label dirI) -> scalar
+    {
+        const vector& centre = mesh.C()[celli];
+        const scalar xi =
+            (centre.x() - fdDirectionMin.x())
+           /Foam::max(mag(fdDirectionSpan.x()), SMALL);
+        const scalar eta =
+            (centre.y() - fdDirectionMin.y())
+           /Foam::max(mag(fdDirectionSpan.y()), SMALL);
+        const scalar zeta =
+            (centre.z() - fdDirectionMin.z())
+           /Foam::max(mag(fdDirectionSpan.z()), SMALL);
+        const scalar mode = scalar(dirI + 1);
+
+        return Foam::sin
+        (
+            mode*(2.137*xi + 3.071*eta + 4.113*zeta) + 0.5
+        );
+    };
+
+'''
+          gradient_text = gradient_text.replace(marker, helper + marker)
+          gradient_text = gradient_text.replace(
+              old_direction,
+              'partitionInvariantFDValue(celli, dirI);',
+          )
+          if old_direction in gradient_text:
+              raise SystemExit('local-cell direction expression remains')
+          if gradient_text.count('partitionInvariantFDValue(celli, dirI);') != 2:
+              raise SystemExit('partition-invariant replacement count is not two')
+          gradient_file.write_text(gradient_text, encoding='utf-8')
+          PY
+
+          python3 -m py_compile src/tests/stage_a_acceptance.py
+          ! grep -F "Foam::sin(0.271*(dirI + 1)*(celli + 1) + 0.5);" \
+              src/validateFrozenGradient.H
+          grep -F "relative flux error=" src/tests/stage_a_acceptance.py
+          grep -F "partitionInvariantFDValue(celli, dirI);" \
+              src/validateFrozenGradient.H
+
+      - name: Commit and push cleanup
+        shell: bash
+        run: |
+          git config user.name "Stage A cleanup"
+          git config user.email "stage-a-cleanup@users.noreply.github.com"
+          git add -- src/tests/stage_a_acceptance.py src/validateFrozenGradient.H
+          git commit -m "Make Stage A diagnostics partition invariant"
+          git push origin HEAD:agent/stage-a-anisotropic-validation
