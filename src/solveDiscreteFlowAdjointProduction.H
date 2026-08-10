@@ -1,0 +1,834 @@
+//-----------------------------------------------------------------------------
+// solveDiscreteFlowAdjointProduction.H
+// Production reduced discrete cold-flow adjoint for the validated frozen-RANS
+// route.  This file intentionally contains only the J^T operator and a robust
+// restarted FGMRES solve.  The large solveDiscreteFlowAdjoint.H remains the
+// Stage-B4 diagnostic/oracle implementation.
+//
+// Required symbols from the including scope:
+//   mesh, runTime, U, p, phi, alpha, nuEffFrozen, primalPressureMobility,
+//   ransFlowModel, pRefCell, optProperties,
+//   discreteFlowVelocityRhs, discreteFlowPressureRhs,
+//   discreteExternalFaceFluxAdjoint,
+//   discreteAdjointVelocity, discreteAdjointPressure, discreteAdjointLabel.
+//-----------------------------------------------------------------------------
+
+if (Pstream::parRun())
+{
+    FatalErrorInFunction
+        << "The production reduced discrete flow adjoint is serial-only until "
+        << "processor-patch transpose terms are implemented."
+        << abort(FatalError);
+}
+
+const label prodNCells = mesh.nCells();
+const label prodNVelocity = 3*prodNCells;
+const label prodNUnknowns = 4*prodNCells;
+const labelUList& prodOwner = mesh.owner();
+const labelUList& prodNeighbour = mesh.neighbour();
+const scalarField& prodWeights = mesh.weights().primitiveField();
+const vectorField& prodSf = mesh.Sf().primitiveField();
+const scalarField& prodPhi = phi.primitiveField();
+
+const auto prodUIndex = [&](const label celli, const direction cmpt)
+{
+    return 3*celli + cmpt;
+};
+const auto prodPIndex = [&](const label celli)
+{
+    return prodNVelocity + celli;
+};
+
+// Same unrelaxed frozen residual basis as the Stage-B4 validated operator.
+tmp<fvVectorMatrix> tProdMomentum
+(
+    fvm::div(phi, U)
+  - fvm::laplacian(nuEffFrozen, U)
+  + fvm::Sp(alpha, U)
+);
+fvVectorMatrix& prodMomentum = tProdMomentum.ref();
+
+scalarField prodDiagX(prodMomentum.diag());
+scalarField prodDiagY(prodMomentum.diag());
+scalarField prodDiagZ(prodMomentum.diag());
+forAll(prodMomentum.internalCoeffs(), patchi)
+{
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    const vectorField& patchDiag = prodMomentum.internalCoeffs()[patchi];
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        prodDiagX[celli] += patchDiag[facei].x();
+        prodDiagY[celli] += patchDiag[facei].y();
+        prodDiagZ[celli] += patchDiag[facei].z();
+    }
+}
+
+const scalarField& prodLower = prodMomentum.lower();
+const scalarField& prodUpper = prodMomentum.upper();
+scalarField prodRAU(prodNCells, 0.0);
+for (label celli = 0; celli < prodNCells; ++celli)
+{
+    prodRAU[celli] = 1.0/Foam::max(prodMomentum.A().ref()[celli], SMALL);
+}
+
+// Explicit frozen deviatoric-stress transpose.  Kept identical to the
+// Stage-B4 operator so the production solver uses the same validated J^T.
+auto applyProdFrozenDeviatoricJT =
+[&](const scalarField& input, scalarField& output)
+{
+    if (!ransFlowModel)
+    {
+        return;
+    }
+
+    tensorField stressAdjoint(prodNCells, tensor::zero);
+    tensorField gradientAdjoint(prodNCells, tensor::zero);
+
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const vector lambdaOwn
+        (
+            input[prodUIndex(own, 0)],
+            input[prodUIndex(own, 1)],
+            input[prodUIndex(own, 2)]
+        );
+        const vector lambdaNei
+        (
+            input[prodUIndex(nei, 0)],
+            input[prodUIndex(nei, 1)],
+            input[prodUIndex(nei, 2)]
+        );
+        const tensor faceStressAdjoint =
+            prodSf[facei]*(lambdaNei - lambdaOwn);
+
+        stressAdjoint[own] += prodWeights[facei]*faceStressAdjoint;
+        stressAdjoint[nei] += (1.0 - prodWeights[facei])*faceStressAdjoint;
+    }
+
+    forAll(mesh.boundary(), patchi)
+    {
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        const scalarField& patchMagSf = mesh.magSf().boundaryField()[patchi];
+        const scalarField& patchDelta = mesh.deltaCoeffs().boundaryField()[patchi];
+        const scalarField& patchNuEff = nuEffFrozen.boundaryField()[patchi];
+        const bool velocityFixed = U.boundaryField()[patchi].fixesValue();
+
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const vector lambdaCell
+            (
+                input[prodUIndex(celli, 0)],
+                input[prodUIndex(celli, 1)],
+                input[prodUIndex(celli, 2)]
+            );
+            const tensor boundaryStressAdjoint = -patchSf[facei]*lambdaCell;
+            const tensor boundaryGradientAdjoint =
+                patchNuEff[facei]
+               *dev2(Foam::T(boundaryStressAdjoint));
+            const vector normal =
+                patchSf[facei]/Foam::max(patchMagSf[facei], SMALL);
+
+            gradientAdjoint[celli] +=
+                boundaryGradientAdjoint
+              - normal*(normal & boundaryGradientAdjoint);
+
+            if (velocityFixed)
+            {
+                const vector normalGradientAdjoint =
+                   -patchDelta[facei]
+                   *(normal & boundaryGradientAdjoint);
+                for (direction cmpt = 0; cmpt < 3; ++cmpt)
+                {
+                    output[prodUIndex(celli, cmpt)] +=
+                        normalGradientAdjoint.component(cmpt);
+                }
+            }
+        }
+    }
+
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        gradientAdjoint[celli] +=
+            nuEffFrozen[celli]
+           *dev2(Foam::T(stressAdjoint[celli]));
+    }
+
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const vector faceVelocityAdjoint =
+            prodSf[facei]
+          &
+            (
+                gradientAdjoint[own]/Foam::max(mesh.V()[own], SMALL)
+              - gradientAdjoint[nei]/Foam::max(mesh.V()[nei], SMALL)
+            );
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[prodUIndex(own, cmpt)] +=
+                prodWeights[facei]*faceVelocityAdjoint.component(cmpt);
+            output[prodUIndex(nei, cmpt)] +=
+                (1.0 - prodWeights[facei])
+               *faceVelocityAdjoint.component(cmpt);
+        }
+    }
+
+    forAll(mesh.boundary(), patchi)
+    {
+        if (U.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const vector boundaryVelocityAdjoint =
+                patchSf[facei]
+              & (gradientAdjoint[celli]/Foam::max(mesh.V()[celli], SMALL));
+            for (direction cmpt = 0; cmpt < 3; ++cmpt)
+            {
+                output[prodUIndex(celli, cmpt)] +=
+                    boundaryVelocityAdjoint.component(cmpt);
+            }
+        }
+    }
+};
+
+// Transpose of the pressure-correction contribution used by an explicit
+// objective/residual face-flux derivative.
+auto applyProdPressureFluxCorrectionTranspose =
+[&](const scalarField& faceAdjoint, scalarField& output)
+{
+    const scalarField& deltaCoeffs = mesh.deltaCoeffs().primitiveField();
+    const scalarField& faceAreas = mesh.magSf().primitiveField();
+
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const scalar weight = prodWeights[facei];
+        const scalar multiplier = faceAdjoint[facei];
+        const scalar mobilityFace =
+            weight*primalPressureMobility[own]
+          + (1.0 - weight)*primalPressureMobility[nei];
+        const scalar normalCoefficient =
+            mobilityFace*deltaCoeffs[facei]*faceAreas[facei];
+        output[prodPIndex(own)] -= normalCoefficient*multiplier;
+        output[prodPIndex(nei)] += normalCoefficient*multiplier;
+    }
+
+    forAll(mesh.boundary(), patchi)
+    {
+        if (U.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const scalarField& patchDelta = mesh.deltaCoeffs().boundaryField()[patchi];
+        const scalarField& patchArea = mesh.magSf().boundaryField()[patchi];
+        const label patchStart = mesh.boundary()[patchi].start();
+        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
+
+        if (!pressureFixed)
+        {
+            continue;
+        }
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            output[prodPIndex(celli)] +=
+                primalPressureMobility[celli]
+               *patchDelta[facei]*patchArea[facei]
+               *faceAdjoint[patchStart + facei];
+        }
+    }
+};
+
+// Add the explicit face-flux objective/thermal-adjoint source to the physical
+// U/p right-hand side before scaling.
+scalarField prodExternalTranspose(prodNUnknowns, 0.0);
+forAll(prodUpper, facei)
+{
+    const label own = prodOwner[facei];
+    const label nei = prodNeighbour[facei];
+    const vector faceTranspose =
+        prodSf[facei]*discreteExternalFaceFluxAdjoint[facei];
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        prodExternalTranspose[prodUIndex(own, cmpt)] +=
+            prodWeights[facei]*faceTranspose.component(cmpt);
+        prodExternalTranspose[prodUIndex(nei, cmpt)] +=
+            (1.0 - prodWeights[facei])*faceTranspose.component(cmpt);
+    }
+}
+forAll(mesh.boundary(), patchi)
+{
+    if (U.boundaryField()[patchi].fixesValue())
+    {
+        continue;
+    }
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+    const label patchStart = mesh.boundary()[patchi].start();
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        const vector faceTranspose =
+            patchSf[facei]
+           *discreteExternalFaceFluxAdjoint[patchStart + facei];
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            prodExternalTranspose[prodUIndex(celli, cmpt)] +=
+                faceTranspose.component(cmpt);
+        }
+    }
+}
+applyProdPressureFluxCorrectionTranspose
+(
+    discreteExternalFaceFluxAdjoint,
+    prodExternalTranspose
+);
+for (label celli = 0; celli < prodNCells; ++celli)
+{
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        discreteFlowVelocityRhs[celli].component(cmpt) +=
+            prodExternalTranspose[prodUIndex(celli, cmpt)];
+    }
+    discreteFlowPressureRhs[celli] +=
+        prodExternalTranspose[prodPIndex(celli)];
+}
+
+// Matrix-free physical J^T.  This is the compact production counterpart of
+// applyDiscreteFlowJT() in the Stage-B4 diagnostic solver.
+auto applyProdFlowJT =
+[&](const scalarField& input, scalarField& output)
+{
+    output = scalar(0.0);
+
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        output[prodUIndex(celli, 0)] +=
+            prodDiagX[celli]*input[prodUIndex(celli, 0)];
+        output[prodUIndex(celli, 1)] +=
+            prodDiagY[celli]*input[prodUIndex(celli, 1)];
+        output[prodUIndex(celli, 2)] +=
+            prodDiagZ[celli]*input[prodUIndex(celli, 2)];
+    }
+
+    scalarField hAx(prodNCells, 0.0);
+    scalarField hAy(prodNCells, 0.0);
+    scalarField hAz(prodNCells, 0.0);
+
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const vector lambdaOwn
+        (
+            input[prodUIndex(own, 0)],
+            input[prodUIndex(own, 1)],
+            input[prodUIndex(own, 2)]
+        );
+        const vector lambdaNei
+        (
+            input[prodUIndex(nei, 0)],
+            input[prodUIndex(nei, 1)],
+            input[prodUIndex(nei, 2)]
+        );
+        const scalar lambdaPown = input[prodPIndex(own)];
+        const scalar lambdaPnei = input[prodPIndex(nei)];
+
+        // Frozen fvm momentum A^T off-diagonal.
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[prodUIndex(own, cmpt)] +=
+                prodLower[facei]*input[prodUIndex(nei, cmpt)];
+            output[prodUIndex(nei, cmpt)] +=
+                prodUpper[facei]*input[prodUIndex(own, cmpt)];
+        }
+
+        // Direct momentum pressure-gradient transpose.
+        const scalar pressureTranspose =
+            prodSf[facei] & (lambdaOwn - lambdaNei);
+        output[prodPIndex(own)] +=
+            prodWeights[facei]*pressureTranspose;
+        output[prodPIndex(nei)] +=
+            (1.0 - prodWeights[facei])*pressureTranspose;
+
+        // Reduced SIMPLE flux transpose.
+        const vector velocityJump = U[nei] - U[own];
+        const label downwind = prodPhi[facei] >= 0.0 ? nei : own;
+        const vector lambdaDown =
+            (downwind == nei) ? lambdaNei : lambdaOwn;
+        const scalar phiAdjoint =
+            (lambdaPown - lambdaPnei) + (lambdaDown & velocityJump);
+
+        const scalar weight = prodWeights[facei];
+        const scalar mobilityFace =
+            weight*primalPressureMobility[own]
+          + (1.0 - weight)*primalPressureMobility[nei];
+        const scalar kf =
+            mobilityFace
+           *mesh.deltaCoeffs().primitiveField()[facei]
+           *mesh.magSf().primitiveField()[facei];
+
+        output[prodPIndex(own)] -= kf*phiAdjoint;
+        output[prodPIndex(nei)] += kf*phiAdjoint;
+
+        const vector hOwn =
+            phiAdjoint*weight*prodRAU[own]*prodSf[facei];
+        const vector hNei =
+            phiAdjoint*(1.0 - weight)*prodRAU[nei]*prodSf[facei];
+        hAx[own] += hOwn.x(); hAy[own] += hOwn.y(); hAz[own] += hOwn.z();
+        hAx[nei] += hNei.x(); hAy[nei] += hNei.y(); hAz[nei] += hNei.z();
+    }
+
+    // Boundary reduced-flux transpose and direct U-p transpose.
+    forAll(mesh.boundary(), patchi)
+    {
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const scalar lambdaPc = input[prodPIndex(celli)];
+            const vector hB = lambdaPc*prodRAU[celli]*patchSf[facei];
+            hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
+
+            if (!p.boundaryField()[patchi].fixesValue())
+            {
+                const vector lambdaCell
+                (
+                    input[prodUIndex(celli, 0)],
+                    input[prodUIndex(celli, 1)],
+                    input[prodUIndex(celli, 2)]
+                );
+                output[prodPIndex(celli)] += patchSf[facei] & lambdaCell;
+            }
+        }
+    }
+
+    // deltaH^T, including fvMatrix::H() /V semantics.
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+        const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+        output[prodUIndex(nei, 0)] -= prodUpper[facei]*Vinvo*hAx[own];
+        output[prodUIndex(nei, 1)] -= prodUpper[facei]*Vinvo*hAy[own];
+        output[prodUIndex(nei, 2)] -= prodUpper[facei]*Vinvo*hAz[own];
+        output[prodUIndex(own, 0)] -= prodLower[facei]*Vinn*hAx[nei];
+        output[prodUIndex(own, 1)] -= prodLower[facei]*Vinn*hAy[nei];
+        output[prodUIndex(own, 2)] -= prodLower[facei]*Vinn*hAz[nei];
+    }
+
+    // Boundary H() diagonal transpose.  Do not skip fixedValue patches.
+    forAll(mesh.boundary(), patchi)
+    {
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField internalCoeffs = prodMomentum.internalCoeffs()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const scalar cav =
+                (internalCoeffs[facei].x()
+               + internalCoeffs[facei].y()
+               + internalCoeffs[facei].z())/3.0;
+            const scalar Vinvc = 1.0/Foam::max(mesh.V()[celli], SMALL);
+            output[prodUIndex(celli, 0)] +=
+                (-internalCoeffs[facei].x() + cav)*Vinvc*hAx[celli];
+            output[prodUIndex(celli, 1)] +=
+                (-internalCoeffs[facei].y() + cav)*Vinvc*hAy[celli];
+            output[prodUIndex(celli, 2)] +=
+                (-internalCoeffs[facei].z() + cav)*Vinvc*hAz[celli];
+        }
+    }
+
+    applyProdFrozenDeviatoricJT(input, output);
+};
+
+auto prodDot = [&](const scalarField& a, const scalarField& b)
+{
+    scalar result = sum(a*b);
+    reduce(result, sumOp<scalar>());
+    return result;
+};
+
+// Scale U and p blocks to O(1), matching the Stage-B4 convention.
+scalar prodMomentumScale =
+    (
+        sum(mag(prodDiagX))
+      + sum(mag(prodDiagY))
+      + sum(mag(prodDiagZ))
+    )/Foam::max(3.0*prodNCells, scalar(1.0));
+reduce(prodMomentumScale, sumOp<scalar>());
+prodMomentumScale = Foam::max(prodMomentumScale, scalar(SMALL));
+
+scalar prodAreaScale = sum(mesh.magSf().primitiveField());
+label prodFaceCount = mesh.nInternalFaces();
+forAll(mesh.boundary(), patchi)
+{
+    prodAreaScale += sum(mesh.magSf().boundaryField()[patchi]);
+    prodFaceCount += mesh.boundary()[patchi].size();
+}
+reduce(prodAreaScale, sumOp<scalar>());
+reduce(prodFaceCount, sumOp<label>());
+prodAreaScale /= Foam::max(scalar(prodFaceCount), scalar(1.0));
+prodAreaScale = Foam::max(prodAreaScale, scalar(SMALL));
+
+scalarField prodRhs(prodNUnknowns, 0.0);
+for (label celli = 0; celli < prodNCells; ++celli)
+{
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        prodRhs[prodUIndex(celli, cmpt)] =
+            discreteFlowVelocityRhs[celli].component(cmpt)/prodMomentumScale;
+    }
+    prodRhs[prodPIndex(celli)] =
+        discreteFlowPressureRhs[celli]/prodAreaScale;
+}
+prodRhs[prodPIndex(pRefCell)] = 0.0;
+
+auto applyProdScaledJT =
+[&](const scalarField& input, scalarField& output)
+{
+    scalarField physicalInput(input);
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        physicalInput[prodPIndex(celli)] *=
+            prodMomentumScale/prodAreaScale;
+    }
+    scalarField physicalOutput(prodNUnknowns, 0.0);
+    applyProdFlowJT(physicalInput, physicalOutput);
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            output[prodUIndex(celli, cmpt)] =
+                physicalOutput[prodUIndex(celli, cmpt)]/prodMomentumScale;
+        }
+        output[prodPIndex(celli)] =
+            physicalOutput[prodPIndex(celli)]/prodAreaScale;
+    }
+    // Reference row is identity; solution is explicitly pinned to zero.
+    output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
+};
+
+// Signed Jacobi right-preconditioner.  It is deliberately simple and robust:
+// no ILU factorization, no duplicate-CSR assumptions, no pivot sign loss.
+scalarField prodJacobiDiag(prodNUnknowns, 0.0);
+for (label celli = 0; celli < prodNCells; ++celli)
+{
+    prodJacobiDiag[prodUIndex(celli, 0)] = prodDiagX[celli]/prodMomentumScale;
+    prodJacobiDiag[prodUIndex(celli, 1)] = prodDiagY[celli]/prodMomentumScale;
+    prodJacobiDiag[prodUIndex(celli, 2)] = prodDiagZ[celli]/prodMomentumScale;
+}
+scalarField prodPDiagPhysical(prodNCells, 0.0);
+forAll(prodUpper, facei)
+{
+    const label own = prodOwner[facei];
+    const label nei = prodNeighbour[facei];
+    const scalar weight = prodWeights[facei];
+    const scalar mobilityFace =
+        weight*primalPressureMobility[own]
+      + (1.0 - weight)*primalPressureMobility[nei];
+    const scalar kf =
+        mobilityFace
+       *mesh.deltaCoeffs().primitiveField()[facei]
+       *mesh.magSf().primitiveField()[facei];
+    prodPDiagPhysical[own] -= kf;
+    prodPDiagPhysical[nei] -= kf;
+}
+for (label celli = 0; celli < prodNCells; ++celli)
+{
+    prodJacobiDiag[prodPIndex(celli)] =
+        prodPDiagPhysical[celli]
+       *prodMomentumScale/sqr(prodAreaScale);
+}
+prodJacobiDiag[prodPIndex(pRefCell)] = 1.0;
+
+scalar prodDiagAverage = 0.0;
+forAll(prodJacobiDiag, i)
+{
+    prodDiagAverage += mag(prodJacobiDiag[i]);
+}
+reduce(prodDiagAverage, sumOp<scalar>());
+prodDiagAverage /= Foam::max(scalar(prodNUnknowns), 1.0);
+const scalar prodDiagFloor =
+    Foam::max(1e-10, 1e-8*Foam::max(prodDiagAverage, scalar(1e-12)));
+forAll(prodJacobiDiag, i)
+{
+    if (mag(prodJacobiDiag[i]) < prodDiagFloor)
+    {
+        prodJacobiDiag[i] =
+            (prodJacobiDiag[i] < 0.0 ? -prodDiagFloor : prodDiagFloor);
+    }
+}
+
+auto applyProdPreconditioner =
+[&](const scalarField& input, scalarField& output)
+{
+    output.setSize(prodNUnknowns);
+    forAll(input, i)
+    {
+        output[i] = input[i]/prodJacobiDiag[i];
+    }
+    output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
+};
+
+const label prodRestart =
+    optProperties.lookupOrDefault<label>("discreteFlowAdjointRestart", 80);
+const label prodMaxIterations =
+    optProperties.lookupOrDefault<label>("discreteFlowAdjointMaxIter", 4000);
+const scalar prodTolerance =
+    optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-9);
+
+if (prodRestart < 2 || prodMaxIterations < 1 || prodTolerance <= SMALL)
+{
+    FatalErrorInFunction
+        << "Invalid production discrete-adjoint controls: require restart>=2, "
+        << "maxIter>=1 and tolerance>0."
+        << abort(FatalError);
+}
+
+scalarField prodSolution(prodNUnknowns, 0.0);
+scalarField prodResidual(prodNUnknowns, 0.0);
+scalarField prodOperator(prodNUnknowns, 0.0);
+prodSolution[prodPIndex(pRefCell)] = 0.0;
+
+const scalar prodRhsNorm = Foam::sqrt
+(
+    Foam::max(prodDot(prodRhs, prodRhs), scalar(1e-300))
+);
+scalar discreteRelativeResidual = 0.0;
+label prodIteration = 0;
+
+if (prodRhsNorm > 1e-145)
+{
+    std::vector<scalarField> V(prodRestart + 1);
+    std::vector<scalarField> Z(prodRestart);
+    for (label i = 0; i <= prodRestart; ++i)
+    {
+        V[i].setSize(prodNUnknowns, 0.0);
+    }
+    for (label i = 0; i < prodRestart; ++i)
+    {
+        Z[i].setSize(prodNUnknowns, 0.0);
+    }
+    std::vector<std::vector<scalar>> H
+    (
+        prodRestart + 1,
+        std::vector<scalar>(prodRestart, 0.0)
+    );
+    std::vector<scalar> C(prodRestart, 0.0);
+    std::vector<scalar> S(prodRestart, 0.0);
+    std::vector<scalar> G(prodRestart + 1, 0.0);
+    std::vector<scalar> Y(prodRestart, 0.0);
+    scalarField W(prodNUnknowns, 0.0);
+
+    discreteRelativeResidual = GREAT;
+    while
+    (
+        prodIteration < prodMaxIterations
+     && discreteRelativeResidual > prodTolerance
+    )
+    {
+        applyProdScaledJT(prodSolution, prodOperator);
+        prodResidual = prodRhs - prodOperator;
+        prodResidual[prodPIndex(pRefCell)] = 0.0;
+        const scalar beta = Foam::sqrt(prodDot(prodResidual, prodResidual));
+        discreteRelativeResidual = beta/prodRhsNorm;
+        if (discreteRelativeResidual <= prodTolerance)
+        {
+            break;
+        }
+
+        V[0] = prodResidual/beta;
+        for (label i = 0; i <= prodRestart; ++i)
+        {
+            G[i] = 0.0;
+            if (i < prodRestart)
+            {
+                C[i] = 0.0;
+                S[i] = 0.0;
+                Y[i] = 0.0;
+            }
+        }
+        G[0] = beta;
+        for (label i = 0; i <= prodRestart; ++i)
+        {
+            for (label j = 0; j < prodRestart; ++j)
+            {
+                H[i][j] = 0.0;
+            }
+        }
+
+        label innerDone = 0;
+        for
+        (
+            label k = 0;
+            k < prodRestart && prodIteration + k < prodMaxIterations;
+            ++k
+        )
+        {
+            applyProdPreconditioner(V[k], Z[k]);
+            applyProdScaledJT(Z[k], W);
+
+            // Two-pass modified Gram-Schmidt improves robustness for the
+            // strongly non-normal U-p operator.
+            for (label pass = 0; pass < 2; ++pass)
+            {
+                for (label i = 0; i <= k; ++i)
+                {
+                    const scalar hij = prodDot(W, V[i]);
+                    H[i][k] += hij;
+                    forAll(W, dofi)
+                    {
+                        W[dofi] -= hij*V[i][dofi];
+                    }
+                }
+            }
+
+            const scalar hk1 = Foam::sqrt(prodDot(W, W));
+            H[k + 1][k] = hk1;
+            if (hk1 > 1e-14)
+            {
+                V[k + 1] = W/hk1;
+            }
+
+            for (label i = 0; i < k; ++i)
+            {
+                const scalar tmp =
+                    C[i]*H[i][k] + S[i]*H[i + 1][k];
+                H[i + 1][k] =
+                   -S[i]*H[i][k] + C[i]*H[i + 1][k];
+                H[i][k] = tmp;
+            }
+
+            const scalar rot = Foam::sqrt
+            (
+                sqr(H[k][k]) + sqr(H[k + 1][k])
+            );
+            if (rot <= 1e-30)
+            {
+                innerDone = k + 1;
+                break;
+            }
+            C[k] = H[k][k]/rot;
+            S[k] = H[k + 1][k]/rot;
+            H[k][k] = rot;
+            H[k + 1][k] = 0.0;
+
+            const scalar gk = G[k];
+            G[k] = C[k]*gk;
+            G[k + 1] = -S[k]*gk;
+            innerDone = k + 1;
+
+            const scalar projectedResidual =
+                mag(G[k + 1])/prodRhsNorm;
+            if
+            (
+                projectedResidual <= prodTolerance
+             || hk1 <= 1e-14
+            )
+            {
+                break;
+            }
+        }
+
+        if (innerDone <= 0)
+        {
+            FatalErrorInFunction
+                << "FGMRES failed to build a Krylov basis for "
+                << discreteAdjointLabel << abort(FatalError);
+        }
+
+        for (label i = innerDone - 1; i >= 0; --i)
+        {
+            scalar rhsI = G[i];
+            for (label j = i + 1; j < innerDone; ++j)
+            {
+                rhsI -= H[i][j]*Y[j];
+            }
+            const scalar pivot = H[i][i];
+            if (mag(pivot) <= 1e-30)
+            {
+                FatalErrorInFunction
+                    << "FGMRES triangular solve encountered a zero pivot at "
+                    << i << " for " << discreteAdjointLabel
+                    << abort(FatalError);
+            }
+            // Preserve the pivot sign.  Never divide by mag(pivot).
+            Y[i] = rhsI/pivot;
+        }
+
+        for (label i = 0; i < innerDone; ++i)
+        {
+            forAll(prodSolution, dofi)
+            {
+                prodSolution[dofi] += Y[i]*Z[i][dofi];
+            }
+        }
+        prodSolution[prodPIndex(pRefCell)] = 0.0;
+        prodIteration += innerDone;
+
+        applyProdScaledJT(prodSolution, prodOperator);
+        prodResidual = prodRhs - prodOperator;
+        prodResidual[prodPIndex(pRefCell)] = 0.0;
+        discreteRelativeResidual =
+            Foam::sqrt(prodDot(prodResidual, prodResidual))/prodRhsNorm;
+
+        Info<< "  [FGMRES-PROD " << discreteAdjointLabel << "] iter="
+            << prodIteration << " trueRelRes="
+            << discreteRelativeResidual << endl;
+    }
+}
+
+applyProdScaledJT(prodSolution, prodOperator);
+prodResidual = prodRhs - prodOperator;
+prodResidual[prodPIndex(pRefCell)] = 0.0;
+discreteRelativeResidual =
+    Foam::sqrt(prodDot(prodResidual, prodResidual))/prodRhsNorm;
+
+Info<< "Production reduced discrete flow adjoint " << discreteAdjointLabel
+    << ": FGMRES iterations=" << prodIteration
+    << ", true relative residual=" << discreteRelativeResidual << endl;
+
+if
+(
+   !std::isfinite(discreteRelativeResidual)
+ || discreteRelativeResidual > prodTolerance
+)
+{
+    FatalErrorInFunction
+        << "Production reduced discrete flow adjoint did not converge for "
+        << discreteAdjointLabel << ". trueRelRes="
+        << discreteRelativeResidual << ", tolerance=" << prodTolerance
+        << ". Gradients are blocked rather than using a partial adjoint."
+        << abort(FatalError);
+}
+
+for (label celli = 0; celli < prodNCells; ++celli)
+{
+    discreteAdjointVelocity[celli] = vector
+    (
+        prodSolution[prodUIndex(celli, 0)],
+        prodSolution[prodUIndex(celli, 1)],
+        prodSolution[prodUIndex(celli, 2)]
+    );
+    discreteAdjointPressure[celli] =
+        prodSolution[prodPIndex(celli)]
+       *prodMomentumScale/prodAreaScale;
+}
+discreteAdjointVelocity.correctBoundaryConditions();
+discreteAdjointPressure.correctBoundaryConditions();
