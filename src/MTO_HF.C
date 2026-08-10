@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     #include "validateFrozenHotCase.H"
     #include "initContinuityErrs.H"
     #include "opt_initialization.H"
+    #include "validateMmaUnlockGate.H"
 
     while (simple.loop(runTime))
     {
@@ -107,14 +108,14 @@ int main(int argc, char *argv[])
         // Stage B1: frozen-turbulence repeatability & noise floor (serial,
         // stageBEnabled-gated; restores all state on exit).
         #include "validateStageBRepeatability.H"
-        // Stage B1.5/B2/B3: gradient amplitude validation (serial,
-        // stageB2Enabled-gated; restores all state on exit).
+        // Stage B1.5/B2/B3: frozen-model gradient amplitude validation.
+        // A PASS authorizes setting frozenGradientValidated=true for a later
+        // production run; this validation never advances MMA itself.
         #include "validateStageB2GradientAmplitude.H"
         #include "validateSSTDirection.H"
-        // Strict replacement for the legacy sign-only Gate 6. This version
-        // removes the duplicate pressure normalization, checks gradient
-        // magnitude, enforces a minimum number of valid directions and
-        // verifies full-SST repeatability before unlocking gradientValidated.
+        // Full-SST directional/magnitude consistency remains a higher-level
+        // physical correction/acceptance gate. It is distinct from the
+        // frozen-model amplitude unlock enforced by validateMmaUnlockGate.H.
         #include "validateGate6SSTStrict.H"
     }
 
