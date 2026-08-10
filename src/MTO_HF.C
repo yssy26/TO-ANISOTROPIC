@@ -104,6 +104,12 @@ int main(int argc, char *argv[])
         #include "validateCommon.H"
         #include "validateGradientChain.H"
         #include "validateFrozenGradient.H"
+        // Stage B1: frozen-turbulence repeatability & noise floor (serial,
+        // stageBEnabled-gated; restores all state on exit).
+        #include "validateStageBRepeatability.H"
+        // Stage B1.5/B2/B3: gradient amplitude validation (serial,
+        // stageB2Enabled-gated; restores all state on exit).
+        #include "validateStageB2GradientAmplitude.H"
         #include "validateSSTDirection.H"
         // Strict replacement for the legacy sign-only Gate 6. This version
         // removes the duplicate pressure normalization, checks gradient

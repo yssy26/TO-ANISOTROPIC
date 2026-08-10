@@ -192,6 +192,30 @@ Switch gradientValidated
 (
     optProperties.lookupOrDefault<Switch>("gradientValidated", false)
 );
+Switch stageBEnabled
+(
+    optProperties.lookupOrDefault<Switch>("stageBEnabled", false)
+);
+label stageBRepeatA
+(
+    optProperties.lookupOrDefault<label>("stageBRepeatA", 5)
+);
+label stageBRepeatB
+(
+    optProperties.lookupOrDefault<label>("stageBRepeatB", 3)
+);
+label stageBSNRRepeats
+(
+    optProperties.lookupOrDefault<label>("stageBSNRRepeats", 3)
+);
+Switch stageB2Enabled
+(
+    optProperties.lookupOrDefault<Switch>("stageB2Enabled", false)
+);
+label stageB2FDStepsMulti
+(
+    optProperties.lookupOrDefault<label>("stageB2FDStepsMulti", 3)
+);
 Switch directionOnlyFeasibilityFirst
 (
     optProperties.lookupOrDefault<Switch>

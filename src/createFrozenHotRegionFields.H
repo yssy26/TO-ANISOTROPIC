@@ -581,6 +581,27 @@ if (frozenHotRegionEnabled)
 scalarField thermalObjectiveDerivative(mesh.nCells(), 0.0);
 scalarField pressureConstraintDerivative(mesh.nCells(), 0.0);
 
+// Objective direct flux derivative dJ/dphi on the cold outlet boundary.
+// J = -sum(phi_out*T_out)/(sum(phi_out)*Tref)  (mass-flow-weighted mixed
+// outlet temperature, minimization form) therefore
+//   dJ/dT_f    = -phi_f/(M*Tref)
+//   dJ/dphi_f  = -(T_f - Tmix)/(M*Tref),  Tmix = N/M
+// Filled per outer iteration in computeObjective.H; zero elsewhere.
+surfaceScalarField thermalObjectiveFluxDerivative
+(
+    IOobject
+    (
+        "thermalObjectiveFluxDerivative",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("zeroThermalObjFluxDeriv", dimless, 0.0),
+    calculatedFvPatchScalarField::typeName
+);
+
 if (thermalObjectiveType == "maximizeColdOutletTemperature")
 {
     const labelUList& outletCells =

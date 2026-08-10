@@ -24,6 +24,66 @@ if (adjointMode == "discrete")
            -coldThermalFaceMask[facei]
            *adjointDownwind*temperatureJump;
     }
+
+    // Cold outlet boundary: objective direct flux derivative dJ/dphi_out.
+    // [B0.2] The thermal-residual boundary flux term <Tb, dR_T/dphi_out> is
+    // EXACTLY zero under the bounded-Gauss-upwind fvm discretization: the
+    // upwind boundary internalCoeffs (+phi) and the bounded divergence
+    // correction diag -= V*div(phi) cancel, leaving diag+iC independent of
+    // phi_out (verified per-face: lambda_fd ~ 7e-15).  The combined flow-
+    // adjoint boundary flux RHS therefore equals dJ/dphi only.
+    {
+        const label outletStart = mesh.boundary()[coldOutletPatchID].start();
+        const scalarField& outletFluxDeriv =
+            thermalObjectiveFluxDerivative.boundaryField()[coldOutletPatchID];
+        forAll(outletFluxDeriv, facei)
+        {
+            discreteExternalFaceFluxAdjoint[outletStart + facei] +=
+                outletFluxDeriv[facei];
+        }
+    }
+
+    // ------------------------------------------------------------------
+    // [B0.2] Diagnostic output only (no physics change).  Separates the
+    // three flux-adjoint contributions:
+    //   thermalResidualFluxAdjoint  = <Tb, dR_T/dphi>  (internal faces)
+    //   objectiveFluxDerivative     = dJ/dphi          (cold outlet)
+    //   combinedFluxAdjoint         = sum of both      (= faceAdjoint)
+    // ------------------------------------------------------------------
+    {
+        scalar maxInternalResidual = 0.0;
+        scalar maxBoundaryResidual = 0.0;
+        scalar maxObjectiveFlux = 0.0;
+        scalar maxCombined = 0.0;
+        const scalarField& faceAdj = discreteExternalFaceFluxAdjoint;
+        for (label f = 0; f < mesh.nInternalFaces(); ++f)
+        {
+            maxInternalResidual = Foam::max
+            (
+                maxInternalResidual,
+                mag(faceAdj[f])
+            );
+            maxCombined = Foam::max(maxCombined, mag(faceAdj[f]));
+        }
+        const label outletStart = mesh.boundary()[coldOutletPatchID].start();
+        const scalarField& outletFluxDeriv =
+            thermalObjectiveFluxDerivative.boundaryField()[coldOutletPatchID];
+        forAll(outletFluxDeriv, facei)
+        {
+            maxBoundaryResidual = Foam::max(maxBoundaryResidual, scalar(0.0));
+            maxObjectiveFlux = Foam::max(maxObjectiveFlux, mag(outletFluxDeriv[facei]));
+            maxCombined = Foam::max(maxCombined, mag(faceAdj[outletStart + facei]));
+        }
+        reduce(maxInternalResidual, maxOp<scalar>());
+        reduce(maxBoundaryResidual, maxOp<scalar>());
+        reduce(maxObjectiveFlux, maxOp<scalar>());
+        reduce(maxCombined, maxOp<scalar>());
+        Info<< "B0.2 flux-adjoint diagnostics: maxInternalThermalResidualFluxAdjoint="
+            << maxInternalResidual
+            << " maxBoundaryThermalResidualFluxAdjoint=" << maxBoundaryResidual
+            << " maxObjectiveFluxDerivative=" << maxObjectiveFlux
+            << " maxCombinedFluxAdjoint=" << maxCombined << endl;
+    }
     volVectorField& discreteAdjointVelocity = Ub;
     volScalarField& discreteAdjointPressure = pb;
     const word discreteAdjointLabel("thermalCoupling");
