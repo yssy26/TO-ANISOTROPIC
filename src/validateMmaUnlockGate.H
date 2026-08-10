@@ -3,9 +3,10 @@
 // Hard safety gate for the frozen-turbulence optimization route.
 //
 // Frozen-gradient amplitude validation (Stage B2/B3) and full-SST directional
-// consistency are deliberately separate concepts.  Production MMA is unlocked
+// consistency are deliberately separate concepts. Production MMA is unlocked
 // by an explicit case acknowledgement that the frozen-model amplitude gate has
-// passed.  Full-SST checks remain an acceptance/correction layer.
+// passed. Until full-SST consistency is also validated, every topology update
+// must use the full-SST candidate acceptance/rollback layer.
 //-----------------------------------------------------------------------------
 
 const Switch frozenGradientValidated =
@@ -25,7 +26,11 @@ const Switch discreteExplicitSolutionIncludesDeviatoric =
         false
     );
 
-if (mmaUpdateEnabled && (stageBEnabled || stageB2Enabled || stageB4JacobianProbeEnabled))
+if
+(
+    mmaUpdateEnabled
+ && (stageBEnabled || stageB2Enabled || stageB4JacobianProbeEnabled)
+)
 {
     FatalErrorInFunction
         << "MMA updates are forbidden while Stage-B validation/probe modes are "
@@ -95,8 +100,30 @@ if
         << abort(FatalError);
 }
 
+// A validated frozen gradient is sufficient to define a trustworthy search
+// direction for the frozen model, but not to assume that the omitted SST
+// derivatives are negligible. Until the strict full-SST consistency gate has
+// passed, require transactional full-SST candidate validation on every update.
+if
+(
+    mmaUpdateEnabled
+ && ransFlowModel
+ && frozenGradientValidated
+ && !gradientValidated
+ && !enableSSTAcceptanceCheck
+)
+{
+    FatalErrorInFunction
+        << "Frozen gradients are validated, but full-SST consistency is not. "
+        << "Enable enableSSTAcceptanceCheck=true so each MMA candidate is "
+        << "re-converged with full SST and can be rejected/rolled back."
+        << abort(FatalError);
+}
+
 Info<< "Frozen-gradient MMA gate: frozenGradientValidated="
     << frozenGradientValidated
+    << ", fullSSTGradientValidated=" << gradientValidated
+    << ", SSTcandidateAcceptance=" << enableSSTAcceptanceCheck
     << ", mmaUpdateEnabled=" << mmaUpdateEnabled
     << ", stageB4JacobianProbe=" << stageB4JacobianProbeEnabled
     << endl;
