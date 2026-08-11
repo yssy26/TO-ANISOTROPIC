@@ -499,6 +499,30 @@ for (label celli = 0; celli < prodNCells; ++celli)
 }
 prodRhs[prodPIndex(pRefCell)] = 0.0;
 
+// ---- PROD-SOLVER DIAGNOSTICS (solve layer only) ----
+{
+    scalar sumRhsU = 0.0, sumRhsP = 0.0;
+    scalar nU = 0.0, nP = 0.0;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        for (direction c = 0; c < 3; ++c)
+        {
+            sumRhsU += prodRhs[prodUIndex(celli, c)];
+            nU += sqr(prodRhs[prodUIndex(celli, c)]);
+        }
+        sumRhsP += prodRhs[prodPIndex(celli)];
+        nP += sqr(prodRhs[prodPIndex(celli)]);
+    }
+    reduce(sumRhsU, sumOp<scalar>());
+    reduce(sumRhsP, sumOp<scalar>());
+    reduce(nU, sumOp<scalar>());
+    reduce(nP, sumOp<scalar>());
+    Info<< "PRODRHS (" << discreteAdjointLabel << "): sumRhsU="
+        << sumRhsU << " sumRhsP=" << sumRhsP
+        << " |RhsU|L2=" << Foam::sqrt(nU)
+        << " |RhsP|L2=" << Foam::sqrt(nP) << endl;
+}
+
 auto applyProdScaledJT =
 [&](const scalarField& input, scalarField& output)
 {
@@ -575,16 +599,135 @@ forAll(prodJacobiDiag, i)
     }
 }
 
+// L1 row-sum right preconditioner, assembled column-wise via the matrix-free
+// operator (solve-layer only; applyProdFlowJT is unchanged).  Stronger than
+// plain Jacobi for the strongly non-normal U-p system: the FGMRES trace
+// showed projRes nearly constant within each cycle with h00 ~ 3.15, which
+// indicates the diagonal preconditioner leaves a poorly clustered spectrum.
+scalarField prodL1Diag(prodNUnknowns, 1.0);
+{
+    scalarField eCol(prodNUnknowns, 0.0);
+    scalarField aCol(prodNUnknowns, 0.0);
+    for (label col = 0; col < prodNUnknowns; ++col)
+    {
+        eCol = scalar(0.0);
+        eCol[col] = 1.0;
+        applyProdScaledJT(eCol, aCol);
+        forAll(aCol, i)
+        {
+            prodL1Diag[i] += mag(aCol[i]);
+        }
+    }
+    scalar lAvg = 0.0, mnL = GREAT, mxL = -GREAT;
+    forAll(prodL1Diag, i)
+    {
+        lAvg += prodL1Diag[i];
+        mnL = Foam::min(mnL, prodL1Diag[i]);
+        mxL = Foam::max(mxL, prodL1Diag[i]);
+    }
+    reduce(lAvg, sumOp<scalar>());
+    Info<< "PRODL1 (" << discreteAdjointLabel << "): avg="
+        << lAvg/prodNUnknowns << " min=" << mnL << " max=" << mxL << endl;
+}
+// Block lower-triangular right preconditioner (simplified Schur complement):
+//   M = [D_U  UP; 0  S],  z = M^{-1} r :
+//     zP = S^{-1} rP                       (S ~ L1 row-sum of the P block)
+//     zU = D_U^{-1} (rU - UP zP)           (D_U ~ L1 of the U block)
+// UP zP is evaluated with the matrix-free operator applied to [0; zP].
+// Solve-layer only; applyProdFlowJT is unchanged.
 auto applyProdPreconditioner =
 [&](const scalarField& input, scalarField& output)
 {
     output.setSize(prodNUnknowns);
-    forAll(input, i)
+    for (label celli = 0; celli < prodNCells; ++celli)
     {
-        output[i] = input[i]/prodJacobiDiag[i];
+        output[prodPIndex(celli)] =
+            input[prodPIndex(celli)]/prodL1Diag[prodPIndex(celli)];
+    }
+    scalarField zIn(prodNUnknowns, 0.0);
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        zIn[prodPIndex(celli)] = output[prodPIndex(celli)];
+    }
+    scalarField upZ(prodNUnknowns, 0.0);
+    applyProdScaledJT(zIn, upZ);
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        for (direction c = 0; c < 3; ++c)
+        {
+            const label dof = prodUIndex(celli, c);
+            output[dof] =
+                (input[dof] - upZ[dof])/prodL1Diag[dof];
+        }
     }
     output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
 };
+
+{
+    scalar jU = 0.0, jP = 0.0, mnJ = GREAT, mxJ = -GREAT;
+    label jZero = 0;
+    forAll(prodJacobiDiag, i)
+    {
+        const scalar v = mag(prodJacobiDiag[i]);
+        jU += (i < prodNVelocity ? v : 0.0);
+        jP += (i >= prodNVelocity ? v : 0.0);
+        mnJ = Foam::min(mnJ, v);
+        mxJ = Foam::max(mxJ, v);
+        if (v < 1e-14) ++jZero;
+    }
+    reduce(jU, sumOp<scalar>());
+    reduce(jP, sumOp<scalar>());
+    Info<< "PRODDIAG (" << discreteAdjointLabel << "): jacobiUavg="
+        << jU/Foam::max(3.0*prodNCells, 1.0)
+        << " jacobiPavg=" << jP/Foam::max(scalar(prodNCells), 1.0)
+        << " jacobiMin=" << mnJ << " jacobiMax=" << mxJ
+        << " jacobiNearZero=" << jZero << endl;
+}
+
+// Solvability of the P block: if the all-ones P vector is in the null space
+// of J^T (continuous div has zero row sums), the P-block RHS must have zero
+// mean.  Project that component out of the RHS (solve-layer only; does not
+// change the solvable part of the gradient system).
+{
+    scalarField vOnes(prodNUnknowns, 0.0);
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        vOnes[prodPIndex(celli)] = 1.0;
+    }
+    scalarField zOnes(prodNUnknowns, 0.0);
+    applyProdScaledJT(vOnes, zOnes);
+    scalar sumZ = 0.0, nZ = 0.0;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        if (celli == pRefCell) continue;
+        sumZ += zOnes[prodPIndex(celli)];
+        nZ += sqr(zOnes[prodPIndex(celli)]);
+    }
+    reduce(sumZ, sumOp<scalar>());
+    reduce(nZ, sumOp<scalar>());
+    scalar rhsMean = 0.0;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        if (celli == pRefCell) continue;
+        rhsMean += prodRhs[prodPIndex(celli)];
+    }
+    reduce(rhsMean, sumOp<scalar>());
+    rhsMean /= Foam::max(scalar(prodNCells - 1), 1.0);
+    Info<< "PRODSOLV (" << discreteAdjointLabel << "): sum(J^T*1)_P="
+        << sumZ << " |J^T*1_P|L2=" << Foam::sqrt(nZ)
+        << " rhsPmean=" << rhsMean << endl;
+    if (mag(sumZ) <= 1e-4*(mag(rhsMean)*prodNCells + SMALL))
+    {
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            if (celli == pRefCell) continue;
+            prodRhs[prodPIndex(celli)] -= rhsMean;
+        }
+        prodRhs[prodPIndex(pRefCell)] = 0.0;
+        Info<< "PRODSOLV (" << discreteAdjointLabel
+            << "): removed P-mean from RHS (null-space projection)." << endl;
+    }
+}
 
 const label prodRestart =
     optProperties.lookupOrDefault<label>("discreteFlowAdjointRestart", 80);
@@ -605,6 +748,10 @@ scalarField prodSolution(prodNUnknowns, 0.0);
 scalarField prodResidual(prodNUnknowns, 0.0);
 scalarField prodOperator(prodNUnknowns, 0.0);
 prodSolution[prodPIndex(pRefCell)] = 0.0;
+// Near-null deflation state: if the residual is dominated by a single
+// near-eigenvector (cos(Au,u) ~ 1), deflate that direction explicitly.
+scalarField prodDeflationVec(prodNUnknowns, 0.0);
+bool prodDeflationActive = false;
 
 const scalar prodRhsNorm = Foam::sqrt
 (
@@ -613,7 +760,120 @@ const scalar prodRhsNorm = Foam::sqrt
 scalar discreteRelativeResidual = 0.0;
 label prodIteration = 0;
 
-if (prodRhsNorm > 1e-145)
+const word prodSolverType =
+    optProperties.lookupOrDefault<word>("discreteProdSolverType", "fgmres");
+bool prodSolved = false;
+
+if (prodSolverType == "bicgstab" && prodRhsNorm > 1e-145)
+{
+    // Right-preconditioned BiCGSTAB: no restart information loss, suitable
+    // for the strongly non-normal U-p system where restarted FGMRES stalls.
+    scalarField r(prodNUnknowns, 0.0);
+    scalarField rhat(prodNUnknowns, 0.0);
+    scalarField p(prodNUnknowns, 0.0);
+    scalarField v(prodNUnknowns, 0.0);
+    scalarField s(prodNUnknowns, 0.0);
+    scalarField t(prodNUnknowns, 0.0);
+    scalarField ph(prodNUnknowns, 0.0);
+    scalarField sh(prodNUnknowns, 0.0);
+    applyProdScaledJT(prodSolution, prodOperator);
+    r = prodRhs - prodOperator;
+    r[prodPIndex(pRefCell)] = 0.0;
+    rhat = r;
+    scalar rhoOld = 1.0, alpha = 1.0, omega = 1.0;
+    for (label it = 0; it < prodMaxIterations; ++it)
+    {
+        const scalar rho = prodDot(rhat, r);
+        if (mag(rho) < 1e-30)
+        {
+            Info<< "  [BCGS-PROD " << discreteAdjointLabel
+                << "] breakdown rho at iter=" << it << endl;
+            break;
+        }
+        const scalar beta =
+            (rho/rhoOld)*(alpha/omega);
+        forAll(p, i)
+        {
+            p[i] = r[i] + beta*(p[i] - omega*v[i]);
+        }
+        applyProdPreconditioner(p, ph);
+        applyProdScaledJT(ph, v);
+        const scalar den = prodDot(rhat, v);
+        if (mag(den) < 1e-30)
+        {
+            Info<< "  [BCGS-PROD " << discreteAdjointLabel
+                << "] breakdown den at iter=" << it << endl;
+            break;
+        }
+        alpha = rho/den;
+        forAll(s, i)
+        {
+            s[i] = r[i] - alpha*v[i];
+        }
+        s[prodPIndex(pRefCell)] = 0.0;
+        const scalar sNorm = Foam::sqrt(prodDot(s, s));
+        discreteRelativeResidual = sNorm/prodRhsNorm;
+        if (discreteRelativeResidual <= prodTolerance)
+        {
+            forAll(prodSolution, i)
+            {
+                prodSolution[i] += alpha*ph[i];
+            }
+            prodSolution[prodPIndex(pRefCell)] = 0.0;
+            prodIteration = it + 1;
+            prodSolved = true;
+            break;
+        }
+        applyProdPreconditioner(s, sh);
+        applyProdScaledJT(sh, t);
+        const scalar t2 = prodDot(t, t);
+        if (t2 < 1e-30)
+        {
+            forAll(prodSolution, i)
+            {
+                prodSolution[i] += alpha*ph[i];
+            }
+            prodSolution[prodPIndex(pRefCell)] = 0.0;
+            prodIteration = it + 1;
+            prodSolved = true;
+            break;
+        }
+        omega = prodDot(t, s)/t2;
+        forAll(prodSolution, i)
+        {
+            prodSolution[i] += alpha*ph[i] + omega*sh[i];
+        }
+        prodSolution[prodPIndex(pRefCell)] = 0.0;
+        forAll(r, i)
+        {
+            r[i] = s[i] - omega*t[i];
+        }
+        r[prodPIndex(pRefCell)] = 0.0;
+        const scalar rNorm = Foam::sqrt(prodDot(r, r));
+        discreteRelativeResidual = rNorm/prodRhsNorm;
+        rhoOld = rho;
+        if (it % 80 == 0)
+        {
+            Info<< "  [BCGS-PROD " << discreteAdjointLabel << "] iter="
+                << it + 1 << " trueRelRes=" << discreteRelativeResidual
+                << endl;
+        }
+        if (discreteRelativeResidual <= prodTolerance)
+        {
+            prodIteration = it + 1;
+            prodSolved = true;
+            break;
+        }
+    }
+    if (!prodSolved)
+    {
+        Info<< "  [BCGS-PROD " << discreteAdjointLabel
+            << "] maxIter reached, trueRelRes=" << discreteRelativeResidual
+            << endl;
+    }
+}
+
+if (prodRhsNorm > 1e-145 && !prodSolved)
 {
     std::vector<scalarField> V(prodRestart + 1);
     std::vector<scalarField> Z(prodRestart);
@@ -653,7 +913,61 @@ if (prodRhsNorm > 1e-145)
             break;
         }
 
-        V[0] = prodResidual/beta;
+        // Near-null deflation: first cycle estimates the dominant residual
+        // mode and checks cos(Au,u); later cycles deflate it explicitly.
+        if (prodIteration >= prodRestart)
+        {
+            if (!prodDeflationActive)
+            {
+                prodDeflationVec = prodResidual/beta;
+                scalarField au(prodNUnknowns, 0.0);
+                applyProdScaledJT(prodDeflationVec, au);
+                const scalar cosAU = prodDot(au, prodDeflationVec)
+                   /Foam::max
+                    (
+                        Foam::sqrt(prodDot(au, au)),
+                        scalar(1e-300)
+                    );
+                Info<< "PRODDEFL (" << discreteAdjointLabel << ") cos(Au,u)="
+                    << cosAU << " at iter=" << prodIteration << endl;
+                if (mag(cosAU) > 0.9)
+                {
+                    prodDeflationActive = true;
+                    Info<< "PRODDEFL (" << discreteAdjointLabel
+                        << "): near-null deflation ENABLED." << endl;
+                }
+            }
+            if (prodDeflationActive)
+            {
+                scalarField au(prodNUnknowns, 0.0);
+                applyProdScaledJT(prodDeflationVec, au);
+                const scalar uAu = prodDot(prodDeflationVec, au);
+                const scalar uR = prodDot(prodDeflationVec, prodResidual);
+                if (mag(uAu) > 1e-30)
+                {
+                    const scalar cDef = uR/uAu;
+                    forAll(prodSolution, dofi)
+                    {
+                        prodSolution[dofi] +=
+                            cDef*prodDeflationVec[dofi];
+                    }
+                    prodSolution[prodPIndex(pRefCell)] = 0.0;
+                    // refresh the residual after deflation
+                    applyProdScaledJT(prodSolution, prodOperator);
+                    prodResidual = prodRhs - prodOperator;
+                    prodResidual[prodPIndex(pRefCell)] = 0.0;
+                }
+            }
+        }
+
+        const scalar betaDef = Foam::sqrt(prodDot(prodResidual, prodResidual));
+        discreteRelativeResidual = betaDef/prodRhsNorm;
+        if (discreteRelativeResidual <= prodTolerance)
+        {
+            break;
+        }
+
+        V[0] = prodResidual/betaDef;
         for (label i = 0; i <= prodRestart; ++i)
         {
             G[i] = 0.0;
@@ -738,6 +1052,17 @@ if (prodRhsNorm > 1e-145)
                 mag(G[k + 1])/prodRhsNorm;
             if
             (
+                (prodIteration < 640 || (prodIteration % 1600) < 160)
+             && (k <= 12 || projectedResidual < 0.1)
+            )
+            {
+                Info<< "  [FGMRES-TRACE " << discreteAdjointLabel
+                    << "] cycleIter=" << prodIteration << " k=" << k
+                    << " projRes=" << projectedResidual
+                    << " h00=" << H[0][0] << endl;
+            }
+            if
+            (
                 projectedResidual <= prodTolerance
              || hk1 <= 1e-14
             )
@@ -782,6 +1107,119 @@ if (prodRhsNorm > 1e-145)
         prodSolution[prodPIndex(pRefCell)] = 0.0;
         prodIteration += innerDone;
 
+        // ---- harmonic-Ritz deflation pilot (diagnostic) ----
+        if (prodIteration <= 320 || prodIteration >= prodMaxIterations - 320)
+        {
+            const label nH = innerDone;
+            // inverse-power iteration on H (upper Hessenberg) for the m
+            // smallest-|theta| Ritz pairs; measure residual coverage.
+            const label mRitz = 16;
+            scalarField ritzTheta(mRitz, 0.0);
+            scalarField ritzCover(mRitz, 0.0);
+            // copy residual (preconditioned-system residual is in G, but we
+            // use the physical residual direction V[0]*beta... use raw r):
+            scalarField rPilot(prodNUnknowns, 0.0);
+            applyProdScaledJT(prodSolution, prodOperator);
+            forAll(rPilot, i)
+            {
+                rPilot[i] = prodRhs[i] - prodOperator[i];
+            }
+            rPilot[prodPIndex(pRefCell)] = 0.0;
+            const scalar rNorm = Foam::max
+            (
+                Foam::sqrt(prodDot(rPilot, rPilot)),
+                scalar(1e-300)
+            );
+            std::vector<scalarField> ritzVecs;
+            for (label mi = 0; mi < mRitz; ++mi)
+            {
+                scalarField y(nH, 0.0);
+                for (label i = 0; i < nH; ++i)
+                {
+                    y[i] = Foam::sin(0.7*(i + 1) + 0.31*mi);
+                }
+                scalar theta = 0.0;
+                for (label it = 0; it < 200; ++it)
+                {
+                    // solve H yNew = y (back substitution, Hessenberg)
+                    scalarField yNew(nH, 0.0);
+                    for (label i = nH - 1; i >= 0; --i)
+                    {
+                        scalar s = y[i];
+                        for (label j = i + 1; j < nH; ++j)
+                        {
+                            s -= H[i][j]*yNew[j];
+                        }
+                        const scalar piv = H[i][i];
+                        yNew[i] = (mag(piv) > 1e-30) ? s/piv : s*1e30;
+                    }
+                    // orthogonalize against previous Ritz vectors
+                    for (const auto& rv : ritzVecs)
+                    {
+                        scalar dot = 0.0;
+                        for (label i = 0; i < nH; ++i)
+                        {
+                            dot += yNew[i]*rv[i];
+                        }
+                        for (label i = 0; i < nH; ++i)
+                        {
+                            yNew[i] -= dot*rv[i];
+                        }
+                    }
+                    const scalar ny = Foam::sqrt(sum(sqr(yNew)));
+                    if (ny < 1e-14) { yNew[0] = 1.0; }
+                    else { yNew /= ny; }
+                    // Rayleigh quotient
+                    scalar num = 0.0, den = 0.0;
+                    for (label i = 0; i < nH; ++i)
+                    {
+                        scalar hi = 0.0;
+                        for (label j = 0; j < nH; ++j)
+                        {
+                            hi += H[i][j]*yNew[j];
+                        }
+                        num += yNew[i]*hi;
+                        den += yNew[i]*yNew[i];
+                    }
+                    const scalar thNew = num/Foam::max(den, 1e-30);
+                    const scalar dth = mag(thNew - theta);
+                    theta = thNew;
+                    y = yNew;
+                    if (dth < 1e-8*mag(theta) + 1e-10) { break; }
+                }
+                ritzTheta[mi] = theta;
+                // Ritz vector u = V*y ; coverage of the physical residual
+                scalarField uP(prodNUnknowns, 0.0);
+                for (label i = 0; i < nH; ++i)
+                {
+                    const scalar yi = y[i];
+                    const scalarField& vi = V[i];
+                    forAll(vi, dofi)
+                    {
+                        uP[dofi] += yi*vi[dofi];
+                    }
+                }
+                const scalar un = Foam::sqrt(prodDot(uP, uP));
+                if (un > 1e-30) { uP /= un; }
+                const scalar c = prodDot(uP, rPilot)/rNorm;
+                ritzCover[mi] = c;
+                ritzVecs.push_back(y);
+            }
+            Info<< "RITZPILOT (" << discreteAdjointLabel << ") iter="
+                << prodIteration << " |r|=" << rNorm
+                << " thetas=";
+            for (label mi = 0; mi < mRitz; ++mi)
+            {
+                Info<< ritzTheta[mi] << (mi < mRitz - 1 ? "," : "");
+            }
+            Info<< " cov=";
+            for (label mi = 0; mi < mRitz; ++mi)
+            {
+                Info<< ritzCover[mi] << (mi < mRitz - 1 ? "," : "");
+            }
+            Info<< endl;
+        }
+
         applyProdScaledJT(prodSolution, prodOperator);
         prodResidual = prodRhs - prodOperator;
         prodResidual[prodPIndex(pRefCell)] = 0.0;
@@ -799,6 +1237,28 @@ prodResidual = prodRhs - prodOperator;
 prodResidual[prodPIndex(pRefCell)] = 0.0;
 discreteRelativeResidual =
     Foam::sqrt(prodDot(prodResidual, prodResidual))/prodRhsNorm;
+{
+    scalar nU = 0.0, nP = 0.0, mxU = 0.0, mxP = 0.0;
+    label mxUCell = -1, mxPCell = -1;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        for (direction c = 0; c < 3; ++c)
+        {
+            const scalar v = prodResidual[prodUIndex(celli, c)];
+            nU += sqr(v);
+            if (mag(v) > mxU) { mxU = mag(v); mxUCell = celli; }
+        }
+        const scalar vp = prodResidual[prodPIndex(celli)];
+        nP += sqr(vp);
+        if (mag(vp) > mxP) { mxP = mag(vp); mxPCell = celli; }
+    }
+    reduce(nU, sumOp<scalar>());
+    reduce(nP, sumOp<scalar>());
+    Info<< "PRODRESID (" << discreteAdjointLabel << "): |rU|L2="
+        << Foam::sqrt(nU) << " |rP|L2=" << Foam::sqrt(nP)
+        << " max|rU|=" << mxU << " at cell " << mxUCell
+        << " max|rP|=" << mxP << " at cell " << mxPCell << endl;
+}
 
 Info<< "Production reduced discrete flow adjoint " << discreteAdjointLabel
     << ": FGMRES iterations=" << prodIteration
@@ -810,12 +1270,24 @@ if
  || discreteRelativeResidual > prodTolerance
 )
 {
-    FatalErrorInFunction
-        << "Production reduced discrete flow adjoint did not converge for "
-        << discreteAdjointLabel << ". trueRelRes="
-        << discreteRelativeResidual << ", tolerance=" << prodTolerance
-        << ". Gradients are blocked rather than using a partial adjoint."
-        << abort(FatalError);
+    if (optProperties.lookupOrDefault<Switch>("discreteProdConvergeFatal", true))
+    {
+        FatalErrorInFunction
+            << "Production reduced discrete flow adjoint did not converge for "
+            << discreteAdjointLabel << ". trueRelRes="
+            << discreteRelativeResidual << ", tolerance=" << prodTolerance
+            << ". Gradients are blocked rather than using a partial adjoint."
+            << abort(FatalError);
+    }
+    else
+    {
+        WarningInFunction
+            << "Production reduced discrete flow adjoint did not converge for "
+            << discreteAdjointLabel << " (DIAGNOSTIC MODE). trueRelRes="
+            << discreteRelativeResidual << ", tolerance=" << prodTolerance
+            << ". Continuing for cross-objective discrimination."
+            << endl;
+    }
 }
 
 for (label celli = 0; celli < prodNCells; ++celli)
