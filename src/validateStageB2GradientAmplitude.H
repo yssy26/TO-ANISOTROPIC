@@ -140,12 +140,23 @@ if (stageB2Enabled)
     auto solveFrozenPrimalConverged = [&](label maxIter) -> label
     {
         label consecutive = 0;
-        scalar Jprev = evaluateObjective();
-        scalar gDPprev = evaluatePressureDrop()
-                        /Foam::max(pressureDropMaxPa, SMALL) - 1.0;
-        scalarField Jhist(maxIter + 1, Jprev);
-        scalarField gDPhist(maxIter + 1, gDPprev);
+        const scalar J0 = evaluateObjective();
+        const scalar gDP0 = evaluatePressureDrop()
+                          /Foam::max(pressureDropMaxPa, SMALL) - 1.0;
+        // Stage B1 noise-floor based convergence.  The frozen primal is
+        // bit-reproducible but runs a deterministic limit cycle: J oscillates
+        // at ~1e-7 (relative) and never satisfies a 1e-10 platform window.
+        // The reproducible converged value is the sliding-window mean (the
+        // Stage B1 "platform value").  We accept convergence when the
+        // non-overlapping window mean of both J and gDP stops drifting by
+        // more than a small multiple of the measured noise floor.
         const label platformWindow = 20;
+        DynamicList<scalar> Jhist;
+        DynamicList<scalar> gDPhist;
+        Jhist.append(J0);
+        gDPhist.append(gDP0);
+        const scalar JtolRel = 1e-6;
+        const scalar gDPtolRel = 1e-6;
 
         for (label iter = 0; iter < maxIter; ++iter)
         {
@@ -227,36 +238,43 @@ if (stageB2Enabled)
             const scalar Jnow = evaluateObjective();
             const scalar gDPnow = evaluatePressureDrop()
                                   /Foam::max(pressureDropMaxPa, SMALL) - 1.0;
-            const scalar dJrel =
-                mag(Jnow - Jprev)/Foam::max(mag(Jprev), SMALL);
-            const scalar dgDPrel =
-                mag(gDPnow - gDPprev)/Foam::max(mag(gDPprev), SMALL);
-            Jhist[iter] = Jnow;
-            gDPhist[iter] = gDPnow;
+            Jhist.append(Jnow);
+            gDPhist.append(gDPnow);
 
-            bool platformOK = true;
-            if (iter >= platformWindow)
+            if (Jhist.size() >= 2*platformWindow)
             {
-                platformOK =
-                    mag(Jnow - Jhist[iter - platformWindow]) <= 1e-10
-                 && mag(gDPnow - gDPhist[iter - platformWindow]) <= 1e-9;
-            }
+                scalar JprevW = 0.0, JcurW = 0.0;
+                scalar gDPprevW = 0.0, gDPcurW = 0.0;
+                for (label i = 0; i < platformWindow; ++i)
+                {
+                    JprevW += Jhist[Jhist.size() - 2*platformWindow + i];
+                    JcurW  += Jhist[Jhist.size() - platformWindow + i];
+                    gDPprevW += gDPhist[Jhist.size() - 2*platformWindow + i];
+                    gDPcurW  += gDPhist[Jhist.size() - platformWindow + i];
+                }
+                JprevW /= platformWindow;
+                JcurW  /= platformWindow;
+                gDPprevW /= platformWindow;
+                gDPcurW  /= platformWindow;
 
-            if (dJrel <= 1e-9 && dgDPrel <= 1e-8 && platformOK)
-            {
-                ++consecutive;
-            }
-            else
-            {
-                consecutive = 0;
-            }
+                const scalar dJrel =
+                    mag(JcurW - JprevW)/Foam::max(mag(JprevW), SMALL);
+                const scalar dgDPrel =
+                    mag(gDPcurW - gDPprevW)/Foam::max(mag(gDPprevW), SMALL);
 
-            if (consecutive >= 5)
-            {
-                return iter + 1;
+                if (dJrel <= JtolRel && dgDPrel <= gDPtolRel)
+                {
+                    ++consecutive;
+                }
+                else
+                {
+                    consecutive = 0;
+                }
+                if (consecutive >= 2)
+                {
+                    return iter + 1;
+                }
             }
-            Jprev = Jnow;
-            gDPprev = gDPnow;
         }
         return -1;
     };
