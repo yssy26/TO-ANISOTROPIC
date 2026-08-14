@@ -735,6 +735,8 @@ const label prodMaxIterations =
     optProperties.lookupOrDefault<label>("discreteFlowAdjointMaxIter", 4000);
 const scalar prodTolerance =
     optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-9);
+const Switch discreteCheckpointGradient =
+    optProperties.lookupOrDefault<Switch>("discreteCheckpointGradient", false);
 
 if (prodRestart < 2 || prodMaxIterations < 1 || prodTolerance <= SMALL)
 {
@@ -748,6 +750,79 @@ scalarField prodSolution(prodNUnknowns, 0.0);
 scalarField prodResidual(prodNUnknowns, 0.0);
 scalarField prodOperator(prodNUnknowns, 0.0);
 prodSolution[prodPIndex(pRefCell)] = 0.0;
+
+// Gradient-convergence checkpoint proxy (diagnostic only).  The flow-adjoint
+// contribution to dJ/dx and d(gDP)/dx is linear in lambda_U through
+//   -dAlphaDxh * (U & lambda_U) * V
+// Since dAlphaDxh and V are fixed during the adjoint solve, the functional
+//   proxy = sum((U & lambda_U) * Dprobe)
+// converges identically to the true flow-adjoint gradient.  Dprobe mirrors
+// the Stage-B2 D1 physical direction (normalized, design-masked).
+scalarField prodProbeD(prodNCells, 0.0);
+{
+    const vectorField& C = mesh.C().primitiveField();
+    const scalar Lx = gMax(C.component(0)) - gMin(C.component(0));
+    const scalar Ly = gMax(C.component(1)) - gMin(C.component(1));
+    const scalar Lz = gMax(C.component(2)) - gMin(C.component(2));
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        if (designMask[celli] <= 0.5)
+        {
+            continue;
+        }
+        const scalar xx = C[celli].x()/Foam::max(Lx, SMALL);
+        const scalar yy = C[celli].y()/Foam::max(Ly, SMALL);
+        const scalar zz = C[celli].z()/Foam::max(Lz, SMALL);
+        prodProbeD[celli] =
+            Foam::sin(2.0*Foam::constant::mathematical::pi*xx)
+           *Foam::cos(Foam::constant::mathematical::pi*yy)
+          + 0.5*Foam::sin(3.0*Foam::constant::mathematical::pi*zz);
+        if (x[celli] < 0.02 || x[celli] > 0.98)
+        {
+            prodProbeD[celli] = 0.0;
+        }
+    }
+    scalar mx = 0.0;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        mx = Foam::max(mx, mag(prodProbeD[celli]));
+    }
+    reduce(mx, maxOp<scalar>());
+    if (mx > 1e-30)
+    {
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            prodProbeD[celli] /= mx;
+        }
+    }
+}
+
+auto prodGradProxy = [&](const scalarField& sol) -> scalar
+{
+    scalar proxy = 0.0;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        const vector lamU
+        (
+            sol[prodUIndex(celli, 0)],
+            sol[prodUIndex(celli, 1)],
+            sol[prodUIndex(celli, 2)]
+        );
+        proxy += (U[celli] & lamU)*prodProbeD[celli];
+    }
+    reduce(proxy, sumOp<scalar>());
+    return proxy;
+};
+
+Foam::OFstream ckptStream
+(
+    runTime.path()/fileName("adjointCheckpoint_" + discreteAdjointLabel + ".tsv")
+);
+if (discreteCheckpointGradient)
+{
+    ckptStream.precision(16);
+    ckptStream << "iter\ttrueRelRes\tgradProxy\n";
+}
 // Near-null deflation state: if the residual is dominated by a single
 // near-eigenvector (cos(Au,u) ~ 1), deflate that direction explicitly.
 scalarField prodDeflationVec(prodNUnknowns, 0.0);
@@ -1229,6 +1304,17 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
         Info<< "  [FGMRES-PROD " << discreteAdjointLabel << "] iter="
             << prodIteration << " trueRelRes="
             << discreteRelativeResidual << endl;
+
+        if (discreteCheckpointGradient)
+        {
+            const scalar gproxy = prodGradProxy(prodSolution);
+            ckptStream << prodIteration << '\t'
+                       << discreteRelativeResidual << '\t'
+                       << gproxy << '\n';
+            Info<< "  [GRADPROXY " << discreteAdjointLabel << "] iter="
+                << prodIteration << " trueRelRes="
+                << discreteRelativeResidual << " proxy=" << gproxy << endl;
+        }
     }
 }
 
@@ -1237,6 +1323,15 @@ prodResidual = prodRhs - prodOperator;
 prodResidual[prodPIndex(pRefCell)] = 0.0;
 discreteRelativeResidual =
     Foam::sqrt(prodDot(prodResidual, prodResidual))/prodRhsNorm;
+if (discreteCheckpointGradient)
+{
+    const scalar gproxy = prodGradProxy(prodSolution);
+    ckptStream << prodIteration << '\t'
+               << discreteRelativeResidual << '\t'
+               << gproxy << '\n';
+    Info<< "  [GRADPROXY-FINAL " << discreteAdjointLabel << "] trueRelRes="
+        << discreteRelativeResidual << " proxy=" << gproxy << endl;
+}
 {
     scalar nU = 0.0, nP = 0.0, mxU = 0.0, mxP = 0.0;
     label mxUCell = -1, mxPCell = -1;
