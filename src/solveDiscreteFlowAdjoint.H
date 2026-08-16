@@ -2484,6 +2484,225 @@ forAll(mesh.boundary(), patchi)
     }
 }
 
+// =========================================================================
+// Explicit frozen deviatoric-stress transpose (U-U block) for the oracle.
+// Replicates applyFrozenDeviatoricJT() as explicit COO entries so that the
+// exported explicitJT.mtx is the COMPLETE frozen-RANS J^T.  The ExplicitJToracle
+// check further below (explicit vs matrix-free) then verifies this assembly to
+// ~1e-16, so an error here cannot silently pass.
+// =========================================================================
+if (ransFlowModel)
+{
+    // Per-cell gradient coefficient map: gradCoef[c] = list of
+    //   (cell m, coeff[27]), coeff[(i*3+j)*3+k] = d grad[c][i][j]/d lambda[m][k]
+    // built from the interior stress and boundary projection (radius-1).
+    typedef std::pair<label, std::vector<scalar>> GradTerm;
+    std::vector<std::vector<GradTerm>> gradCoef(mesh.nCells());
+
+    auto gradFindOrAdd = [&](label c, label m) -> std::vector<scalar>&
+    {
+        auto& lst = gradCoef[c];
+        for (auto& t : lst)
+        {
+            if (t.first == m)
+            {
+                return t.second;
+            }
+        }
+        lst.emplace_back(m, std::vector<scalar>(27, 0.0));
+        return lst.back().second;
+    };
+
+    auto gradAdd = [&](label c, label m, label i, label j, label k, scalar v)
+    {
+        if (mag(v) < 1e-300)
+        {
+            return;
+        }
+        auto& a = gradFindOrAdd(c, m);
+        a[(i*3 + j)*3 + k] += v;
+    };
+
+    // ---- interior stress -> grad ----
+    // grad[c][i][j] = nu_c * (sigma_c[j][i] - (1/3) delta_ij tr(sigma_c)).
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+        const scalar w = discreteWeights[facei];
+        const vector sf = discreteSf[facei];
+        const scalar nuOwn = nuEffFrozen[own];
+        const scalar nuNei = nuEffFrozen[nei];
+
+        for (label i = 0; i < 3; ++i)
+        {
+            for (label j = 0; j < 3; ++j)
+            {
+                const scalar twoThirdDelta = (i == j) ? (2.0/3.0) : 0.0;
+
+                // owner side: sigma_own += w * sf * (lambda_nei - lambda_own)
+                gradAdd(own, nei, i, j, i,  nuOwn*w*sf[j]);
+                gradAdd(own, own, i, j, i, -nuOwn*w*sf[j]);
+                // neighbour side: sigma_nei += (1-w) * sf * (lambda_nei - lambda_own)
+                gradAdd(nei, own, i, j, i, -nuNei*(1.0 - w)*sf[j]);
+                gradAdd(nei, nei, i, j, i,  nuNei*(1.0 - w)*sf[j]);
+                for (label k = 0; k < 3; ++k)
+                {
+                    // trace term -(2/3)delta_ij * (sf . (lambda_nei - lambda_own))
+                    gradAdd(own, nei, i, j, k, -twoThirdDelta*nuOwn*w*sf[k]);
+                    gradAdd(own, own, i, j, k,  twoThirdDelta*nuOwn*w*sf[k]);
+                    gradAdd(nei, own, i, j, k,  twoThirdDelta*nuNei*(1.0 - w)*sf[k]);
+                    gradAdd(nei, nei, i, j, k, -twoThirdDelta*nuNei*(1.0 - w)*sf[k]);
+                }
+            }
+        }
+    }
+
+    // ---- boundary projection -> grad (and velocityFixed direct output) ----
+    forAll(mesh.boundary(), patchi)
+    {
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        const scalarField& patchMagSf = mesh.magSf().boundaryField()[patchi];
+        const scalarField& patchDelta = mesh.deltaCoeffs().boundaryField()[patchi];
+        const scalarField& patchNuEff = nuEffFrozen.boundaryField()[patchi];
+        const bool velocityFixed = U.boundaryField()[patchi].fixesValue();
+
+        forAll(patchCells, facei)
+        {
+            const label c = patchCells[facei];
+            const vector sf = patchSf[facei];
+            const scalar mag = patchMagSf[facei];
+            const vector n = sf/Foam::max(mag, SMALL);
+            const scalar nu = patchNuEff[facei];
+            const scalar delta = patchDelta[facei];
+
+            for (label i = 0; i < 3; ++i)
+            {
+                for (label j = 0; j < 3; ++j)
+                {
+                    const scalar twoThirdDelta = (i == j) ? (2.0/3.0) : 0.0;
+                    for (label k = 0; k < 3; ++k)
+                    {
+                        const scalar dki = (k == i) ? 1.0 : 0.0;
+                        const scalar v = nu
+                           *(
+                                -sf[j]*(dki - n[i]*n[k])
+                              + twoThirdDelta*sf[k]
+                              - (2.0/3.0)*n[i]*n[j]*sf[k]
+                            );
+                        gradAdd(c, c, i, j, k, v);
+                    }
+                }
+            }
+
+            if (velocityFixed)
+            {
+                for (label j = 0; j < 3; ++j)
+                {
+                    for (label k = 0; k < 3; ++k)
+                    {
+                        const scalar v =
+                            -delta*nu*( -sf[j]*n[k] + (2.0/3.0)*n[j]*sf[k] );
+                        addCoo(discreteUIndex(c, j), discreteUIndex(c, k), v);
+                    }
+                }
+            }
+        }
+    }
+
+    // ---- divergence: grad -> output (interior) ----
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+        const scalar w = discreteWeights[facei];
+        const vector sf = discreteSf[facei];
+        const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+        const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+
+        for (label j = 0; j < 3; ++j)
+        {
+            for (const auto& term : gradCoef[own])
+            {
+                const label m = term.first;
+                const auto& A = term.second;
+                for (label k = 0; k < 3; ++k)
+                {
+                    scalar cSum = 0.0;
+                    for (label i = 0; i < 3; ++i)
+                    {
+                        cSum += sf[i]*A[(i*3 + j)*3 + k];
+                    }
+                    if (mag(cSum) < 1e-300)
+                    {
+                        continue;
+                    }
+                    addCoo(discreteUIndex(own, j), discreteUIndex(m, k),  w*cSum*Vinvo);
+                    addCoo(discreteUIndex(nei, j), discreteUIndex(m, k),  (1.0 - w)*cSum*Vinvo);
+                }
+            }
+            for (const auto& term : gradCoef[nei])
+            {
+                const label m = term.first;
+                const auto& A = term.second;
+                for (label k = 0; k < 3; ++k)
+                {
+                    scalar cSum = 0.0;
+                    for (label i = 0; i < 3; ++i)
+                    {
+                        cSum += sf[i]*A[(i*3 + j)*3 + k];
+                    }
+                    if (mag(cSum) < 1e-300)
+                    {
+                        continue;
+                    }
+                    addCoo(discreteUIndex(own, j), discreteUIndex(m, k), -w*cSum*Vinn);
+                    addCoo(discreteUIndex(nei, j), discreteUIndex(m, k), -(1.0 - w)*cSum*Vinn);
+                }
+            }
+        }
+    }
+
+    // ---- divergence: grad -> output (boundary, non-fixedValue U) ----
+    forAll(mesh.boundary(), patchi)
+    {
+        if (U.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label c = patchCells[facei];
+            const vector sf = patchSf[facei];
+            const scalar Vinvc = 1.0/Foam::max(mesh.V()[c], SMALL);
+            for (label j = 0; j < 3; ++j)
+            {
+                for (const auto& term : gradCoef[c])
+                {
+                    const label m = term.first;
+                    const auto& A = term.second;
+                    for (label k = 0; k < 3; ++k)
+                    {
+                        scalar cSum = 0.0;
+                        for (label i = 0; i < 3; ++i)
+                        {
+                            cSum += sf[i]*A[(i*3 + j)*3 + k];
+                        }
+                        if (mag(cSum) < 1e-300)
+                        {
+                            continue;
+                        }
+                        addCoo(discreteUIndex(c, j), discreteUIndex(m, k), cSum*Vinvc);
+                    }
+                }
+            }
+        }
+    }
+}
+
 // ---- COO -> CSR (sort by row then col, merge duplicates) ----
 const label cooNnz = cooRow.size();
 std::vector<label> perm(cooNnz);
@@ -2584,8 +2803,9 @@ auto applyExplicitScaled = [&](const scalarField& input, scalarField& output)
             discreteMomentumScale/discreteAreaScale;
     }
     scalarField physOut(discreteNUnknowns, 0.0);
+    // The deviatoric transpose is now assembled explicitly into the CSR, so
+    // applyExplicitMatVec already carries the FULL operator.
     applyExplicitMatVec(physInput, physOut);
-    applyFrozenDeviatoricJT(physInput, physOut);
     for (label celli = 0; celli < discreteNCells; ++celli)
     {
         for (direction cmpt = 0; cmpt < 3; ++cmpt)
@@ -3438,8 +3658,8 @@ physRhs[discretePIndex(pRefCell)] = 0.0;
 
 auto applyExplicitPhys = [&](const scalarField& x, scalarField& y)
 {
+    // deviatoric transpose is assembled into the CSR; this is now the full op.
     applyExplicitMatVec(x, y);
-    applyFrozenDeviatoricJT(x, y);
 };
 
 scalarField physSolution(discreteNUnknowns, 0.0);
