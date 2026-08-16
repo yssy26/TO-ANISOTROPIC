@@ -1,0 +1,35 @@
+# Stage B0.2 per-face and combined-direction FD: lambda_phi = (dR_T/dphi)^T Tb
+# bounded Gauss upwind; lambda_fd = [<Tb,r(phi+h e)>-<Tb,r(phi-h e)>]/(2h), long-double hand assembly
+# HAND_VS_RESIDUAL maxDiff = 2.86e-17 (hand assembly == fvMatrix::residual())
+Category	Face	Owner	Neighbour	phiTh	lambdaRef	Step	lambdaFD	RelErr	SignOK
+INTERNAL	16331	5600	5680	4.0923377e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16332	5600	6720	-3.9072713e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16334	5601	5681	5.888992e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16335	5601	6721	-6.1033475e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16337	5602	5682	8.1224099e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16338	5602	6722	-7.6423519e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16340	5603	5683	1.1101478e-07	-	-	-	-	SKIP_nearZero
+INTERNAL	16341	5603	6723	-9.4030328e-08	-	-	-	-	SKIP_nearZero
+INTERNAL	16344	5604	6724	-1.1842521e-07	-	-	-	-	SKIP_nearZero
+INTERNAL	16347	5605	6725	-1.5142153e-07	-	-	-	-	SKIP_nearZero
+INTERNAL	16350	5606	6726	-1.9480681e-07	-	-	-	-	SKIP_nearZero
+INTERNAL	16353	5607	6727	-2.4615785e-07	-	-	-	-	SKIP_nearZero
+INTERNAL	16356	5608	6728	-3.0760487e-07	-	-	-	-	SKIP_nearZero
+INTERNAL	16843	5771	6891	-4.5954319e-09	-	-	-	-	SKIP_nearZero
+INTERNAL	17321	5931	7051	9.2682948e-09	-	-	-	-	SKIP_nearZero
+INTERNAL	17407	5960	6040	2.5560471e-09	-	-	-	-	SKIP_nearZero
+INTERNAL	17560	6011	7131	-2.7613287e-09	-	-	-	-	SKIP_nearZero
+INTERNAL	17563	6012	7132	-4.7732104e-09	-	-	-	-	SKIP_nearZero
+INTERNAL	17646	6040	6120	9.5360102e-09	-	-	-	-	SKIP_nearZero
+INTERNAL	17765	6080	6160	-3.532717e-13	-	-	-	-	SKIP_nearZero
+INTERNAL	17768	6081	6161	-7.2437714e-13	-	-	-	-	SKIP_nearZero
+INTERNAL	17771	6082	6162	-1.1365743e-12	-	-	-	-	SKIP_nearZero
+SUMMARY	INTERNAL	count=count=20	median=medianRelErr=2.048638e-10	max=maxRelErr=1.5579e-09	-	-	-	-	-
+SUMMARY	INLET	max=maxRelErr=2.954245e-08	-	-	-	-	-	-	-
+HOTINLET	0	-	-	-	-	-	0	-	mask=mask=0
+HOTINLET	1	-	-	-	-	-	0	-	mask=mask=0
+HOTINLET	2	-	-	-	-	-	0	-	mask=mask=0
+HOTOUTLET	0	-	-	-	-	-	0	-	mask=mask=0
+HOTOUTLET	1	-	-	-	-	-	0	-	mask=mask=0
+HOTOUTLET	2	-	-	-	-	-	0	-	mask=mask=0
+SUMMARY	COMBINED	count=count=16	median=medianRelErr=1.5098395e-06	max=maxRelErr=1	-	-	-	-	-

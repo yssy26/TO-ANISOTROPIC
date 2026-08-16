@@ -1,0 +1,15 @@
+loading direction + FD vectors ...
+loaded in 0.1s
+scatter matvec over 13210746 nnz in 18.6s
+
+--- B-F2 partial cross-check (direction dUdir = sin(0.271*(celli+1)), single hU) ---
+momentum rows:   J*v  vs frozen-phi FD (ruDudU): relL2=1.653123e-04 cos=0.999999986 |ref|L2=1.477043e+00 |Jv|L2=1.477036e+00 maxAbsDiff=1.428557e-05 @idx=18693
+continuity rows: J*v  vs rebuilt-phi FD (rpDudU_rebuilt): relL2=8.240837e-01 cos=0.695444677 |ref|L2=3.268841e-06 |Jv|L2=3.592053e-06 maxAbsDiff=3.527257e-07 @idx=10079
+continuity rows: J*v  vs J matrix-free P-row (Jdq_P_forward): relL2=1.239622e-15 cos=1.000000000 |ref|L2=3.592053e-06 |Jv|L2=3.592053e-06 maxAbsDiff=2.994394e-22 @idx=10440
+
+--- continuity P-row, pRef row excluded ---
+continuity rows: J*v  vs rebuilt-phi FD (excl pRef): relL2=8.240837e-01 cos=0.695444677 |ref|L2=3.268841e-06 |Jv|L2=3.592053e-06 maxAbsDiff=3.527257e-07 @idx=10079
+
+|Jv_U|L2=1.477036e+00  |ruDudU|L2=1.477043e+00  |Jv_P|L2=3.592053e-06  |rpDudU_rebuilt|L2=3.268841e-06  |Jdq_P_forward|L2=3.592053e-06
+dUdir max|.|=9.999883e-01
+total wall 18.8s

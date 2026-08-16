@@ -1,0 +1,80 @@
+{
+  "stage": "B2/B3",
+  "commit": "f3c4aa25e4ae46b4bed80143cc1ef81ab6c7c68f",
+  "branch": "agent/stage-a-anisotropic-validation",
+  "case": "/home/ys/b2_case",
+  "config": {
+    "stageBEnabled": false,
+    "stageB2Enabled": true,
+    "mmaUpdateEnabled": false,
+    "gradientValidated": false,
+    "freezeColdFlowForValidation": false,
+    "solveFlowAdjoints": true,
+    "freezeTurbulenceForValidation": true,
+    "pressureGradientScale": 1.0,
+    "objectiveGradientScale": 1.0,
+    "flowModel": "incompressibleRANSFrozen",
+    "adjointMode": "discrete",
+    "pressureSolver": "PCG+DIC",
+    "serial": true
+  },
+  "baseline": {
+    "J": -1.167356909288929,
+    "PressureDropPa": 48336.29491165639,
+    "gDP": 0.9334517964662556,
+    "gV": -7.932936196830553e-09
+  },
+  "adjointProjections": {
+    "J": {
+      "D1": -0.03635965972378629,
+      "D2": -0.01958526990321687,
+      "D3": -0.01907445843212483
+    },
+    "gDP": {
+      "D1": -5.456523622683569,
+      "D2": 1.178763352362489,
+      "D3": 14.05218865023693
+    },
+    "gV": {
+      "D1": 0.1555186511144686,
+      "D2": -0.08449667741658891,
+      "D3": 0.06396237684432686
+    }
+  },
+  "bestRel": {
+    "J": 0.8062425263109244,
+    "gDP": 0.5348828009122368,
+    "gV": 1.33555281498858e-07
+  },
+  "signOK": {
+    "J": false,
+    "gDP": true,
+    "gV": true
+  },
+  "pass": {
+    "J_5pct": false,
+    "gDP_10pct": false,
+    "gV_1e-6": true
+  },
+  "plateauOK": true,
+  "status": "FAIL",
+  "pressureIdentity": {
+    "lhs": -2.537922984138796,
+    "rhs": -2.537922984138796,
+    "relDiff": 2.4672371455e-14
+  },
+  "diagnostics": {
+    "J_D1_sign_flip": true,
+    "J_adj_amplification": {
+      "D1": "sign flip",
+      "D2": 5.17,
+      "D3": -20
+    },
+    "gDP_adj_factor": {
+      "D1": 2.15,
+      "D2": 2.33,
+      "D3": 2.17
+    },
+    "volume_chain_OK": true
+  }
+}

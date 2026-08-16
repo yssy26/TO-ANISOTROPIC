@@ -1,0 +1,182 @@
+{
+  "stage": "B1",
+  "commit": "f3c4aa25e4ae46b4bed80143cc1ef81ab6c7c68f",
+  "branch": "agent/stage-a-anisotropic-validation",
+  "case": "/home/ys/b1_case",
+  "config": {
+    "stageBEnabled": true,
+    "mmaUpdateEnabled": false,
+    "gradientValidated": false,
+    "directionOnlyOptimizationApproved": false,
+    "flowModel": "incompressibleRANSFrozen",
+    "frozenTurbulenceAdjoint": true,
+    "freezeTurbulenceForValidation": true,
+    "freezeColdFlowForValidation": false,
+    "solveFlowAdjoints": true,
+    "adjointMode": "discrete",
+    "objectiveGradientScale": 1.0,
+    "pressureGradientScale": 1.0,
+    "serial": true,
+    "FOAM_SIGFPE": "unset for diagnostics"
+  },
+  "baseline": {
+    "J": -1.167356909288929,
+    "PressureDropPa": 48336.29491165639,
+    "gDP": 0.9334517964662556,
+    "gV": -7.932936196830553e-09
+  },
+  "fullSST": {
+    "converged": true,
+    "iterations": null
+  },
+  "testA": {
+    "count": 5,
+    "J_range": 0.0,
+    "J_relRange": 0.0,
+    "gDP_range": 0.0,
+    "gDP_relRange": 0.0,
+    "gV_absRange": 0.0,
+    "gradField_maxRelL2": 0.0,
+    "gradField_maxRelLinf": 0.0,
+    "gradField_minCos": 1.0,
+    "projections": {
+      "D1": [
+        -0.03689777800841193,
+        -0.03689777800841193,
+        -0.03689777800841193,
+        -0.03689777800841193,
+        -0.03689777800841193
+      ],
+      "D2": [
+        -0.02001873231572951,
+        -0.02001873231572951,
+        -0.02001873231572951,
+        -0.02001873231572951,
+        -0.02001873231572951
+      ],
+      "D3": [
+        -0.0194025111188949,
+        -0.0194025111188949,
+        -0.0194025111188949,
+        -0.0194025111188949,
+        -0.0194025111188949
+      ],
+      "DP1": [
+        -5.463965069507252,
+        -5.463965069507252,
+        -5.463965069507252,
+        -5.463965069507252,
+        -5.463965069507252
+      ],
+      "V1": [
+        0.1555186511144686,
+        0.1555186511144686,
+        0.1555186511144686,
+        0.1555186511144686,
+        0.1555186511144686
+      ]
+    },
+    "signOK": true,
+    "iterations": [
+      -1,
+      -1,
+      -1,
+      -1,
+      -1
+    ],
+    "tbRes": [
+      6.533439739873715e-13,
+      6.814812332968239e-13,
+      6.814812332968239e-13,
+      6.814812332968239e-13,
+      6.814812332968239e-13
+    ],
+    "ubRes": [
+      9.97406360452213e-09,
+      9.97406360452213e-09,
+      9.97406360452213e-09,
+      9.97406360452213e-09,
+      9.97406360452213e-09
+    ]
+  },
+  "testB": {
+    "count": 3,
+    "J_relBaseMax": 3.430531132445277e-15,
+    "gDP_relBaseMax": 1.6436768569438262e-14,
+    "gradField_maxRelL2": 0.0,
+    "gradField_maxRelLinf": 0.0,
+    "gradField_minCos": 1.0,
+    "iterations": [
+      -1,
+      -1,
+      -1
+    ]
+  },
+  "drift": {
+    "nutFrozen": {
+      "maxAbs": 0.0,
+      "maxRel": 0.0,
+      "L2rel": 0.0
+    },
+    "nuEffFrozen": {
+      "maxAbs": 0.0,
+      "maxRel": 0.0,
+      "L2rel": 0.0
+    },
+    "alphaTurbulent": {
+      "maxAbs": 0.0,
+      "maxRel": 0.0,
+      "L2rel": 0.0
+    },
+    "k": {
+      "maxAbs": 0.0,
+      "maxRel": 0.0,
+      "L2rel": 0.0
+    },
+    "omega": {
+      "maxAbs": 0.0,
+      "maxRel": 0.0,
+      "L2rel": 0.0
+    },
+    "nut": {
+      "maxAbs": 0.0,
+      "maxRel": 0.0,
+      "L2rel": 0.0
+    }
+  },
+  "drift_maxRel": 0.0,
+  "snr": {
+    "h": 0.001,
+    "signalJ": 8.343631888485525e-05,
+    "noiseJ": 0.0,
+    "SNR_J": 8.343631888485524e+25,
+    "signalDP": 126.8961492069429,
+    "noiseDP": 0.0,
+    "SNR_DP": 1.268961492069429e+32,
+    "Jplus": "-1.165027241615661",
+    "Jminus": "-1.165110677934546"
+  },
+  "criteria": {
+    "A_J_relRange_le_1e-8": true,
+    "A_gDP_relRange_le_1e-7": true,
+    "A_gV_absRange_le_1e-13": true,
+    "A_dfdx_relL2_le_1e-5": true,
+    "A_dgdx0_relL2_le_1e-10": true,
+    "A_dgdx1_relL2_le_1e-4": true,
+    "A_proj_sign_consistent": true,
+    "B_J_relBase_le_1e-7": true,
+    "B_gDP_relBase_le_1e-6": true,
+    "B_dfdx_relL2_le_1e-4": true,
+    "B_dgdx0_relL2_le_1e-10": true,
+    "B_dgdx1_relL2_le_1e-3": true,
+    "B_proj_sign_consistent": true,
+    "drift_maxRel_le_1e-13": true,
+    "SNR_J_ge_100": true,
+    "SNR_DP_ge_20": true
+  },
+  "allCriteriaPass": true,
+  "status": "PASS",
+  "recommendedFDSteps": "h=1e-3 SNR dominated (SNR_J/SNR_DP >> 100/20); minimum usable FD step for objective: h >= max(1e-5, noiseJ/|dJ/dx|) - see report",
+  "readyForNext": true,
+  "gradientValidated": false
+}

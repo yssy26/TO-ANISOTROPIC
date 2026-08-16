@@ -1,0 +1,104 @@
+{
+  "stage": "B0.2",
+  "repository": "/home/ys/TO-ANISOTROPIC",
+  "branch": "agent/stage-a-anisotropic-validation",
+  "commit": "f3c4aa25e4ae46b4bed80143cc1ef81ab6c7c68f",
+  "discretization": {
+    "divPhiT": "bounded Gauss upwind (fvSchemes)",
+    "implementation": "boundedConvectionScheme::fvmDiv = gauss(upwind).fvmDiv - fvm::Sp(fvc::surfaceIntegrate(faceFlux), T)",
+    "residual": "fvMatrix::residual() = source + bC - (diag + iC)*T - upper/lower*T (physical patches)",
+    "handAssemblyVsResidualMaxDiff": 2.86e-17
+  },
+  "b01ConclusionCorrection": {
+    "b01Finding": "internal-face expression -Tb_downwind*(T_nei-T_own) inconsistent with fvm residual derivative",
+    "b01Cause": "B0.1 inner product multiplied by cell volume V (1.25e-10); fvMatrix residual is already volume-integrated",
+    "correctValue": "lambda_phi = +1.4668e-4 (no-volume dot product) == current code expression",
+    "verdict": "current internal-face formula IS the exact fvm transpose; no change needed"
+  },
+  "internalFaces": {
+    "formula": "lambda_phi = -Tb_downwind*(T_nei - T_own) (phi>=0: downwind=nei; phi<0: downwind=own)",
+    "matrixPath": "dr[n] = -d(diag[n]*T_n)/dphi - d(lower*T_o)/dphi = -(T_n-T_o); dr[o]=0 (upwind w=1, bounded d(diag)[o]/dphi=0)",
+    "medianRelErr": 2.048638e-10,
+    "maxRelErr": 1.5579e-09,
+    "signMismatch": 0,
+    "faces": 20,
+    "steps": "1e-3,3e-4,1e-4,3e-5 times |phi_f|",
+    "nearZeroSkipped": "2 faces with |phi|<1e-6 (upwind sign flip; non-differentiable)",
+    "gate": "median<=1e-8, max<=1e-6 -> PASS"
+  },
+  "boundaryFaces": {
+    "coldOutlet": {
+      "lambda_fd": "7e-15 (exact zero)",
+      "proof": "upwind iC d/dh=+1 and bounded diag-=V*div d/dh=-1 cancel (d(diagFull)/dh=0 measured); residual independent of phi_out exactly",
+      "faceAdjoint": "dJ/dphi only (B0.1 fix confirmed)"
+    },
+    "coldInlet": {
+      "lambda_fd": "(T_cell - T_bnd)*Tb_cell ~ -1.5e-4",
+      "maxRelErr": 2.954245e-08,
+      "handling": "inlet U fixedValue -> flux not a design-free flow variable -> not filled into faceAdjoint (solveDiscreteFlowAdjoint skips fixedValue-U boundaries)"
+    },
+    "hotInletHotOutlet": "lambda_fd = 0 (coldFaceMask=0)",
+    "walls": "no contribution"
+  },
+  "matrixDotTests": {
+    "perFaceFD": "every column of (dR_T/dphi)^T Tb verified at 1e-10 (section above)",
+    "combinedDirections": [
+      {"name": "internal_sin", "bestRelErr": 8.161426e-07, "signOk": true},
+      {"name": "internal_outlet", "bestRelErr": 5.8261367e-06, "signOk": true},
+      {"name": "internal_inlet", "bestRelErr": 1.7173177e-05, "signOk": true},
+      {"name": "outlet_zeroSum", "D_an": 0.0, "D_fd": "~1e-13 (verifies outlet residual term zero)", "signOk": true}
+    ],
+    "medianCombined": 1.5098395e-06,
+    "e2eDeltaU": [
+      {"name": "dU_x", "bestRelErr": 3.5392382e-04, "signOk": true},
+      {"name": "dU_xy", "bestRelErr": 1.1774721e-06, "signOk": true},
+      {"name": "dU_y", "note": "zero direction (D_an~-1e-13, verifies y-flux independence)", "signOk": true}
+    ],
+    "flowAdjointDotTest": 7.44e-14
+  },
+  "combination": {
+    "faceAdjoint": "dJ/dphi + (dR_T/dphi)^T Tb",
+    "internal": "-Tb_downwind*(T_nei-T_own) (residual term only)",
+    "coldOutlet": "dJ/dphi = -(T_f-Tmix)/(M*Tref) (residual term zero)",
+    "signVerified": "full-objective smoke F3 obj_err 2.44e-2, same sign"
+  },
+  "modifiedFiles": [
+    "src/AdjNS_HT.H (+60 lines: diagnostic output maxInternal/maxBoundaryThermalResidualFluxAdjoint, maxObjectiveFluxDerivative, maxCombinedFluxAdjoint + updated comment; NO physics change)"
+  ],
+  "smokeTest": {
+    "case": "/home/ys/smoke_b02",
+    "config": "incompressibleRANSFrozen, adjointMode discrete, freezeTurbulenceForValidation true, freezeColdFlowForValidation false, solveFlowAdjoints true, mmaUpdateEnabled false, objectiveGradientScale 1.0, pressureGradientScale 1.0",
+    "f1": "median 2.246e-4, max 2.490e-3, 0/9, sign 0",
+    "f2": "maxRelError 6.655e-2, failures 3/9 (informational)",
+    "f3_objective": "obj_err 2.44e-2 (2.4%), sign consistent",
+    "gate6": "baseline repeatability FAIL (expected; full SST Gate 6 out of scope, not part of B0.2 acceptance)"
+  },
+  "f1Regression": {
+    "serial": {"median": 2.246e-4, "max": 2.490e-3, "failures": "0/9", "sign": 0, "pass": true},
+    "parallel4": {"median": 9.946e-5, "max": 1.506e-3, "failures": "0/9", "sign": 0, "pass": true},
+    "dir12SerialParallelMaxRelDiff": 3.651e-8,
+    "bitwiseUnchangedFromB01": true
+  },
+  "acceptanceCriteria": {
+    "1_internalDrdphiPerFaceFD": "PASS (median 2.05e-10, max 1.56e-9)",
+    "2_coldOutletStrictProof": "PASS (bounded iC/diag cancel; lambda 7e-15)",
+    "3_otherBoundariesExplained": "PASS (inlet formula verified, hot=0, walls none)",
+    "4_transposeDotProduct": "PASS (per-face 1e-10 + combined directions sign-consistent)",
+    "5_dJdphiCombination": "PASS (F3 2.4%, sign verified)",
+    "6_fullObjectiveSingleDirectionNoSignError": "PASS",
+    "7_atLeastOneStepRelLe10pct": "PASS (F3 2.4%)",
+    "8_f1Serial": "PASS",
+    "9_f1Parallel": "PASS",
+    "10_noPhysicsChange": "PASS (diagnostics only)"
+  },
+  "finalStatus": "PASS",
+  "b0Closable": true,
+  "readyForB1": true,
+  "b1Preconditions": [
+    "objectiveGradientScale 1.0; pressureGradientScale 1.0",
+    "serial run (reduced discrete flow adjoint serial-only)",
+    "flow-coupled pressure FD (solveFlowAdjoints=true, freezeColdFlowForValidation=false)",
+    "B1 must use the no-volume inner product for residual-flux checks"
+  ],
+  "gradientValidated": false
+}

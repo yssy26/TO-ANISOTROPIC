@@ -1,0 +1,105 @@
+{
+  "stage": "B0.1",
+  "repository": "/home/ys/TO-ANISOTROPIC",
+  "branch": "agent/stage-a-anisotropic-validation",
+  "commit": "f3c4aa25e4ae46b4bed80143cc1ef81ab6c7c68f",
+  "workingTreeModifiedByB0_1": true,
+  "modifiedFiles": [
+    "src/createFrozenHotRegionFields.H",
+    "src/computeObjective.H",
+    "src/AdjNS_HT.H"
+  ],
+  "objective": {
+    "definition": "J = -sum_f(phi_f*T_f)/(sum_f(phi_f)*Tref) = -Tmix/Tref",
+    "dJdT": "dJ/dT_f = -phi_f/(M*Tref) - IMPLEMENTED (computeObjective.H:26-56); algebraic FD max rel err 9.54e-09 PASS",
+    "dJdphi": "dJ/dphi_f = -(T_f - Tmix)/(M*Tref) - was MISSING, NOW IMPLEMENTED (computeObjective.H + AdjNS_HT.H outlet boundary)",
+    "dJdphiFDPass": true,
+    "dJdphiMedianRelErr": 1.653e-11,
+    "dJdphiMaxRelErr": 2.881e-09,
+    "dJdphiSignMismatch": 0
+  },
+  "thermalResidualFluxDerivative": {
+    "method": "fvMatrix::residual() re-assembly (exact solver semantics), single-face and multi-face FD on frozen gate4 state",
+    "internalFaces": "<Tb, dR_T/dphi_f> ~ 1.8e-14 (dr has zero-sum T-difference structure; numerically negligible)",
+    "outletBoundary": "dr vector identically zero -> dR_T/dphi_out = 0 exactly under fvm discretization; code's zero value is CORRECT",
+    "inletBoundary": "<Tb, dR_T/dphi_f> ~ -2e-14 (negligible; inlet flux design-fixed)",
+    "codeInternalTerm": "-Tb_downwind*(T_nei - T_own) ~ 1.5e-4 does NOT equal exact fvm derivative (1.8e-14); pre-existing inaccuracy, inactive in all Stage A/B tests (solveFlowAdjoints=false), listed as B1 precondition"
+  },
+  "decision": "Case B: dJ/dphi missing (fixed); outlet thermal-residual boundary term is exactly zero (nothing missing); internal-face term is a pre-existing separate inaccuracy (finding, not fixed)",
+  "minimalCorrection": {
+    "files": [
+      "createFrozenHotRegionFields.H: thermalObjectiveFluxDerivative surfaceScalarField declaration",
+      "computeObjective.H: fill cold outlet boundary with -(T_f - Tmix)/(M*Tref) each outer iteration",
+      "AdjNS_HT.H: add thermalObjectiveFluxDerivative to discreteExternalFaceFluxAdjoint cold outlet boundary"
+    ],
+    "noObjectiveChange": true,
+    "noConstraintChange": true,
+    "noAdjointEquationChange": true,
+    "noGradientFormulaChange": true,
+    "noThresholdChange": true,
+    "noMMAChange": true,
+    "noScaleAdjustment": true
+  },
+  "combinedTphiFDPass": true,
+  "combinedTphi": {
+    "medianRelErr": 3.121e-11,
+    "maxRelErr_h_le_1e-4": 6.275e-10,
+    "note": "h=1e-3 point shows 2nd-order truncation (6.3e-8), h^2 convergence to 6.3e-10 at h=1e-4"
+  },
+  "f1Regression": {
+    "serial": {
+      "medianRelError": 0.0002246,
+      "maxRelError": 0.00249,
+      "failures": "0/9",
+      "signMismatch": 0,
+      "pass": true
+    },
+    "parallel4": {
+      "medianRelError": 9.946e-05,
+      "maxRelError": 0.001506,
+      "failures": "0/9",
+      "signMismatch": 0,
+      "pass": true
+    },
+    "dir12SerialParallelMaxRelDiff": 3.651e-08,
+    "dir12Tolerance": 1e-06,
+    "bitwiseUnchangedFromPrefix": true
+  },
+  "acceptanceCriteria": {
+    "1_dJdT": "PASS",
+    "2_dJdphi": "PASS",
+    "3_internalResidualFluxFD": "PASS (negligible 1.8e-14)",
+    "4_outletResidualFluxFD": "PASS (exactly zero)",
+    "5_combinedTphiFD": "PASS",
+    "6_objectiveFluxIntoFlowAdjointRHS": "PASS (code path + algebraic verification)",
+    "7_f1Serial": "PASS",
+    "8_f1Parallel": "PASS",
+    "9_noSignMismatch": "PASS",
+    "10_noScaleAdjustment": "PASS",
+    "11_objectiveUnchanged": "PASS",
+    "12_stateRestored": "PASS"
+  },
+  "issues": [
+    "FIXED: dJ/dphi was missing on the cold outlet boundary.",
+    "PRE-EXISTING: internal-face thermal-coupling term -Tb_downwind*(T_nei-T_own) does not equal the exact fvm residual derivative; inactive in all Stage A/B validation cases; re-derive before Stage B1 activates the discrete flow adjoint.",
+    "INFO: use fvMatrix::residual() for residual-flux derivative checks; fvc::div gives the fvc-explicit phi-derivative, not the transposed-solver operator.",
+    "INFO: gate4 1/Tb does not satisfy A0^T Tb = g because the frozen-cold-flow branch wrote it with solveFlowAdjoints=false; conclusions are Tb-independent."
+  ],
+  "finalStatus": "PASS",
+  "b0Closable": true,
+  "readyForB1": true,
+  "b1Preconditions": [
+    "objectiveGradientScale 1.0; pressureGradientScale 1.0",
+    "serial run (discrete flow adjoint serial-only)",
+    "flow-coupled pressure FD (solveFlowAdjoints=true, freezeColdFlowForValidation=false)",
+    "re-derive internal-face -Tb_downwind*(T_nei-T_own) term to match exact fvm residual derivatives"
+  ],
+  "gradientValidated": false,
+  "b02Correction": {
+    "supersedes": "B0.1 claim that internal-face -Tb_downwind*(T_nei-T_own) is inconsistent with the fvm residual derivative",
+    "cause": "B0.1 test multiplied the inner product by cell volume; fvMatrix residual is already volume-integrated",
+    "correctConclusion": "current internal-face expression IS the exact fvm transpose (no-volume dot product); no source change needed",
+    "outletBoundary": "dR_T/dphi_out = 0 exactly (bounded iC/diag cancel); B0.1 dJ/dphi outlet fix confirmed",
+    "see": "STAGE_B_B0_2_THERMAL_FLOW_TRANSPOSE_REPORT.md"
+  }
+}

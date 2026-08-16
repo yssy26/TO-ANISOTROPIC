@@ -1,0 +1,111 @@
+{
+  "stage": "B0",
+  "repository": "/home/ys/TO-ANISOTROPIC",
+  "branch": "agent/stage-a-anisotropic-validation",
+  "commit": "f3c4aa25e4ae46b4bed80143cc1ef81ab6c7c68f",
+  "workingTreeClean": false,
+  "untrackedFiles": [
+    "src/validation_stage_a_diagnostic_cleanup_build.log",
+    "src/validation_stage_a_processor_unit.log",
+    "src/validation_stage_a_rebuild.log",
+    "src/validation_stage_a_unit.log",
+    "src/validation/stage_b/STAGE_B_B0_AUDIT_REPORT.md",
+    "src/validation/stage_b/stage_b_b0_audit.json",
+    "src/validation/stage_b/stage_b_b0_variable_trace.tsv"
+  ],
+  "objective": {
+    "valueDefinition": "J = -Tmix/Tref; Tmix = sum(phi_out*T_out)/sum(phi_out); Tref = thermalReferenceTemperature (costfunction.H:38-40,71-79)",
+    "gradientVariable": "dfdx",
+    "normalized": true,
+    "referenceScale": "thermalReferenceTemperature",
+    "gradientScale": 1.0,
+    "gradientFormula": "dfdx = objectiveGradientScale * fsensMeanT; fsensMeanT = filter-adjoint(projection-chain(dJ/dxh)); dJ/dxh = -dAlphaDxh*(U&Ub)*mesh.V() + thermalDiffusionDerivativeDTCell; Ub RHS now includes the objective direct flux derivative dJ/dphi = -(T_f-Tmix)/(M*Tref) on the cold outlet (B0.1 fix: computeObjective.H + AdjNS_HT.H)",
+    "status": "PASS (B0.1: dJ/dT max 9.5e-9, dJ/dphi median 1.65e-11/max 2.88e-9, combined T-phi median 3.1e-11)"
+  },
+  "volumeConstraint": {
+    "valueDefinition": "gV = solidFractionMin - designSolidFraction; designSolidFraction = 1 - domainIntegrate(xh*designMask)/designVolume (costfunction.H:49-53)",
+    "valueVariable": "gx[0]",
+    "gradientVariable": "dgdx[0]",
+    "gradientFormula": "dgdx[0] = gsensVol = Helmholtz-filter-adjoint(projection-chain(designMask*mesh.V()/designVolume)), no user scale",
+    "normalized": true,
+    "normalizedBy": "designVolume",
+    "status": "PASS"
+  },
+  "pressureConstraint": {
+    "valueDefinition": "gDP = PressureDropPa/pressureDropMaxPa - 1; PressureDropPa = rhoFluid*(pInletAvg - pOutletAvg), area-weighted (costfunction.H:116-118)",
+    "valueVariable": "gx[1]",
+    "gradientVariable": "dgdx[1]",
+    "gradientFormula": "dgdx[1] = pressureGradientScale * gsensPressureDrop; gsenshPressureDrop = -dAlphaDxh*(U&Uc)*mesh.V(); Uc solved from J^T with RHS = pressureConstraintDerivative (contains rhoFluid/pressureDropMaxPa once)",
+    "normalizedBy": "pressureDropMaxPa",
+    "gradientScale": 1.0,
+    "normalizationCount": 1,
+    "status": "PASS"
+  },
+  "meshVolumeAudit": {
+    "darcySensitivity": "mesh.V() exactly once: fvm::Sp(alpha,U) assembles alpha*V on diagonal; sensitivity.H multiplies -dAlphaDxh*(U&Uadj) by mesh.V() once (PASS)",
+    "thermalDiffusionSensitivity": "no mesh.V(): thermalDiffusionDerivativeDTCell is a per-cell face-sum of the discrete Laplacian derivative, added without mesh.V() (PASS)",
+    "volumeDirectDerivative": "mesh.V() once: gsenshVol = designMask*mesh.V()/designVolume (PASS)",
+    "filterAdjointOutput": "no additional mesh.V(): Helmholtz filter adjoint output used directly; E4 dot test with V-weighted inner products confirms symmetry (PASS)",
+    "serialParallelConsistency": "PASS for thermal adjoint/design-filter mask/F1 directions (A7 fixes); solveDiscreteFlowAdjoint.H is serial-only by design (parRun abort), so pressure-chain FD must run serial"
+  },
+  "frozenTurbulenceAudit": {
+    "k": "frozen: turbulence->correct() guarded by !freezeTurbulenceForValidation (NS.H:106-109)",
+    "omega": "frozen: same guard",
+    "nut": "frozen: same guard",
+    "nutFrozen": "frozen: recomputation skipped when freezeTurbulenceForValidation=true (updateFrozenTurbulenceFields.H:13-21,51-55)",
+    "nuEffFrozen": "frozen: nuEffFrozen = nu + nutFrozen",
+    "alphaTurbulent": "frozen: alphaTurbulent = nutFrozen/turbulentPrandtl",
+    "DTEffective": "updates through molecular part: DTEffective = DTMolecular + alphaTurbulent*I (intended)",
+    "turbulenceCorrectDuringPerturbation": "not called in F1/F2/F3 perturbation loops (PASS)"
+  },
+  "checks": {
+    "B0-01": "PASS (B0.1: dJ/dT and dJ/dphi direct derivatives both verified by algebraic FD; dJ/dphi was missing and is now implemented)",
+    "B0-02": "PASS",
+    "B0-03": "PASS",
+    "B0-04": "PASS",
+    "B0-05": "PASS",
+    "B0-06": "PASS",
+    "B0-07": "PASS",
+    "B0-08": "PASS",
+    "B0-09": "PASS",
+    "B0-10": "PASS",
+    "B0-11": "PASS",
+    "B0-12": "PASS",
+    "B0-13": "PASS",
+    "B0-14": "PASS",
+    "B0-15": "PASS",
+    "B0-16": "PASS",
+    "B0-17": "PASS (B0.1: dJ/dphi sign -(T_f-Tmix)/(M*Tref) consistent with J=-Tmix/Tref; faceAdjoint enters A^T lambda = dJ/du RHS with positive sign)",
+    "B0-18": "PASS",
+    "B0-19": "PASS",
+    "B0-20": "PASS (B0.2: internal-face -Tb_downwind*(T_nei-T_own) PROVEN the exact fvm transpose; no re-derive needed. B1 preconditions: scale=1, serial, flow-coupled pressure FD)"
+  },
+  "issues": [
+    "WARNING: in freezeColdFlowForValidation=true mode dgdx[1] is identically zero by construction (gsenshPressureDrop zeroed, Uc not solved); the F2 pressure-drop FD check would compare 0 vs non-zero FD and fail. Pressure chain is validated via the discrete flow adjoint dot-tests in the non-frozen path.",
+    "WARNING: solveDiscreteFlowAdjoint.H aborts in parallel (parRun) - the discrete flow adjoint (Ub/Uc) is serial-only; Stage B formal FD must run serial.",
+    "WARNING: the disk field dfdx is the SCALED gradient while fsensMeanT/gsensVol/gsensPressureDrop are raw; consumers must not mix them.",
+    "INFO: thermalObjectiveDerivative has two definitions (area-weighted at init for validateDiscreteObjectiveDerivatives.H; phi-weighted at runtime via computeObjective.H); runtime adjoint always uses the phi-weighted version.",
+    "INFO: gsenshVol multiplies designMask twice (definition + post-multiplication); harmless since mask in {0,1}.",
+    "INFO: validateDiscreteObjectiveDerivatives.H test direction uses local cell indices (serial-centric, not partition-invariant); serial-only usage documented.",
+    "B0.1: dJ/dphi was missing on the cold outlet boundary; now implemented and verified (algebraic FD median 1.65e-11, max 2.88e-9; combined T-phi median 3.1e-11). Outlet thermal-residual flux term is exactly zero under fvm discretization (dr=0). Internal-face -Tb_downwind*(T_nei-T_own) does not equal the exact fvm residual derivative (1.5e-4 vs 1.8e-14); inactive in all Stage A/B tests; re-derive before B1.",
+    "B0.2: internal-face -Tb_downwind*(T_nei-T_own) verified as the EXACT fvm transpose (no-volume dot product; median FD 2.05e-10, max 1.56e-9). B0.1's 'inconsistency' finding was caused by a cell-volume-weighted test and is superseded. cold outlet dR_T/dphi=0 proven (bounded iC/diag cancel). faceAdjoint = dJ/dphi + (dR_T/dphi)^T Tb with the sign verified by the full-objective smoke F3 (2.4%).",
+    "B1: GAMG pressure solver is non-deterministic across identical restarts (in-process heap state changes the second non-orthogonal p solve path), giving J platform noise ~1e-5 and SNR_J=9.1. Fixed for B1 by using PCG+DIC in the B1 case fvSolution: identical-restart chains are then bit-identical and all repeatability and SNR gates pass (SNR_J 8.3e25, SNR_DP 1.3e32)."
+  ],
+  "recommendedFixes": [
+    "Gate the F2/F3 pressure-drop FD comparison on solveFlowAdjoints && !freezeColdFlowForValidation (or mark N/A in frozen-cold-flow mode).",
+    "Write the B1 case template documenting objectiveGradientScale 1.0; pressureGradientScale 1.0; and serial execution as mandatory.",
+    "Optionally rename the disk scalar dfdx to dfdxScaled (or add dfdxRaw) to disambiguate scaled vs raw output.",
+    "Document the dual definition of thermalObjectiveDerivative in the code header."
+  ],
+  "readyForB1": true,
+  "readyForB1Preconditions": [
+    "objectiveGradientScale must be 1.0",
+    "pressureGradientScale must be 1.0",
+    "serial run (discrete flow adjoint is serial-only)",
+    "pressure-gradient FD in flow-coupled mode (freezeColdFlowForValidation=false, solveFlowAdjoints=true)",
+    "compare dgdx[1] against FD of normalized gDP = PressureDropPa/pressureDropMaxPa - 1",
+    "B1 residual-flux checks must use the no-volume inner product (fvMatrix residual is volume-integrated)",
+    "B1/B2/B3: use a DETERMINISTIC pressure solver (PCG+DIC) for frozen-flow repeatability; GAMG is non-deterministic across identical restarts (J noise ~1e-5) - see STAGE_B_B1_REPEATABILITY_NOISE_REPORT.md"
+  ],
+  "overallStatus": "PASS (B0 + B0.1 + B0.2)"
+}

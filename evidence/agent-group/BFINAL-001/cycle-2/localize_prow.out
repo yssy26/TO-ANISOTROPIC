@@ -1,0 +1,17 @@
+nFaces=104740 nInternal=96860 nCells=33600
+boundary cells: 7392
+
+P-row J*v vs NS.H rebuilt-phi FD (stageB2_rpDudU_rebuilt):
+  ALL cells: relL2=8.240837e-01 cos=0.695444677 |a|L2=3.592053e-06 |b|L2=3.268841e-06
+  internal cells only: relL2=1.090701e-07 cos=1.000000000 |a|L2=2.650394e-06 |b|L2=2.650394e-06
+  boundary cells only: relL2=1.407930e+00 cos=0.246014468 |a|L2=2.424511e-06 |b|L2=1.913305e-06
+
+P-row J*v vs J matrix-free P-row (Jdq_P_forward):
+  ALL cells: relL2=1.239622e-15 cos=1.000000000 |a|L2=3.592053e-06 |b|L2=3.592053e-06
+
+face-level dphi/dU (internal faces):
+  J-collected vs GateOracle-FD (same conv): relL2=9.003456e-10 cos=1.000000000 |a|L2=1.270430e-05 |b|L2=1.270430e-05
+  J-collected vs NS.H-rebuilt face dphi: relL2=4.717604e-08 cos=1.000000000 |a|L2=1.270430e-05 |b|L2=1.270430e-05
+  GateOracle-FD vs NS.H-rebuilt face dphi: relL2=4.717257e-08 cos=1.000000000 |a|L2=1.270430e-05 |b|L2=1.270430e-05
+
+|diff|L2 ALL=2.693799e-06  internal=2.890788e-13  boundary=2.693799e-06
