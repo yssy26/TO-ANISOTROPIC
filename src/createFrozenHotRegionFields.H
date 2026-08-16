@@ -2,7 +2,6 @@ Info<< "Reading optional frozen-hot-region configuration\n" << endl;
 
 Switch frozenHotRegionEnabled(false);
 Switch strictFrozenHotValidation(true);
-Switch mmaUpdateEnabled(true);
 word hotZoneName("hotFluidZone");
 word wallZoneName("separatorWallZone");
 word hotVelocityFieldName("UHotFrozen");
@@ -321,7 +320,23 @@ forAll(designFilterInternal, facei)
 
 forAll(designFilterFaceMask.boundaryField(), patchi)
 {
-    designFilterFaceMask.boundaryFieldRef()[patchi] = 0.0;
+    if (mesh.boundary()[patchi].coupled())
+    {
+        // Processor/cyclic faces are interior faces between design cells:
+        // the filter mask must equal designMask[own]*designMask[nei] exactly
+        // as for internal faces, so the parallel filter operator is identical
+        // to the serial one.  Zeroing these patch values decoupled the
+        // subdomains in parallel (Stage-A A7 defect: fsensMeanT/dfdx
+        // differed from serial at processor-adjacent cells).
+        designFilterFaceMask.boundaryFieldRef()[patchi] =
+            designMask.boundaryField()[patchi].patchInternalField()
+           *designMask.boundaryField()[patchi].patchNeighbourField();
+    }
+    else
+    {
+        // Physical boundaries: no filter flux leaves the domain.
+        designFilterFaceMask.boundaryFieldRef()[patchi] = 0.0;
+    }
 }
 
 surfaceScalarField hotFaceMask
@@ -565,6 +580,27 @@ if (frozenHotRegionEnabled)
 
 scalarField thermalObjectiveDerivative(mesh.nCells(), 0.0);
 scalarField pressureConstraintDerivative(mesh.nCells(), 0.0);
+
+// Objective direct flux derivative dJ/dphi on the cold outlet boundary.
+// J = -sum(phi_out*T_out)/(sum(phi_out)*Tref)  (mass-flow-weighted mixed
+// outlet temperature, minimization form) therefore
+//   dJ/dT_f    = -phi_f/(M*Tref)
+//   dJ/dphi_f  = -(T_f - Tmix)/(M*Tref),  Tmix = N/M
+// Filled per outer iteration in computeObjective.H; zero elsewhere.
+surfaceScalarField thermalObjectiveFluxDerivative
+(
+    IOobject
+    (
+        "thermalObjectiveFluxDerivative",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("zeroThermalObjFluxDeriv", dimless, 0.0),
+    calculatedFvPatchScalarField::typeName
+);
 
 if (thermalObjectiveType == "maximizeColdOutletTemperature")
 {

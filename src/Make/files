@@ -1,3 +1,4 @@
+harmonicSymmTensor.C
 
 adjointOutletPressureHeat/adjointOutletPressureHeatFvPatchScalarField.C
 adjointOutletVelocityHeat/adjointOutletVelocityHeatFvPatchVectorField.C

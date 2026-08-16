@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
     #include "validateFrozenHotCase.H"
     #include "initContinuityErrs.H"
     #include "opt_initialization.H"
+    #include "validateMmaUnlockGate.H"
 
     while (simple.loop(runTime))
     {
@@ -96,7 +97,7 @@ int main(int argc, char *argv[])
 
         // Phase J: Save optimizer state for restart.
         // Always save, even on finalSolvedIteration, so that the state is
-        // available for restart.  The saved state reflects the current
+        // available for restart. The saved state reflects the current
         // solved design (pre-MMA-update on finalSolvedIteration, post-MMA
         // on normal iterations).
         #include "saveOptimizerState.H"
@@ -104,8 +105,18 @@ int main(int argc, char *argv[])
         #include "validateCommon.H"
         #include "validateGradientChain.H"
         #include "validateFrozenGradient.H"
+        // Stage B1: frozen-turbulence repeatability & noise floor (serial,
+        // stageBEnabled-gated; restores all state on exit).
+        #include "validateStageBRepeatability.H"
+        // Stage B1.5/B2/B3: frozen-model gradient amplitude validation.
+        // A PASS authorizes setting frozenGradientValidated=true for a later
+        // production run; this validation never advances MMA itself.
+        #include "validateStageB2GradientAmplitude.H"
         #include "validateSSTDirection.H"
-        #include "validateGate6SST.H"
+        // Full-SST directional/magnitude consistency remains a higher-level
+        // physical correction/acceptance gate. It is distinct from the
+        // frozen-model amplitude unlock enforced by validateMmaUnlockGate.H.
+        #include "validateGate6SSTStrict.H"
     }
 
     #include "finalize.H"

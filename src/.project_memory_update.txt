@@ -1,13 +1,30 @@
 
 ## Anisotropic Conductivity Implementation Status
 - Feature flag: useAnisotropicConductivity in optProperties (false=scalar ks, true=tensor solidK)
-- DTMolecular and DTEffective are always volSymmTensorField regardless of flag
-- Gate 0 (baseline): completed - 1_scalar_baseline/ directory
-- Gate 1 (compile + material): completed - wmake succeeds, field types verified
-- Gate 2 (isotropic regression): PASSED - all 51 field files bit-for-bit identical between tensor mode (solidK=19.1*I) and scalar mode (ks=19.1)
-- Gate 2.5 (boundary sensitivity): pending
-- Gate 3 (physical direction): pending
-- Gate 4 (adjoint FD): pending
-- Gate 5 (serial/parallel + transaction): pending
-- Gate 6 (full SST hard gate): optional, for MMA recovery
-- Note: E5 volume constraint validation failure (0.289912) is pre-existing, identical in both modes
+- DTMolecular, DTEffective and dDTDxh use volSymmTensorField
+- Production scope is currently restricted to axis-aligned diagonal solidK
+- Off-diagonal anisotropy is blocked by default pending rotated-tensor validation
+- Stage A A1-A7 PASSED at commit eb3f11573400d0c9359cac4683a372a982603c33
+  in OpenFOAM Foundation v7
+- A5 boundary FD: maximum relative error 3.940e-02, 3 directions, PASS
+- A6 full thermal-adjoint raw-x FD: maximum relative error 9.525e-03,
+  4 directions, plateau PASS
+- A7 serial/parallel consistency: field error 2.624e-11,
+  objective error 0.000e+00, gradient error 4.859e-12, PASS
+- Processor-patch sensitivity and Helmholtz-filter coupling defects are fixed
+- Validated cases may set anisotropicConductivityValidated=true;
+  the source default remains false as a safety gate for new cases
+- The Stage A report generator labels A2 values as relative flux error,
+  not physical heat flux
+- F1/F2 synthetic finite-difference directions are generated from normalized
+  physical cell-centre coordinates and are independent of MPI local cell labels
+- harmonicSymmTensor is compiled for the A3 layered-conduction/forward test;
+  it is not approved for adjoint topology optimization because the current
+  sensitivity differentiates the standard linear tensor interpolation
+- Strict Gate 6 replaces the legacy sign-only gate in MTO_HF.C
+- Strict Gate 6 fixes duplicate pressure normalization, requires magnitude
+  agreement, at least four valid directions and repeated-baseline consistency
+- Full k/omega/nut turbulence adjoints remain outside the implemented scope
+- Post-Stage-A diagnostic cleanup must receive one OpenFOAM-7 clean rebuild
+  before relying on parallel F1/F2 output; it does not alter the validated PDE,
+  material interpolation, thermal adjoint, or A1-A7 acceptance result

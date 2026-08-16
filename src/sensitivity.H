@@ -39,6 +39,27 @@ dAlphaDxh.correctBoundaryConditions();
 // source in AdjHeatTransfer.H.
 if (adjointMode == "discrete")
 {
+    // Uc fingerprint before the gDP sensitivity assembly
+    if (optProperties.lookupOrDefault<Switch>("stageB4JacobianProbe", false))
+    {
+        scalar sUc = 0.0, nUc = 0.0, mUc = 0.0;
+        forAll(Uc, celli)
+        {
+            const vector ucv = Uc[celli];
+            sUc += ucv.x() + ucv.y() + ucv.z();
+            nUc += magSqr(ucv);
+            mUc = Foam::max(mUc, mag(ucv));
+        }
+        reduce(sUc, sumOp<scalar>());
+        reduce(nUc, sumOp<scalar>());
+        reduce(mUc, maxOp<scalar>());
+        Info<< "UcFingerprint[beforeSens]:"
+            << " sum=" << sUc << " L2=" << Foam::sqrt(nUc)
+            << " max=" << mUc
+            << " c0=" << Uc[0]
+            << " c100=" << Uc[100]
+            << " c5000=" << Uc[5000] << endl;
+    }
     // Brinkman term: fvm::Sp(alpha, U) assembles alpha*V_cell on the
     // diagonal, so the adjoint sensitivity dJ/dxh includes mesh.V().
     fsenshMeanT = -dAlphaDxh*(U & Ub);
@@ -195,6 +216,28 @@ if (runTime.writeTime() || finalSolvedIteration)
     gsensPowerDiss.write();
     gsensPressureDrop.write();
     gsensVol.write();
+    // Stage A diagnostic: write the raw design-objective gradient dJ/dx.
+    // Instrumentation only; no equation or optimizer value is changed.
+    volScalarField dfdxField
+    (
+        IOobject
+        (
+            "dfdx",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroDfdx", dimless, 0.0)
+    );
+    forAll(activeDesignCells, activeI)
+    {
+        dfdxField.primitiveFieldRef()[activeDesignCells[activeI]] =
+            dfdx[activeI];
+    }
+    dfdxField.write();
+
 }
 
 if (mmaUpdateEnabled && !finalSolvedIteration)
