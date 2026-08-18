@@ -64,8 +64,57 @@ if (adjointMode == "discrete")
     // diagonal, so the adjoint sensitivity dJ/dxh includes mesh.V().
     fsenshMeanT = -dAlphaDxh*(U & Ub);
     fsenshMeanT.primitiveFieldRef() *= mesh.V();
-    gsenshPressureDrop = -dAlphaDxh*(U & Uc);
-    gsenshPressureDrop.primitiveFieldRef() *= mesh.V();
+    // BFINAL-005 (PATCH_RX_PRESSURE_ROW): transparent decomposition of the
+    // pressure-drop design sensitivity into the momentum-row contribution
+    // (-lambda_U^T R_U,x, unchanged) and the pressure/continuity-row
+    // contribution (-lambda_P^T R_P,x, new):
+    //   gsenshPressureDrop_total
+    //     = gsenshPressureDrop_momentum + gsenshPressureDrop_pressureRow
+    // Momentum row (UNCHANGED formula):
+    //   -dAlphaDxh*(U&Uc)*V  (fvm::Sp assembles alpha*V_cell on the diagonal)
+    volScalarField gsenshPressureDropMomentum
+    (
+        IOobject
+        (
+            "gsenshPressureDropMomentum",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroGPDMomentum", gsenshPressureDrop.dimensions(), 0.0),
+        zeroGradientFvPatchScalarField::typeName
+    );
+    gsenshPressureDropMomentum = -dAlphaDxh*(U & Uc);
+    gsenshPressureDropMomentum.primitiveFieldRef() *= mesh.V();
+    // Pressure/continuity row (BFINAL-005, task §5-§10): the exact transpose
+    // of the BFINAL-004-validated R_P operator applied to the pressure
+    // adjoint, T = J_P^T pc, contracted with the production dAlphaDxh:
+    //   gsenshPressureDropPressureRow = -T*dAlphaDxh   (NO extra V)
+    // so that sum(gsenshPressureDropPressureRow*z) == -pc^T R_P,x d with
+    // z = dxh/dx*d through the EXISTING filter_chainrule.H path.  The helper
+    // computes T = J_P^T pc UNCONDITIONALLY (production term active with the
+    // stageB6RxDesignOracle switch OFF as well); only its runtime dot-test
+    // self-check and diagnostics are gated behind that switch.
+    #include "rxPressureRowTranspose.H"
+    volScalarField gsenshPressureDropPressureRow
+    (
+        IOobject
+        (
+            "gsenshPressureDropPressureRow",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroGPDPressRow", gsenshPressureDrop.dimensions(), 0.0),
+        zeroGradientFvPatchScalarField::typeName
+    );
+    gsenshPressureDropPressureRow = -rxPressureRowT*dAlphaDxh;
+    // Total (single field feeds the existing filter_chainrule.H path).
+    gsenshPressureDrop = gsenshPressureDropMomentum + gsenshPressureDropPressureRow;
 
     if (freezeColdFlowForValidation)
     {
@@ -75,12 +124,53 @@ if (adjointMode == "discrete")
             fsenshMeanT.dimensions(),
             0.0
         );
+        gsenshPressureDropMomentum = dimensionedScalar
+        (
+            "zeroFrozenPressureSensitivity",
+            gsenshPressureDropMomentum.dimensions(),
+            0.0
+        );
+        gsenshPressureDropPressureRow = dimensionedScalar
+        (
+            "zeroFrozenPressureRowSensitivity",
+            gsenshPressureDropPressureRow.dimensions(),
+            0.0
+        );
         gsenshPressureDrop = dimensionedScalar
         (
             "zeroFrozenPressureSensitivity",
             gsenshPressureDrop.dimensions(),
             0.0
         );
+    }
+
+    // BFINAL-005 G1/G2 evidence: export the three decomposed xh-level
+    // pressure-drop sensitivities (momentum / pressure-row / total) BEFORE
+    // the projection/filter chain mutates the total field.
+    if (optProperties.lookupOrDefault<Switch>("stageB6RxDesignOracle", false))
+    {
+        OFstream rxM("rxpr_prod_gsensh_momentum.mtx");
+        OFstream rxP("rxpr_prod_gsensh_pressurerow.mtx");
+        OFstream rxT("rxpr_prod_gsensh_total.mtx");
+        rxM.precision(16); rxP.precision(16); rxT.precision(16);
+        scalar rxNM = 0.0, rxNP = 0.0, rxNT = 0.0;
+        forAll(gsenshPressureDropMomentum, celli)
+        {
+            rxM << gsenshPressureDropMomentum[celli] << nl;
+            rxP << gsenshPressureDropPressureRow[celli] << nl;
+            rxT << gsenshPressureDrop[celli] << nl;
+            rxNM += sqr(gsenshPressureDropMomentum[celli]);
+            rxNP += sqr(gsenshPressureDropPressureRow[celli]);
+            rxNT += sqr(gsenshPressureDrop[celli]);
+        }
+        rxM.flush(); rxP.flush(); rxT.flush();
+        reduce(rxNM, sumOp<scalar>());
+        reduce(rxNP, sumOp<scalar>());
+        reduce(rxNT, sumOp<scalar>());
+        Info<< "RxPressureRow production xh fields: |momentum|L2="
+            << Foam::sqrt(rxNM)
+            << " |pressureRow|L2=" << Foam::sqrt(rxNP)
+            << " |total|L2=" << Foam::sqrt(rxNT) << endl;
     }
 
     // thermalDiffusionDerivativeDTCell already contains the full dJ/dxh
@@ -132,6 +222,18 @@ gsenshPowerDiss =
 gsenshPowerDiss.primitiveFieldRef() *= mesh.V();
 
 #include "filter_chainrule.H"
+
+// BFINAL-005 G2/G3 evidence: export the patched raw-design pressure-drop
+// sensitivity (post projection/filter chain, pre MMA scaling).  The
+// projection of this field onto a raw-design direction d is D_total_production
+// = sum_active(gsensPressureDrop*d).
+if (optProperties.lookupOrDefault<Switch>("stageB6RxDesignOracle", false))
+{
+    OFstream rxG("rxpr_prod_gsens.mtx");
+    rxG.precision(16);
+    forAll(gsensPressureDrop, celli) { rxG << gsensPressureDrop[celli] << nl; }
+    rxG.flush();
+}
 
 gx[0] = V;
 gx[1] = PressureDropPa/Foam::max(pressureDropMaxPa, SMALL) - 1.0;

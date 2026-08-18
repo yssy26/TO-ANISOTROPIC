@@ -72,6 +72,20 @@ for (label celli = 0; celli < prodNCells; ++celli)
     prodRAU[celli] = 1.0/Foam::max(prodMomentum.A().ref()[celli], SMALL);
 }
 
+// BFINAL-003 (P<-U relaxation patch): U-equation relaxation factor read from
+// fvSolution relaxationFactors/equations/U exactly as fvMatrix::relax() does
+// (guarded by relaxEquation, default 1.0 = no relaxation).  The production
+// SIMPLE P-row flux tangent uses the RELAXED momentum mapping:
+//   HbyA = rAU_rel*H_rel  with  rAU_rel = alphaRel*rAU_u  and the relax-source
+//   derivative (D_rel-D0)*dU = (1/alphaRel-1)*A_u*dU entering H, which yields
+//   dHbyA/dU = alphaRel*rAU_u*dH_u + (1-alphaRel)*dU.
+// No hard-coded 0.4/0.6/2.5: the coefficients follow the actual relaxation
+// factor (0.4 for the current case -> 0.4 mobility + 0.6 relax-source).
+// This file is included in the production branch only (the diagnostic branch
+// defines its own alphaRel in solveDiscreteFlowAdjoint.H).
+const scalar alphaRel =
+    mesh.relaxEquation("U") ? mesh.equationRelaxationFactor("U") : scalar(1.0);
+
 // Explicit frozen deviatoric-stress transpose.  Kept identical to the
 // Stage-B4 operator so the production solver uses the same validated J^T.
 auto applyProdFrozenDeviatoricJT =
@@ -364,13 +378,27 @@ auto applyProdFlowJT =
         output[prodPIndex(nei)] +=
             (1.0 - prodWeights[facei])*pressureTranspose;
 
-        // Reduced SIMPLE flux transpose.
+        // Reduced SIMPLE flux transpose (BFINAL-003 P<-U relaxation patch):
+        //   forward: the P row is routed through the corrected P-U flux
+        //     dphi_PU = Sf&(alphaRel*rAU*dH + (1-alphaRel)*dUbar) + kf*(p_n-p_o)
+        //     while the velocityJump conv term keeps the OLD unrelaxed dphi,
+        //   so the adjoint scalar splits:
+        //     phiAdjointRel = convTerm + alphaRel*lambdaPdiff  (-> hA path)
+        //     + direct (1-alphaRel)*lambdaPdiff*(weight*Sf)    (-> U rows)
+        //   BFINAL-008 (J_PP actual-primal closure): the kf path is the exact
+        //   transpose of the corrected forward P-P block (dR_P/dp = -L_int:
+        //   diag +kf, off-diag -kf).  Only the lambdaPdiff coefficient flips
+        //   sign (P(own) += kf*lambdaPdiff, P(nei) -= kf*lambdaPdiff); the
+        //   convTerm (J_UP^T via the OLD velocityJump dphi) keeps its
+        //   unchanged -kf/+kf routing; phiAdjointRel/hA/directRel (J_PU) are
+        //   byte-identical.
         const vector velocityJump = U[nei] - U[own];
         const label downwind = prodPhi[facei] >= 0.0 ? nei : own;
         const vector lambdaDown =
             (downwind == nei) ? lambdaNei : lambdaOwn;
-        const scalar phiAdjoint =
-            (lambdaPown - lambdaPnei) + (lambdaDown & velocityJump);
+        const scalar convTerm = lambdaDown & velocityJump;
+        const scalar lambdaPdiff = lambdaPown - lambdaPnei;
+        const scalar phiAdjointPP = lambdaPdiff - convTerm;
 
         const scalar weight = prodWeights[facei];
         const scalar mobilityFace =
@@ -381,30 +409,61 @@ auto applyProdFlowJT =
            *mesh.deltaCoeffs().primitiveField()[facei]
            *mesh.magSf().primitiveField()[facei];
 
-        output[prodPIndex(own)] -= kf*phiAdjoint;
-        output[prodPIndex(nei)] += kf*phiAdjoint;
+        output[prodPIndex(own)] += kf*phiAdjointPP;
+        output[prodPIndex(nei)] -= kf*phiAdjointPP;
 
+        const scalar phiAdjointRel = convTerm + alphaRel*lambdaPdiff;
         const vector hOwn =
-            phiAdjoint*weight*prodRAU[own]*prodSf[facei];
+            phiAdjointRel*weight*prodRAU[own]*prodSf[facei];
         const vector hNei =
-            phiAdjoint*(1.0 - weight)*prodRAU[nei]*prodSf[facei];
+            phiAdjointRel*(1.0 - weight)*prodRAU[nei]*prodSf[facei];
         hAx[own] += hOwn.x(); hAy[own] += hOwn.y(); hAz[own] += hOwn.z();
         hAx[nei] += hNei.x(); hAy[nei] += hNei.y(); hAz[nei] += hNei.z();
+
+        // direct relax-source transpose: U(own/nei) <- (1-alphaRel)*lambdaPdiff*Sf
+        const vector directRel =
+            (1.0 - alphaRel)*lambdaPdiff*prodSf[facei];
+        output[prodUIndex(own, 0)] += weight*directRel.x();
+        output[prodUIndex(own, 1)] += weight*directRel.y();
+        output[prodUIndex(own, 2)] += weight*directRel.z();
+        output[prodUIndex(nei, 0)] += (1.0 - weight)*directRel.x();
+        output[prodUIndex(nei, 1)] += (1.0 - weight)*directRel.y();
+        output[prodUIndex(nei, 2)] += (1.0 - weight)*directRel.z();
     }
 
     // Boundary reduced-flux transpose and direct U-p transpose.
+    // BFINAL-003 (P<-U relaxation patch): forward boundary dphi is 0 on
+    // non-assignable (fixedValue/noSlip) U patches and
+    // Sf_b&(alphaRel*rAU*dH + (1-alphaRel)*dU_cell) on assignable ones;
+    // the transpose mirrors that: alphaRel-scaled hB + direct
+    // (1-alphaRel)*lambdaPc*patchSf term, assignable-only.
     forAll(mesh.boundary(), patchi)
     {
         const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
         const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        const bool uAssignable = U.boundaryField()[patchi].assignable();
+        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
         forAll(patchCells, facei)
         {
             const label celli = patchCells[facei];
-            const scalar lambdaPc = input[prodPIndex(celli)];
-            const vector hB = lambdaPc*prodRAU[celli]*patchSf[facei];
-            hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
 
-            if (!p.boundaryField()[patchi].fixesValue())
+            if (uAssignable)
+            {
+                const scalar lambdaPc = input[prodPIndex(celli)];
+                const vector hB =
+                    lambdaPc*(alphaRel*prodRAU[celli])*patchSf[facei];
+                hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
+
+                // direct relax-source transpose on the boundary face:
+                // U(cell) <- (1-alphaRel)*lambdaPc*patchSf
+                const vector dB =
+                    (1.0 - alphaRel)*lambdaPc*patchSf[facei];
+                output[prodUIndex(celli, 0)] += dB.x();
+                output[prodUIndex(celli, 1)] += dB.y();
+                output[prodUIndex(celli, 2)] += dB.z();
+            }
+
+            if (!pressureFixed)
             {
                 const vector lambdaCell
                 (
@@ -413,6 +472,21 @@ auto applyProdFlowJT =
                     input[prodUIndex(celli, 2)]
                 );
                 output[prodPIndex(celli)] += patchSf[facei] & lambdaCell;
+            }
+
+            // BFINAL-008 (J_PP actual-primal closure): fixedValue-p boundary
+            // P-P diagonal = +rAtU_c*deltaCoeffs_b*|Sf|_b (production
+            // fvm::laplacian(rAtU,p) addBoundaryDiag internalCoeffs, residual
+            // convention dR_P/dp; boundaryCoeffs source = 0 since p_b = 0;
+            // zeroGradient p patches contribute 0; no identity row).  The
+            // diagonal-only term is symmetric, so J^T carries it identically.
+            if (pressureFixed)
+            {
+                output[prodPIndex(celli)] +=
+                    primalPressureMobility[celli]
+                   *mesh.deltaCoeffs().boundaryField()[patchi][facei]
+                   *mesh.magSf().boundaryField()[patchi][facei]
+                   *input[prodPIndex(celli)];
             }
         }
     }
@@ -557,6 +631,12 @@ for (label celli = 0; celli < prodNCells; ++celli)
     prodJacobiDiag[prodUIndex(celli, 1)] = prodDiagY[celli]/prodMomentumScale;
     prodJacobiDiag[prodUIndex(celli, 2)] = prodDiagZ[celli]/prodMomentumScale;
 }
+// BFINAL-008 (J_PP actual-primal closure): the production P-P diagonal now
+// follows the corrected operator dR_P/dp = -L_prod: interior diag +kf per
+// face (was -kf) plus the fixedValue-p boundary internalCoeffs term
+// +rAtU_c*deltaCoeffs_b*|Sf|_b on pressure-fixed patches (boundaryCoeffs
+// source = 0 since p_b = 0; zeroGradient p patches contribute 0; no identity
+// row).  This keeps the Jacobi diagonal consistent with the corrected J^T.
 scalarField prodPDiagPhysical(prodNCells, 0.0);
 forAll(prodUpper, facei)
 {
@@ -570,8 +650,26 @@ forAll(prodUpper, facei)
         mobilityFace
        *mesh.deltaCoeffs().primitiveField()[facei]
        *mesh.magSf().primitiveField()[facei];
-    prodPDiagPhysical[own] -= kf;
-    prodPDiagPhysical[nei] -= kf;
+    prodPDiagPhysical[own] += kf;
+    prodPDiagPhysical[nei] += kf;
+}
+forAll(mesh.boundary(), patchi)
+{
+    if (!p.boundaryField()[patchi].fixesValue())
+    {
+        continue;
+    }
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    const scalarField& patchDelta =
+        mesh.deltaCoeffs().boundaryField()[patchi];
+    const scalarField& patchArea =
+        mesh.magSf().boundaryField()[patchi];
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        prodPDiagPhysical[celli] +=
+            primalPressureMobility[celli]*patchDelta[facei]*patchArea[facei];
+    }
 }
 for (label celli = 0; celli < prodNCells; ++celli)
 {

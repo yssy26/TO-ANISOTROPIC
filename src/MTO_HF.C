@@ -84,6 +84,11 @@ int main(int argc, char *argv[])
             Info << "MTO_HF: Finished AdjNS_PD.H" << endl << flush;
         }
 
+        // BFINAL-007 diagnostic probe (switch "stageB7PressureBCDiagnostic",
+        // default false; read-only; no-op when disabled).  Runs AFTER the
+        // flow-adjoint block, NOT inside NS.H/J/R_x/sensitivity.
+        #include "stageB7PressureBCDiagnostic.H"
+
         Info << "MTO_HF: Starting costfunction.H" << endl << flush;
         #include "costfunction.H"
         #include "validateOptimizationState.H"
