@@ -1,7 +1,8 @@
 # Stage B — BFINAL Summary (pressure-drop gradient closure)
 
 - **Branch:** `agent/dsH-stage-b-validation`
-- **HEAD:** `5116f88` (after BFINAL-003/005/007/008 production patches)
+- **Validated BFINAL source baseline:** `5116f88`
+- **Current source validation target:** `7fece6b` (OpenFOAM-7 rerun pending)
 - **Stage:** B-final (in progress — pressure-drop gradient gate not yet closed)
 - **Date:** 2026-08-18
 
@@ -11,6 +12,25 @@
 > J_PU / R_x / J_PP corrections below and must not be treated as current
 > numerical ground truth. The full per-round evidence lives under
 > `evidence/agent-group/BFINAL-0NN/` (final reports + raw logs).
+
+---
+
+## Post-BFINAL source changes pending validation
+
+The BFINAL-003/005/008 numerical PASS evidence applies to source baseline
+`5116f88`, not automatically to the newer source target:
+
+- `fb913a6`: pressure reference/RHS/operator/solution handling now follows
+  `p.needReference()`; fixedValue-pressure cases retain every physical pressure
+  row. The unvalidated direction-only MMA bypass was removed.
+- `7fece6b`: production preconditioner setup defaults to an O(N) positive
+  diagonal scale; the O(N*nnz) basis-vector L1 construction is retained only as
+  explicit `bruteForceL1` diagnostic mode. Ritz diagnostics default to off.
+
+These changes deliberately alter solve-layer/reference behavior and therefore
+require a fresh OpenFOAM-7 compile plus fixedValue-pressure operator, tangent,
+and B2/B3 gradient validation. Until that evidence is committed,
+`frozenGradientValidated` must remain `false` and MMA must remain disabled.
 
 ---
 
