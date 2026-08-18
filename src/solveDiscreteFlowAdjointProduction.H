@@ -39,6 +39,20 @@ const auto prodPIndex = [&](const label celli)
     return prodNVelocity + celli;
 };
 
+// OpenFOAM only inserts a pressure reference when the pressure field has no
+// value-fixing boundary.  Keep the reduced adjoint, its RHS, preconditioner,
+// residual checks and solution gauge on exactly the same condition.  In the
+// current fixedValue-outlet validation case this is false: every physical
+// pressure row must remain active.
+const bool prodPressureNeedsReference = p.needReference();
+const auto pinProdPressureReference = [&](scalarField& values)
+{
+    if (prodPressureNeedsReference)
+    {
+        values[prodPIndex(pRefCell)] = 0.0;
+    }
+};
+
 // Same unrelaxed frozen residual basis as the Stage-B4 validated operator.
 tmp<fvVectorMatrix> tProdMomentum
 (
@@ -571,7 +585,7 @@ for (label celli = 0; celli < prodNCells; ++celli)
     prodRhs[prodPIndex(celli)] =
         discreteFlowPressureRhs[celli]/prodAreaScale;
 }
-prodRhs[prodPIndex(pRefCell)] = 0.0;
+pinProdPressureReference(prodRhs);
 
 // ---- PROD-SOLVER DIAGNOSTICS (solve layer only) ----
 {
@@ -618,8 +632,12 @@ auto applyProdScaledJT =
         output[prodPIndex(celli)] =
             physicalOutput[prodPIndex(celli)]/prodAreaScale;
     }
-    // Reference row is identity; solution is explicitly pinned to zero.
-    output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
+    if (prodPressureNeedsReference)
+    {
+        // Legacy all-Neumann gauge row.  FixedValue-pressure cases keep the
+        // complete physical operator and do not replace any row.
+        output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
+    }
 };
 
 // Signed Jacobi right-preconditioner.  It is deliberately simple and robust:
@@ -677,7 +695,10 @@ for (label celli = 0; celli < prodNCells; ++celli)
         prodPDiagPhysical[celli]
        *prodMomentumScale/sqr(prodAreaScale);
 }
-prodJacobiDiag[prodPIndex(pRefCell)] = 1.0;
+if (prodPressureNeedsReference)
+{
+    prodJacobiDiag[prodPIndex(pRefCell)] = 1.0;
+}
 
 scalar prodDiagAverage = 0.0;
 forAll(prodJacobiDiag, i)
@@ -758,7 +779,10 @@ auto applyProdPreconditioner =
                 (input[dof] - upZ[dof])/prodL1Diag[dof];
         }
     }
-    output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
+    if (prodPressureNeedsReference)
+    {
+        output[prodPIndex(pRefCell)] = input[prodPIndex(pRefCell)];
+    }
 };
 
 {
@@ -782,10 +806,10 @@ auto applyProdPreconditioner =
         << " jacobiNearZero=" << jZero << endl;
 }
 
-// Solvability of the P block: if the all-ones P vector is in the null space
-// of J^T (continuous div has zero row sums), the P-block RHS must have zero
-// mean.  Project that component out of the RHS (solve-layer only; does not
-// change the solvable part of the gradient system).
+// Solvability projection is only valid for an all-Neumann pressure field.
+// A fixedValue pressure boundary removes the constant mode and its physical
+// RHS must not be mean-projected.
+if (prodPressureNeedsReference)
 {
     scalarField vOnes(prodNUnknowns, 0.0);
     for (label celli = 0; celli < prodNCells; ++celli)
@@ -821,7 +845,7 @@ auto applyProdPreconditioner =
             if (celli == pRefCell) continue;
             prodRhs[prodPIndex(celli)] -= rhsMean;
         }
-        prodRhs[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(prodRhs);
         Info<< "PRODSOLV (" << discreteAdjointLabel
             << "): removed P-mean from RHS (null-space projection)." << endl;
     }
@@ -847,7 +871,7 @@ if (prodRestart < 2 || prodMaxIterations < 1 || prodTolerance <= SMALL)
 scalarField prodSolution(prodNUnknowns, 0.0);
 scalarField prodResidual(prodNUnknowns, 0.0);
 scalarField prodOperator(prodNUnknowns, 0.0);
-prodSolution[prodPIndex(pRefCell)] = 0.0;
+pinProdPressureReference(prodSolution);
 
 // Gradient-convergence checkpoint proxy (diagnostic only).  The flow-adjoint
 // contribution to dJ/dx and d(gDP)/dx is linear in lambda_U through
@@ -951,7 +975,7 @@ if (prodSolverType == "bicgstab" && prodRhsNorm > 1e-145)
     scalarField sh(prodNUnknowns, 0.0);
     applyProdScaledJT(prodSolution, prodOperator);
     r = prodRhs - prodOperator;
-    r[prodPIndex(pRefCell)] = 0.0;
+    pinProdPressureReference(r);
     rhat = r;
     scalar rhoOld = 1.0, alpha = 1.0, omega = 1.0;
     for (label it = 0; it < prodMaxIterations; ++it)
@@ -983,7 +1007,7 @@ if (prodSolverType == "bicgstab" && prodRhsNorm > 1e-145)
         {
             s[i] = r[i] - alpha*v[i];
         }
-        s[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(s);
         const scalar sNorm = Foam::sqrt(prodDot(s, s));
         discreteRelativeResidual = sNorm/prodRhsNorm;
         if (discreteRelativeResidual <= prodTolerance)
@@ -992,7 +1016,7 @@ if (prodSolverType == "bicgstab" && prodRhsNorm > 1e-145)
             {
                 prodSolution[i] += alpha*ph[i];
             }
-            prodSolution[prodPIndex(pRefCell)] = 0.0;
+            pinProdPressureReference(prodSolution);
             prodIteration = it + 1;
             prodSolved = true;
             break;
@@ -1006,7 +1030,7 @@ if (prodSolverType == "bicgstab" && prodRhsNorm > 1e-145)
             {
                 prodSolution[i] += alpha*ph[i];
             }
-            prodSolution[prodPIndex(pRefCell)] = 0.0;
+            pinProdPressureReference(prodSolution);
             prodIteration = it + 1;
             prodSolved = true;
             break;
@@ -1016,12 +1040,12 @@ if (prodSolverType == "bicgstab" && prodRhsNorm > 1e-145)
         {
             prodSolution[i] += alpha*ph[i] + omega*sh[i];
         }
-        prodSolution[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(prodSolution);
         forAll(r, i)
         {
             r[i] = s[i] - omega*t[i];
         }
-        r[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(r);
         const scalar rNorm = Foam::sqrt(prodDot(r, r));
         discreteRelativeResidual = rNorm/prodRhsNorm;
         rhoOld = rho;
@@ -1078,7 +1102,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
     {
         applyProdScaledJT(prodSolution, prodOperator);
         prodResidual = prodRhs - prodOperator;
-        prodResidual[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(prodResidual);
         const scalar beta = Foam::sqrt(prodDot(prodResidual, prodResidual));
         discreteRelativeResidual = beta/prodRhsNorm;
         if (discreteRelativeResidual <= prodTolerance)
@@ -1124,11 +1148,11 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
                         prodSolution[dofi] +=
                             cDef*prodDeflationVec[dofi];
                     }
-                    prodSolution[prodPIndex(pRefCell)] = 0.0;
+                    pinProdPressureReference(prodSolution);
                     // refresh the residual after deflation
                     applyProdScaledJT(prodSolution, prodOperator);
                     prodResidual = prodRhs - prodOperator;
-                    prodResidual[prodPIndex(pRefCell)] = 0.0;
+                    pinProdPressureReference(prodResidual);
                 }
             }
         }
@@ -1277,7 +1301,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
                 prodSolution[dofi] += Y[i]*Z[i][dofi];
             }
         }
-        prodSolution[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(prodSolution);
         prodIteration += innerDone;
 
         // ---- harmonic-Ritz deflation pilot (diagnostic) ----
@@ -1297,7 +1321,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
             {
                 rPilot[i] = prodRhs[i] - prodOperator[i];
             }
-            rPilot[prodPIndex(pRefCell)] = 0.0;
+            pinProdPressureReference(rPilot);
             const scalar rNorm = Foam::max
             (
                 Foam::sqrt(prodDot(rPilot, rPilot)),
@@ -1395,7 +1419,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
 
         applyProdScaledJT(prodSolution, prodOperator);
         prodResidual = prodRhs - prodOperator;
-        prodResidual[prodPIndex(pRefCell)] = 0.0;
+        pinProdPressureReference(prodResidual);
         discreteRelativeResidual =
             Foam::sqrt(prodDot(prodResidual, prodResidual))/prodRhsNorm;
 
@@ -1418,7 +1442,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
 
 applyProdScaledJT(prodSolution, prodOperator);
 prodResidual = prodRhs - prodOperator;
-prodResidual[prodPIndex(pRefCell)] = 0.0;
+pinProdPressureReference(prodResidual);
 discreteRelativeResidual =
     Foam::sqrt(prodDot(prodResidual, prodResidual))/prodRhsNorm;
 if (discreteCheckpointGradient)

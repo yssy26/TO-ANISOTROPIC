@@ -118,6 +118,18 @@ auto discretePIndex = [&](const label celli)
 {
     return discreteNVelocity + celli;
 };
+
+// Match fvMatrix::setReference(): a pressure gauge exists only when no
+// pressure boundary fixes the value.  The current fixedValue-outlet case is
+// nonsingular and must retain every physical pressure row.
+const bool discretePressureNeedsReference = p.needReference();
+const auto pinDiscretePressureReference = [&](scalarField& values)
+{
+    if (discretePressureNeedsReference)
+    {
+        values[discretePIndex(pRefCell)] = 0.0;
+    }
+};
 auto applyFrozenDeviatoricJT =
 [&](const scalarField& input, scalarField& output)
 {
@@ -2356,7 +2368,7 @@ for (label celli = 0; celli < discreteNCells; ++celli)
     discreteRhs[discretePIndex(celli)] =
         discreteFlowPressureRhs[celli]/discreteAreaScale;
 }
-discreteRhs[discretePIndex(pRefCell)] = 0.0;
+pinDiscretePressureReference(discreteRhs);
 
 auto applyScaledDiscreteFlowJT =
 [&](const scalarField& input, scalarField& output)
@@ -2382,7 +2394,10 @@ auto applyScaledDiscreteFlowJT =
         output[discretePIndex(celli)] =
             physicalOutput[discretePIndex(celli)]/discreteAreaScale;
     }
-    output[discretePIndex(pRefCell)] = input[discretePIndex(pRefCell)];
+    if (discretePressureNeedsReference)
+    {
+        output[discretePIndex(pRefCell)] = input[discretePIndex(pRefCell)];
+    }
 };
 
 // =========================================================================
@@ -2937,8 +2952,9 @@ for (label rr = prevRow + 1; rr <= discreteNUnknowns; ++rr)
     csrRowPtr[rr] = csrCol.size();
 }
 
-// pin the physical matrix: P(pRef) row -> identity (removes the constant
-// null mode so ILU/GMRES see a nonsingular system)
+// Only all-Neumann pressure systems need the legacy gauge row.  With a
+// fixedValue pressure boundary the physical P-P block is already nonsingular.
+if (discretePressureNeedsReference)
 {
     const label pRefRow = discretePIndex(pRefCell);
     for (label j = csrRowPtr[pRefRow]; j < csrRowPtr[pRefRow + 1]; ++j)
@@ -2998,7 +3014,10 @@ auto applyExplicitScaled = [&](const scalarField& input, scalarField& output)
         output[discretePIndex(celli)] =
             physOut[discretePIndex(celli)]/discreteAreaScale;
     }
-    output[discretePIndex(pRefCell)] = input[discretePIndex(pRefCell)];
+    if (discretePressureNeedsReference)
+    {
+        output[discretePIndex(pRefCell)] = input[discretePIndex(pRefCell)];
+    }
 };
 
 // ---- oracle verification: explicit vs matrix-free ----
@@ -3109,7 +3128,7 @@ const scalar discreteTolerance =
 scalarField discreteSolution(discreteNUnknowns, 0.0);
 scalarField discreteResidual(discreteNUnknowns, 0.0);
 scalarField discreteOperatorSolution(discreteNUnknowns, 0.0);
-discreteSolution[discretePIndex(pRefCell)] = 0.0;
+pinDiscretePressureReference(discreteSolution);
 
 const scalar discreteRhsNorm = Foam::sqrt
 (
@@ -3336,8 +3355,9 @@ auto applyDiscreteBlockPreconditioner =
             rpStar[celli] -= patchSf[facei] & zUstar[celli];
         }
     }
-    // remove the constant (null-space) component of rp*: S has a
-    // near-zero constant mode; the mean of rp* would otherwise dominate zp
+    // Remove the constant component only for an all-Neumann Schur system.
+    // A fixedValue pressure boundary makes this projection non-physical.
+    if (discretePressureNeedsReference)
     {
         scalar rpMean = sum(rpStar.primitiveField());
         reduce(rpMean, sumOp<scalar>());
@@ -3358,11 +3378,14 @@ auto applyDiscreteBlockPreconditioner =
             fvm::laplacian(discretePcMobility, zpField)
         );
         fvScalarMatrix& S = tS.ref();
-        S.setReference(pRefCell, 0.0);
+        if (discretePressureNeedsReference)
+        {
+            S.setReference(pRefCell, 0.0);
+        }
         S.source() = rpStar.primitiveField();
         S.solve(discretePcSdict);
-        // enforce the gauge explicitly: remove the constant null-space mode
-        // (the fvMatrix reference pin did not zero zp[pRef])
+        // Enforce the gauge only when the Schur system actually needs one.
+        if (discretePressureNeedsReference)
         {
             const scalar zpRef = zpField[pRefCell];
             zpField.primitiveFieldRef() -= zpRef;
@@ -3509,7 +3532,10 @@ auto applyDiscreteBlockPreconditioner =
         output[discretePIndex(celli)] =
             zpField[celli]*(discreteAreaScale/discreteMomentumScale);
     }
-    output[discretePIndex(pRefCell)] = input[discretePIndex(pRefCell)];
+    if (discretePressureNeedsReference)
+    {
+        output[discretePIndex(pRefCell)] = input[discretePIndex(pRefCell)];
+    }
 };
 
 
@@ -3836,7 +3862,7 @@ for (label celli = 0; celli < discreteNCells; ++celli)
     physRhs[discretePIndex(celli)] =
         discreteRhs[discretePIndex(celli)]*discreteAreaScale;
 }
-physRhs[discretePIndex(pRefCell)] = 0.0;
+pinDiscretePressureReference(physRhs);
 
 auto applyExplicitPhys = [&](const scalarField& x, scalarField& y)
 {
@@ -3878,7 +3904,7 @@ scalarField physSolution(discreteNUnknowns, 0.0);
                     physSolution[discretePIndex(celli)]
                    *(discreteAreaScale/discreteMomentumScale);
             }
-            discreteSolution[discretePIndex(pRefCell)] = 0.0;
+            pinDiscretePressureReference(discreteSolution);
             applyScaledDiscreteFlowJT(discreteSolution, discreteOperatorSolution);
             discreteResidual = discreteRhs - discreteOperatorSolution;
             discreteRelativeResidual = Foam::sqrt
@@ -4017,7 +4043,7 @@ while
             physSolution[ii] += gmresY[i]*gmresZ[i][ii];
         }
     }
-    physSolution[discretePIndex(pRefCell)] = 0.0;
+    pinDiscretePressureReference(physSolution);
     discreteIteration += innerDone;
     Info<< "  [GMRES-ILU " << discreteAdjointLabel << "] iter="
         << discreteIteration << " relRes=" << discreteRelativeResidual
@@ -4036,7 +4062,7 @@ for (label celli = 0; celli < discreteNCells; ++celli)
         physSolution[discretePIndex(celli)]
        *(discreteAreaScale/discreteMomentumScale);
 }
-discreteSolution[discretePIndex(pRefCell)] = 0.0;
+pinDiscretePressureReference(discreteSolution);
 
 applyScaledDiscreteFlowJT(discreteSolution, discreteOperatorSolution);
 discreteResidual = discreteRhs - discreteOperatorSolution;

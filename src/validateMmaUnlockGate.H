@@ -69,34 +69,12 @@ if
 
 if (mmaUpdateEnabled && !frozenGradientValidated)
 {
-    const bool guardedDirectionOnly =
-           directionOnlyOptimizationApproved
-        && directionOnlyFeasibilityFirst
-        && enableSSTAcceptanceCheck;
-
-    if (!guardedDirectionOnly)
-    {
-        FatalErrorInFunction
-            << "MMA is blocked until frozen-turbulence Stage B2/B3 gradient "
-            << "amplitudes pass. Keep mmaUpdateEnabled=false during validation; "
-            << "after reviewing a PASS report, set frozenGradientValidated=true. "
-            << "The only exception is the explicit direction-only feasibility "
-            << "safeguard with full-SST candidate acceptance enabled."
-            << abort(FatalError);
-    }
-}
-
-if
-(
-    directionOnlyOptimizationApproved
- && !frozenGradientValidated
- && !enableSSTAcceptanceCheck
-)
-{
     FatalErrorInFunction
-        << "Direction-only optimization without validated amplitudes requires "
-        << "enableSSTAcceptanceCheck=true so every candidate is re-converged "
-        << "and accepted/rejected with full SST."
+        << "MMA is blocked until frozen-turbulence Stage B2/B3 gradient "
+        << "directions and amplitudes pass on the current source/configuration. "
+        << "Keep mmaUpdateEnabled=false during validation; only set "
+        << "frozenGradientValidated=true after reviewing a current-head PASS "
+        << "report. Direction-only approval cannot bypass this gate."
         << abort(FatalError);
 }
 
