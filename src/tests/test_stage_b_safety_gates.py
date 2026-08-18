@@ -63,8 +63,20 @@ class StageBSafetyGateTests(unittest.TestCase):
         self.assertRegex(
             self.production,
             re.compile(
-                r'"discreteProdPreconditionerSetup",\s*"diagonal"'
+                r'"discreteProdPreconditionerSetup",\s*"pressureGAMG"'
             ),
+        )
+        self.assertIn(
+            'prodPreconditionerSetup == "pressureGAMG"',
+            self.production,
+        )
+        self.assertIn(
+            "-fvm::laplacian(prodPressurePrecMobility, prodPressurePrecPsi)",
+            self.production,
+        )
+        self.assertIn(
+            "prodPressurePrecMatrix.solve(prodPressurePrecSolverDict);",
+            self.production,
         )
         self.assertIn(
             'else if (prodPreconditionerSetup == "bruteForceL1")',

@@ -727,10 +727,14 @@ const word prodPreconditionerSetup =
     optProperties.lookupOrDefault<word>
     (
         "discreteProdPreconditionerSetup",
-        "diagonal"
+        "pressureGAMG"
     );
 scalarField prodL1Diag(prodNUnknowns, 1.0);
-if (prodPreconditionerSetup == "diagonal")
+if
+(
+    prodPreconditionerSetup == "diagonal"
+ || prodPreconditionerSetup == "pressureGAMG"
+)
 {
     forAll(prodL1Diag, i)
     {
@@ -757,7 +761,7 @@ else
     FatalErrorInFunction
         << "Unknown discreteProdPreconditionerSetup='"
         << prodPreconditionerSetup
-        << "'. Valid choices are diagonal or bruteForceL1."
+        << "'. Valid choices are pressureGAMG, diagonal or bruteForceL1."
         << abort(FatalError);
 }
 {
@@ -774,6 +778,130 @@ else
         << " avg=" << lAvg/prodNUnknowns
         << " min=" << mnL << " max=" << mxL << endl;
 }
+// Reusable pressure-Poisson approximation to the scaled P-P block.  This
+// removes the pressure elliptic condition number instead of merely rescaling
+// its diagonal.  Construction is O(nnz); GAMG is used only when the selected
+// mode is pressureGAMG.  The physical J^T operator is not changed.
+volScalarField prodPressurePrecMobility(p);
+prodPressurePrecMobility.rename
+(
+    "prodPressurePrecMobility_" + discreteAdjointLabel
+);
+const scalar prodPressurePrecScale =
+    prodMomentumScale/sqr(prodAreaScale);
+forAll(prodPressurePrecMobility, celli)
+{
+    prodPressurePrecMobility[celli] =
+        primalPressureMobility[celli]*prodPressurePrecScale;
+}
+forAll(mesh.boundary(), patchi)
+{
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    forAll(patchCells, facei)
+    {
+        prodPressurePrecMobility.boundaryFieldRef()[patchi][facei] =
+            primalPressureMobility[patchCells[facei]]
+           *prodPressurePrecScale;
+    }
+}
+
+volScalarField prodPressurePrecPsi(p);
+prodPressurePrecPsi.rename
+(
+    "prodPressurePrecPsi_" + discreteAdjointLabel
+);
+prodPressurePrecPsi.primitiveFieldRef() = scalar(0.0);
+forAll(mesh.boundary(), patchi)
+{
+    prodPressurePrecPsi.boundaryFieldRef()[patchi] == scalar(0.0);
+}
+
+tmp<fvScalarMatrix> tProdPressurePrecMatrix
+(
+   -fvm::laplacian(prodPressurePrecMobility, prodPressurePrecPsi)
+);
+fvScalarMatrix& prodPressurePrecMatrix =
+    tProdPressurePrecMatrix.ref();
+if (prodPressureNeedsReference)
+{
+    prodPressurePrecMatrix.setReference(pRefCell, 0.0);
+}
+
+const scalar prodPressurePrecTolerance =
+    optProperties.lookupOrDefault<scalar>
+    (
+        "discreteProdPressurePrecTolerance",
+        1e-3
+    );
+const label prodPressurePrecMaxIter =
+    optProperties.lookupOrDefault<label>
+    (
+        "discreteProdPressurePrecMaxIter",
+        50
+    );
+if
+(
+    prodPressurePrecTolerance <= SMALL
+ || prodPressurePrecMaxIter < 1
+)
+{
+    FatalErrorInFunction
+        << "Invalid pressureGAMG controls: require "
+        << "discreteProdPressurePrecTolerance > 0 and "
+        << "discreteProdPressurePrecMaxIter >= 1."
+        << abort(FatalError);
+}
+
+dictionary prodPressurePrecSolverDict;
+prodPressurePrecSolverDict.add("solver", "GAMG");
+prodPressurePrecSolverDict.add
+(
+    "tolerance",
+    prodPressurePrecTolerance
+);
+prodPressurePrecSolverDict.add("relTol", 0.0);
+prodPressurePrecSolverDict.add
+(
+    "maxIter",
+    prodPressurePrecMaxIter
+);
+prodPressurePrecSolverDict.add("smoother", "GaussSeidel");
+prodPressurePrecSolverDict.add("cacheAgglomeration", true);
+prodPressurePrecSolverDict.add("agglomerator", "faceAreaPair");
+prodPressurePrecSolverDict.add("nCellsInCoarsestLevel", 10);
+prodPressurePrecSolverDict.add("mergeLevels", 1);
+prodPressurePrecSolverDict.add("nPreSweeps", 0);
+prodPressurePrecSolverDict.add("nPostSweeps", 2);
+
+// Verify that the assembled Poisson diagonal is the same scaled P-P diagonal
+// already used by the matrix-free operator.  A mismatch is reported before
+// the first Krylov iteration instead of being hidden as poor convergence.
+if (prodPreconditionerSetup == "pressureGAMG")
+{
+    scalar prodPressurePrecDiagDiff2 = 0.0;
+    scalar prodPressurePrecDiagRef2 = 0.0;
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        const scalar refDiag =
+            prodJacobiDiag[prodPIndex(celli)];
+        const scalar diff =
+            prodPressurePrecMatrix.diag()[celli] - refDiag;
+        prodPressurePrecDiagDiff2 += sqr(diff);
+        prodPressurePrecDiagRef2 += sqr(refDiag);
+    }
+    reduce(prodPressurePrecDiagDiff2, sumOp<scalar>());
+    reduce(prodPressurePrecDiagRef2, sumOp<scalar>());
+    Info<< "PRODPRECGAMGSETUP (" << discreteAdjointLabel
+        << "): diagRelL2="
+        << Foam::sqrt
+           (
+               prodPressurePrecDiagDiff2
+              /Foam::max(prodPressurePrecDiagRef2, scalar(1e-300))
+           )
+        << " innerTol=" << prodPressurePrecTolerance
+        << " innerMaxIter=" << prodPressurePrecMaxIter << endl;
+}
+
 // Block lower-triangular right preconditioner (simplified Schur complement):
 //   M = [D_U  UP; 0  S],  z = M^{-1} r :
 //     zP = S^{-1} rP                       (S ~ L1 row-sum of the P block)
@@ -784,10 +912,38 @@ auto applyProdPreconditioner =
 [&](const scalarField& input, scalarField& output)
 {
     output.setSize(prodNUnknowns);
-    for (label celli = 0; celli < prodNCells; ++celli)
+    if (prodPreconditionerSetup == "pressureGAMG")
     {
-        output[prodPIndex(celli)] =
-            input[prodPIndex(celli)]/prodL1Diag[prodPIndex(celli)];
+        prodPressurePrecPsi.primitiveFieldRef() = scalar(0.0);
+        forAll(mesh.boundary(), patchi)
+        {
+            prodPressurePrecPsi.boundaryFieldRef()[patchi] == scalar(0.0);
+        }
+        prodPressurePrecMatrix.source() = scalar(0.0);
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            prodPressurePrecMatrix.source()[celli] =
+                input[prodPIndex(celli)];
+        }
+        if (prodPressureNeedsReference)
+        {
+            prodPressurePrecMatrix.source()[pRefCell] = 0.0;
+        }
+        prodPressurePrecMatrix.solve(prodPressurePrecSolverDict);
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            output[prodPIndex(celli)] =
+                prodPressurePrecPsi[celli];
+        }
+    }
+    else
+    {
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            output[prodPIndex(celli)] =
+                input[prodPIndex(celli)]
+               /prodL1Diag[prodPIndex(celli)];
+        }
     }
     scalarField zIn(prodNUnknowns, 0.0);
     for (label celli = 0; celli < prodNCells; ++celli)
