@@ -718,12 +718,26 @@ forAll(prodJacobiDiag, i)
     }
 }
 
-// L1 row-sum right preconditioner, assembled column-wise via the matrix-free
-// operator (solve-layer only; applyProdFlowJT is unchanged).  Stronger than
-// plain Jacobi for the strongly non-normal U-p system: the FGMRES trace
-// showed projRes nearly constant within each cycle with h00 ~ 3.15, which
-// indicates the diagonal preconditioner leaves a poorly clustered spectrum.
+// Production setup must remain O(N) or O(nnz).  The former default built an
+// exact L1 row sum by applying J^T once for every unknown, which is
+// O(N*nnz) and unusable at topology-optimization mesh sizes.  Use a positive
+// diagonal scale by default.  The legacy construction is retained only as an
+// explicit small-case diagnostic/reference option.
+const word prodPreconditionerSetup =
+    optProperties.lookupOrDefault<word>
+    (
+        "discreteProdPreconditionerSetup",
+        "diagonal"
+    );
 scalarField prodL1Diag(prodNUnknowns, 1.0);
+if (prodPreconditionerSetup == "diagonal")
+{
+    forAll(prodL1Diag, i)
+    {
+        prodL1Diag[i] += mag(prodJacobiDiag[i]);
+    }
+}
+else if (prodPreconditionerSetup == "bruteForceL1")
 {
     scalarField eCol(prodNUnknowns, 0.0);
     scalarField aCol(prodNUnknowns, 0.0);
@@ -737,6 +751,16 @@ scalarField prodL1Diag(prodNUnknowns, 1.0);
             prodL1Diag[i] += mag(aCol[i]);
         }
     }
+}
+else
+{
+    FatalErrorInFunction
+        << "Unknown discreteProdPreconditionerSetup='"
+        << prodPreconditionerSetup
+        << "'. Valid choices are diagonal or bruteForceL1."
+        << abort(FatalError);
+}
+{
     scalar lAvg = 0.0, mnL = GREAT, mxL = -GREAT;
     forAll(prodL1Diag, i)
     {
@@ -745,8 +769,10 @@ scalarField prodL1Diag(prodNUnknowns, 1.0);
         mxL = Foam::max(mxL, prodL1Diag[i]);
     }
     reduce(lAvg, sumOp<scalar>());
-    Info<< "PRODL1 (" << discreteAdjointLabel << "): avg="
-        << lAvg/prodNUnknowns << " min=" << mnL << " max=" << mxL << endl;
+    Info<< "PRODPRECSETUP (" << discreteAdjointLabel << "): mode="
+        << prodPreconditionerSetup
+        << " avg=" << lAvg/prodNUnknowns
+        << " min=" << mnL << " max=" << mxL << endl;
 }
 // Block lower-triangular right preconditioner (simplified Schur complement):
 //   M = [D_U  UP; 0  S],  z = M^{-1} r :
@@ -859,6 +885,12 @@ const scalar prodTolerance =
     optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-9);
 const Switch discreteCheckpointGradient =
     optProperties.lookupOrDefault<Switch>("discreteCheckpointGradient", false);
+const Switch prodEnableRitzPilot =
+    optProperties.lookupOrDefault<Switch>
+    (
+        "discreteProdEnableRitzPilot",
+        false
+    );
 
 if (prodRestart < 2 || prodMaxIterations < 1 || prodTolerance <= SMALL)
 {
@@ -1305,7 +1337,12 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
         prodIteration += innerDone;
 
         // ---- harmonic-Ritz deflation pilot (diagnostic) ----
-        if (prodIteration <= 320 || prodIteration >= prodMaxIterations - 320)
+        if
+        (
+            prodEnableRitzPilot
+         && (prodIteration <= 320
+          || prodIteration >= prodMaxIterations - 320)
+        )
         {
             const label nH = innerDone;
             // inverse-power iteration on H (upper Hessenberg) for the m

@@ -55,6 +55,32 @@ class StageBSafetyGateTests(unittest.TestCase):
             ),
         )
 
+    def test_production_preconditioner_default_is_linear_setup(self):
+        self.assertIn(
+            '"discreteProdPreconditionerSetup",',
+            self.production,
+        )
+        self.assertRegex(
+            self.production,
+            re.compile(
+                r'"discreteProdPreconditionerSetup",\s*"diagonal"'
+            ),
+        )
+        self.assertIn(
+            'else if (prodPreconditionerSetup == "bruteForceL1")',
+            self.production,
+        )
+        self.assertIn(
+            '"discreteProdEnableRitzPilot",',
+            self.production,
+        )
+        self.assertRegex(
+            self.production,
+            re.compile(
+                r"prodEnableRitzPilot\s*&&\s*\(prodIteration"
+            ),
+        )
+
     def test_mma_has_no_direction_only_bypass(self):
         self.assertNotIn("guardedDirectionOnly", self.mma_gate)
         self.assertNotIn("The only exception", self.mma_gate)
