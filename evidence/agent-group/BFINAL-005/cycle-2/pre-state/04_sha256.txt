@@ -1,0 +1,9 @@
+sha256 of src/sensitivity.H (production file to be edited in step2):
+1a3031d90a11d780ef163cd70c29e7b356a9c351045b9affb8ca2a82580568c5  src/sensitivity.H
+
+intended new helper path src/rxPressureRowTranspose.H:
+NOT PRESENT (expected: helper does not exist at pre-state)
+
+LOCKED BFINAL-003 production heads (must remain untouched):
+f0c814975cf8bc7f98b9f69efa2f0bc01bd251579920bbedda7d266b72927507  src/solveDiscreteFlowAdjoint.H
+8c4901bf8da4edbc7cc1efe73a7583963e4688bba93c8c58539c4c39cae1ad91  src/solveDiscreteFlowAdjointProduction.H

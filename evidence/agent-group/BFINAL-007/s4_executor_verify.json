@@ -1,0 +1,38 @@
+{
+ "Q1_FDlin_maxabs": 3.898379406317599e-10,
+ "Q1_FDlin_L2": 1.7683122530531548e-09,
+ "Q1_outlet_mass_fraction": 0.6862484752772424,
+ "Q1_top1pct_mass_fraction": 0.9461672242283429,
+ "Q1_FDlin_vs_minusLprod_nP": 2.413969243839516e-09,
+ "Q2_icB_range": [
+  -1.706288787933969e-09,
+  -5.479950656786523e-10
+ ],
+ "Q2_bcB_maxabs": 0.0,
+ "Q2_candidate_range": [
+  5.479950675038135e-10,
+  1.706288779158987e-09
+ ],
+ "Q3_diag_JPP_vs_Lint": 1.6998953257692768e-16,
+ "Q3_prod_minus_export_offoutlet_max": 2.481541837659083e-24,
+ "Q3_prod_minus_export_outlet_range": [
+  -1.7062887879339685e-09,
+  -5.479950656786527e-10
+ ],
+ "Q4a_w_norm": 2.0844704629247094e+18,
+ "Q4a_n_PREF": 0.0,
+ "Q4a_nullvec_Jexp": 2.716845999801765e-19,
+ "Q4a_nullvec_Jcand": 3.0199329144323884e-09,
+ "Q4b_candPPn_vs_FDlin": 2.4139692438395267e-09,
+ "Q4b_candPPn_vs_FDcd": 6.137359188613913e-07,
+ "Q4c_Jv_cand_vs_exp": 0.0,
+ "Q4c_Jexp_vs_oracle_exclPREF": 3.965814239437105e-16,
+ "Q5_term_range": [
+  -1.4388295963821038e-13,
+  5.386249825678602e-14
+ ],
+ "Q5_term_L2": 5.358176626141303e-13,
+ "Q5_deltaAlpha_outlet_nnz": 0,
+ "Q5_designMask_outlet_max": 0.0,
+ "_runtime_s": 7.563906908035278
+}

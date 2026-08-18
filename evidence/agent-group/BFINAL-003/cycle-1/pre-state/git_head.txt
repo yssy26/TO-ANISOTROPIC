@@ -1,0 +1,14 @@
+=== pwd ===
+/home/ys/dsH/TO-ANISOTROPIC
+
+=== git rev-parse --show-toplevel ===
+/home/ys/dsH/TO-ANISOTROPIC
+
+=== git branch --show-current ===
+agent/dsH-stage-b-validation
+
+=== git rev-parse HEAD ===
+ca8a772b8339a36e7906ea32a7125061c47aa280
+
+=== git log -1 --format='%H %s' ===
+ca8a772b8339a36e7906ea32a7125061c47aa280 dsH workspace: deviatoric-stress transpose assembly + validation evidence + docs

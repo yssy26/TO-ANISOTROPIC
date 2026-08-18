@@ -1,0 +1,14 @@
+loaded JT 134400x134400 nnz=6209576
+identity rows in pressure block: [100800]
+row106400 stored=18 nz>1e-12=18 (must be physical, NOT identity)
+J built nnz=6209552
+D1 wPrime: ||w||=2.084470e+18  ||J w||=5.663185e-01  ||J w||/||w||=2.716846e-19
+normalized n: ||J n||=2.716846e-19  (== ||J w||/||w||, null-vector ratio)
+n[PREF]=0.000e+00 (gauge pin, must be ~0)
+P-block |p|: total mass=2.424e+19  top-1% (336 cells) mass fraction=0.8948  max=6.600e+17 mean=7.215e+14
+n[PREF]=0 => null mode is NOT the constant-pressure mode (constant would have n[PREF]=1)
+D1: (-R_x d)^T n / ||-R_x d|| = 1.297e-09
+D2: (-R_x d)^T n / ||-R_x d|| = 4.421e-11
+D3: (-R_x d)^T n / ||-R_x d|| = 1.452e-09
+g_w^T n = 2.805e-18   sum(g_w,P)=2.357e-05
+REV_NULLCHECK_DONE

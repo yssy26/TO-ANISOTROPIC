@@ -1,0 +1,17 @@
+== Q1: actual-residual FD_lin from artifacts ==
+  max|FD|=3.8984e-10 L2=1.7683e-09 outlet-frac=0.6862 top1pct-frac=0.9462
+  |FD_lin - (-L_prod.n_P)|/|L_prod.n_P| = 2.414e-09 (independent rebuild)
+== Q2: outlet boundary coefficients ==
+  internalCoeffs_b=[-1.7063e-09,-5.4800e-10] boundaryCoeffs_b max|.|=0.00e+00 cand=[5.4800e-10,1.7063e-09]
+== Q3: exported J P-P vs production laplacian ==
+  J_PP diag vs L_int relL2=1.700e-16 ; L_prod-J_PP off-outlet max=2.482e-24 ; outlet=[-1.7063e-09,-5.4800e-10]
+== Q4a: null-vector ratio (exported vs candidate) ==
+  ||J_exp.n||/||n||=2.717e-19  ||J_cand.n||/||n||=3.020e-09  (ratio 1.1e+10)
+== Q4b: candidate J_PP . n_P vs actual-residual FD ==
+  candPP.n_P vs FD_lin relL2=2.414e-09 ; vs FD_cd(1e-4) relL2=6.137e-07
+== Q4c: dp=0 Gate-A direction unchanged (regression) ==
+  J_cand.v == J_exp.v relL2=0.000e+00 ; J_exp.v vs oracle (excl PREF) relL2=3.966e-16
+== Q5: R_P,x boundary design term ==
+  term range=[-1.439e-13,5.386e-14] L2=5.358e-13 ; deltaAlpha outlet nnz=0 ; designMask outlet max=0.0
+
+S4_EXECUTOR_VERIFY_DONE (t=7.6s)

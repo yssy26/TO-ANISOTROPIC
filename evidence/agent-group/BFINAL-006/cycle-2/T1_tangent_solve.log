@@ -1,0 +1,70 @@
+=== BFINAL-006 cycle-2 S2/T1: Pressure-Reference Gate + T1 tangent solve ===
+workspace=/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2 case=/home/ys/dsH/b2_case_smoke
+[CHECK 1] p.needReference() semantics
+  fixedValue patches: ['outlet']   zeroGradient patches: ['inlet', 'hotInlet', 'hotOutlet', 'solidEndWalls', 'bottomWall', 'topWall', 'sideWalls']
+  -> needReference()==False  (any fixesValue patch => false; outlet fixedValue uniform 0)
+  readTransportProperties.H: label pRefCell = 0; setRefCell(p, simple.dict(), pRefCell, pRefValue)
+  setRefCell no-op when !needReference() => pRefCell stays 0; fvSolution pRefCell=5600 INEFFECTIVE
+  CHECK 1 => PASS
+[loading] reading explicitJT.mtx (467.5 MB) ...
+  matrix 134400x134400 nnz=6209576 (t=0.7s)
+[CHECK 2] identity-row scan of pressure rows [100800,134400) (corrected criterion: single |v|>1e-12 AND diagonal==1)
+  identity rows (pressure block): [100800]
+  row 100800: stored entries=14; nonzeros>1e-12=1 (diag=-1.0380180000000005e-08)
+[CHECK 3] detected identity row 100800 == discretePIndex(0) = 3*33600+0 = 100800 => PASS
+[CHECK 4] row 106400 (=discretePIndex(5600)): stored entries=18, nonzeros>1e-12=18, is_identity=False
+  CHECK 4 => PASS (106400 is a physical continuity row, NOT the reference row)
+[CHECK 5] pRefRow = 100800 recorded as T1 pinning row (rhs[pRefRow]=0, row->identity). => PASS
+[T1] transposing explicitJT.mtx (J^T -> J) ...
+  J nnz=6209576 (t=1.0s)
+  J[:,100800] identity-column check: nonzeros=1 ok=True
+[T1] re-pinning J row 100800 to identity (gauge wPrime_p[100800]=0; rhs[100800]=0) ...
+[T1] loading directions and R_x*d ...
+  g_w: ||g_w(P)||=2.571480e-06 ||g_w(U)||=0.000000e+00 (U block ~0) sum(g_w,P)=2.356800e-05 (NOT gauge-neutral: outlet is fixedValue p=0, so only inlet cells carry +weight)
+[T1] scales recorded (exported matrix+rhs are PHYSICAL; no extra U/P scaling applied):
+  discreteMomentumScale=7.86409044975000e-03 discreteAreaScale=2.47771624976000e-07 M/A=3.17392697832601e+04
+[T1] SuperLU factorization of pinned J (n=134400) ...
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/tangent_solve.py:220: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+  factorized (t=1982.3s)
+[T1] direction D1: ||R_x*d||=5.663185e-01  ||rhs(post-pin)||=5.663185e-01 (U=5.663184e-01 P=1.930627e-04)
+    D1: iter 0 relres=1.794196e-03
+    D1: iter 5 relres=3.468670e-04
+    D1: iter 10 relres=3.308029e-04
+    D1: iter 15 relres=3.622365e-04
+    D1: iter 20 relres=3.432742e-04
+    D1: iter 25 relres=3.380751e-04
+    D1: ||J*wPrime-rhs||=2.065409e-04  trueRelRes=3.647081e-04  U-rowRel=3.647055e-04  P-rowRel=4.021298e-03  ||wPrime||=2.084470e+18
+    D1: wPrime_p[100800]=0.000e+00 (gauge pin OK)
+    D1: D_TAN = g_w^T*wPrime = 5.84756577e+00
+    wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/artifacts/wPrime_TAN_D1.mtx (2604766 bytes)
+[T1] direction D2: ||R_x*d||=8.615839e-01  ||rhs(post-pin)||=8.615839e-01 (U=8.615837e-01 P=4.479779e-04)
+    D2: iter 0 relres=2.146918e-04
+    D2: iter 5 relres=4.238387e-05
+    D2: iter 10 relres=4.635660e-05
+    D2: iter 15 relres=4.776323e-05
+    D2: iter 20 relres=4.321592e-05
+    D2: iter 25 relres=5.223727e-05
+    D2: ||J*wPrime-rhs||=3.484340e-05  trueRelRes=4.044110e-05  U-rowRel=4.044098e-05  P-rowRel=1.926119e-04  ||wPrime||=5.539179e+17
+    D2: wPrime_p[100800]=0.000e+00 (gauge pin OK)
+    D2: D_TAN = g_w^T*wPrime = 1.19303916e+00
+    wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/artifacts/wPrime_TAN_D2.mtx (2606126 bytes)
+[T1] direction D3: ||R_x*d||=8.516528e-01  ||rhs(post-pin)||=8.516528e-01 (U=8.516527e-01 P=2.595428e-04)
+    D3: iter 0 relres=1.571006e-02
+    D3: iter 5 relres=2.436285e-03
+    D3: iter 10 relres=2.541633e-03
+    D3: iter 15 relres=3.820746e-03
+    D3: iter 20 relres=3.659334e-03
+    D3: iter 25 relres=2.618184e-03
+    D3: ||J*wPrime-rhs||=2.633857e-03  trueRelRes=3.092642e-03  U-rowRel=3.092637e-03  P-rowRel=1.843539e-02  ||wPrime||=3.796498e+19
+    D3: wPrime_p[100800]=0.000e+00 (gauge pin OK)
+    D3: D_TAN = g_w^T*wPrime = -3.31183111e+00
+    wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/artifacts/wPrime_TAN_D3.mtx (2604398 bytes)
+[done] T1 finished in 2093.0s
+
+=== SUMMARY (T1 tangent solve, pRefRow=100800) ===
+dir     ||R_x*d||       ||Jw-rhs||      trueRel   Urel      Prel      wPrime_p[pref]  D_TAN
+D1      5.663185e-01   2.065409e-04   3.647e-04   3.647e-04   4.021e-03   0.000e+00         5.84756577e+00
+D2      8.615839e-01   3.484340e-05   4.044e-05   4.044e-05   1.926e-04   0.000e+00         1.19303916e+00
+D3      8.516528e-01   2.633857e-03   3.093e-03   3.093e-03   1.844e-02   0.000e+00        -3.31183111e+00
+T1_OK

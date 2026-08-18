@@ -1,0 +1,466 @@
+diff --git a/src/solveDiscreteFlowAdjoint.H b/src/solveDiscreteFlowAdjoint.H
+index 7562789..51bae9a 100644
+--- a/src/solveDiscreteFlowAdjoint.H
++++ b/src/solveDiscreteFlowAdjoint.H
+@@ -79,6 +79,18 @@ for (label celli = 0; celli < discreteNCells; ++celli)
+     rAUAdj[celli] =
+         1.0/Foam::max(discretePrimalMomentum.A().ref()[celli], SMALL);
+ }
++
++// BFINAL-003 (P<-U relaxation patch): U-equation relaxation factor read from
++// fvSolution relaxationFactors/equations/U exactly as fvMatrix::relax() does
++// (guarded by relaxEquation, default 1.0 = no relaxation).  The production
++// SIMPLE P-row flux tangent uses the RELAXED momentum mapping:
++//   HbyA = rAU_rel*H_rel  with  rAU_rel = alphaRel*rAU_u  and the relax-source
++//   derivative (D_rel-D0)*dU = (1/alphaRel-1)*A_u*dU entering H, which yields
++//   dHbyA/dU = alphaRel*rAU_u*dH_u + (1-alphaRel)*dU.
++// No hard-coded 0.4/0.6/2.5: the coefficients follow the actual relaxation
++// factor (0.4 for the current case -> 0.4 mobility + 0.6 relax-source).
++const scalar alphaRel =
++    mesh.relaxEquation("U") ? mesh.equationRelaxationFactor("U") : scalar(1.0);
+ {
+     scalar sU = 0.0, mnU = GREAT, mxU = -GREAT;
+     scalar sL = 0.0, mnL = GREAT, mxL = -GREAT;
+@@ -639,9 +651,23 @@ auto applyDiscreteFlowJ =
+             (discreteSf[facei] & rAUdH)
+           + mobF*(input[discretePIndex(nei)] - input[discretePIndex(own)])
+            *dcfF*mafF;
++        // BFINAL-003 (P<-U relaxation patch): the P-row flux tangent must use
++        // the PRODUCTION relaxed-SIMPLE mapping (BFINAL-002 Candidate B):
++        //   dphi/dU = Sf & (alphaRel*rAU_u*dH_u + (1-alphaRel)*dUbar)
++        // where alphaRel is the actual fvSolution U-equation relaxation factor
++        // and the (1-alphaRel)*dUbar term is the relaxation-source derivative
++        // (D_rel-D0)*dU entering H.  The P-P part (mobF*(p_nei-p_own)*dcfF*mafF)
++        // is mathematically unchanged.  The OLD deltaPhiFace is kept ONLY for
++        // the momentum velocityJump (convective) term below, which is part of
++        // the J_UU block and must stay byte-for-byte unchanged.
++        const vector interpDU = wf*deltaUOwn + (1.0 - wf)*deltaUNei;
++        const scalar deltaPhiFacePU =
++            (discreteSf[facei] & (alphaRel*rAUdH + (1.0 - alphaRel)*interpDU))
++          + mobF*(input[discretePIndex(nei)] - input[discretePIndex(own)])
++           *dcfF*mafF;
+         if (collectDPhiJ)
+         {
+-            collectedDPhiJ[facei] = deltaPhiFace;
++            collectedDPhiJ[facei] = deltaPhiFacePU;
+         }
+         const vector velocityJump = U[nei] - U[own];
+         const label downwind = discretePhi[facei] >= 0.0 ? nei : own;
+@@ -653,8 +679,8 @@ auto applyDiscreteFlowJ =
+         }
+         (void)velocityJump; (void)downwind;
+ 
+-        output[discretePIndex(own)] += deltaPhiFace;
+-        output[discretePIndex(nei)] -= deltaPhiFace;
++        output[discretePIndex(own)] += deltaPhiFacePU;
++        output[discretePIndex(nei)] -= deltaPhiFacePU;
+ 
+         const scalar deltaPFace =
+             discreteWeights[facei]*input[discretePIndex(own)]
+@@ -677,24 +703,41 @@ auto applyDiscreteFlowJ =
+         const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+         const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+         const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
++        // BFINAL-003 (P<-U relaxation patch): production constrainHbyA pins
++        // HbyA_b = U_b on non-assignable (fixedValue/noSlip) U patches so the
++        // boundary flux tangent is exactly 0 there.  On assignable
++        // (zeroGradient) U patches the boundary face value is extrapolated
++        // from the cell: dphi_b = Sf_b & (alphaRel*rAU*dH + (1-alphaRel)*dU_c).
++        const bool uAssignable = U.boundaryField()[patchi].assignable();
+ 
+         forAll(patchCells, facei)
+         {
+             const label celli = patchCells[facei];
+ 
+-            // reduced boundary dphi (matches fvc::flux(HbyA) boundary,
+-            // extrapolated-calculated => face value = cell value):
+-            //   dphi_b = Sf_b & (rAU * dH), with dH already /V-scaled
+-            // (the patch loop runs AFTER the /V step on dHx/dHy/dHz).
+-            const scalar rAUb = rAUAdj[celli];
+-            const vector dHb
+-            (
+-                dHx[celli],
+-                dHy[celli],
+-                dHz[celli]
+-            );
+-            output[discretePIndex(celli)] +=
+-                (patchSf[facei] & (rAUb*dHb));
++            if (uAssignable)
++            {
++                // reduced boundary dphi (matches fvc::flux(HbyA) boundary,
++                // extrapolated-calculated => face value = cell value):
++                //   dphi_b = Sf_b & (alphaRel*rAU*dH + (1-alphaRel)*dU),
++                // with dH already /V-scaled (the patch loop runs AFTER the
++                // /V step on dHx/dHy/dHz).
++                const scalar rAUb = rAUAdj[celli];
++                const vector dHb
++                (
++                    dHx[celli],
++                    dHy[celli],
++                    dHz[celli]
++                );
++                const vector dUb
++                (
++                    input[discreteUIndex(celli, 0)],
++                    input[discreteUIndex(celli, 1)],
++                    input[discreteUIndex(celli, 2)]
++                );
++                output[discretePIndex(celli)] +=
++                    (patchSf[facei]
++                     & (alphaRel*rAUb*dHb + (1.0 - alphaRel)*dUb));
++            }
+ 
+             if (!pressureFixed)
+             {
+@@ -770,10 +813,15 @@ auto applyDiscreteFlowJT =
+         output[discretePIndex(nei)] +=
+             (1.0 - discreteWeights[facei])*pressureTranspose;
+ 
+-        // reduced-flux transpose:
+-        //   phiAdjoint = (lambdaP_own - lambdaP_nei) + lambdaU_down & velJump
+-        //   -> kf path (P-P):        Pbar -= kf*lambdaPdiff
+-        //   -> hAdjoint path (P-U & conv):  hA += phiAdjoint*w*rAU*Sf
++        // reduced-flux transpose (BFINAL-003 P<-U relaxation patch):
++        //   forward: the P row is routed through the corrected P-U flux
++        //     dphi_PU = Sf&(alphaRel*rAU*dH + (1-alphaRel)*dUbar) + kf*(p_n-p_o)
++        //     while the velocityJump conv term keeps the OLD unrelaxed dphi,
++        //   so the adjoint scalar splits:
++        //     phiAdjointRel = convTerm + alphaRel*lambdaPdiff  (-> hA path)
++        //     + direct (1-alphaRel)*lambdaPdiff*(wf*Sf)        (-> U rows)
++        //   and the kf path (P-P) keeps phiAdjoint = lambdaPdiff + convTerm
++        //   unchanged (the P-P block is untouched by this patch).
+         const vector velocityJump = U[nei] - U[own];
+         const label downwind = discretePhi[facei] >= 0.0 ? nei : own;
+         const vector lambdaDown = (downwind == nei) ? lambdaNei : lambdaOwn;
+@@ -791,12 +839,23 @@ auto applyDiscreteFlowJT =
+         output[discretePIndex(own)] -= kf*phiAdjoint;
+         output[discretePIndex(nei)] += kf*phiAdjoint;
+ 
++        const scalar phiAdjointRel = convTerm + alphaRel*lambdaPdiff;
+         const vector hOwn =
+-            phiAdjoint*wf*rAUAdj[own]*discreteSf[facei];
++            phiAdjointRel*wf*rAUAdj[own]*discreteSf[facei];
+         const vector hNei =
+-            phiAdjoint*(1.0 - wf)*rAUAdj[nei]*discreteSf[facei];
++            phiAdjointRel*(1.0 - wf)*rAUAdj[nei]*discreteSf[facei];
+         hAx[own] += hOwn.x(); hAy[own] += hOwn.y(); hAz[own] += hOwn.z();
+         hAx[nei] += hNei.x(); hAy[nei] += hNei.y(); hAz[nei] += hNei.z();
++
++        // direct relax-source transpose: U(own/nei) <- (1-alphaRel)*lambdaPdiff*Sf
++        const vector directRel =
++            (1.0 - alphaRel)*lambdaPdiff*discreteSf[facei];
++        output[discreteUIndex(own, 0)] += wf*directRel.x();
++        output[discreteUIndex(own, 1)] += wf*directRel.y();
++        output[discreteUIndex(own, 2)] += wf*directRel.z();
++        output[discreteUIndex(nei, 0)] += (1.0 - wf)*directRel.x();
++        output[discreteUIndex(nei, 1)] += (1.0 - wf)*directRel.y();
++        output[discreteUIndex(nei, 2)] += (1.0 - wf)*directRel.z();
+     }
+ 
+     // boundary: reduced boundary-flux transpose (lambdaP -> hA) and
+@@ -805,14 +864,32 @@ auto applyDiscreteFlowJT =
+     {
+         const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+         const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
++        // BFINAL-003 (P<-U relaxation patch): forward boundary dphi is 0 on
++        // non-assignable (fixedValue/noSlip) U patches and
++        // Sf_b&(alphaRel*rAU*dH + (1-alphaRel)*dU_cell) on assignable ones;
++        // the transpose mirrors that: alphaRel-scaled hB + direct
++        // (1-alphaRel)*lambdaPc*patchSf term, assignable-only.
++        const bool uAssignable = U.boundaryField()[patchi].assignable();
+ 
+         forAll(patchCells, facei)
+         {
+             const label celli = patchCells[facei];
+ 
+-            const scalar lambdaPc = input[discretePIndex(celli)];
+-            const vector hB = lambdaPc*rAUAdj[celli]*patchSf[facei];
+-            hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
++            if (uAssignable)
++            {
++                const scalar lambdaPc = input[discretePIndex(celli)];
++                const vector hB =
++                    lambdaPc*(alphaRel*rAUAdj[celli])*patchSf[facei];
++                hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
++
++                // direct relax-source transpose on the boundary face:
++                // U(cell) <- (1-alphaRel)*lambdaPc*patchSf
++                const vector dB =
++                    (1.0 - alphaRel)*lambdaPc*patchSf[facei];
++                output[discreteUIndex(celli, 0)] += dB.x();
++                output[discreteUIndex(celli, 1)] += dB.y();
++                output[discreteUIndex(celli, 2)] += dB.z();
++            }
+ 
+             if (!p.boundaryField()[patchi].fixesValue())
+             {
+@@ -2344,6 +2421,17 @@ forAll(discreteUpper, facei)
+         addCoo(discretePIndex(own), discreteUIndex(downwind, c2), -kf*velocityJump.component(c2));
+         addCoo(discretePIndex(nei), discreteUIndex(downwind, c2),  kf*velocityJump.component(c2));
+     }
++
++    // BFINAL-003 (P<-U relaxation patch): direct relax-source transpose
++    //   U(own/nei) <- (1-alphaRel)*lambdaPdiff*(weight*Sf)  (internal faces),
++    // mirroring the matrix-free applyDiscreteFlowJT direct term.
++    for (direction c = 0; c < 3; ++c)
++    {
++        addCoo(discreteUIndex(own, c), discretePIndex(own),  (1.0 - alphaRel)*weight*sf.component(c));
++        addCoo(discreteUIndex(own, c), discretePIndex(nei), -(1.0 - alphaRel)*weight*sf.component(c));
++        addCoo(discreteUIndex(nei, c), discretePIndex(own),  (1.0 - alphaRel)*(1.0 - weight)*sf.component(c));
++        addCoo(discreteUIndex(nei, c), discretePIndex(nei), -(1.0 - alphaRel)*(1.0 - weight)*sf.component(c));
++    }
+ }
+ 
+ // hAdjoint path (Stage 1 -> Stage 2) expanded over cross-face sums:
+@@ -2357,7 +2445,10 @@ forAll(discreteUpper, facei)
+         cellFacesOf[discreteNeighbour[fi]].push_back(fi);
+     }
+     // hB coefficient per cell: hA[cell] += lambdaP(cell)*rAU*Sf_b summed over
+-    // all boundary faces of the cell (Stage-1 boundary path).
++    // all boundary faces of the cell (Stage-1 boundary path).  BFINAL-003
++    // (P<-U relaxation patch): assignable-only (constrainHbyA pins the
++    // non-assignable patches to dphi_b = 0) and alphaRel-scaled (relaxed
++    // mobility), mirroring the matrix-free applyDiscreteFlowJT boundary path.
+     scalarField hBx(mesh.nCells(), 0.0);
+     scalarField hBy(mesh.nCells(), 0.0);
+     scalarField hBz(mesh.nCells(), 0.0);
+@@ -2365,12 +2456,16 @@ forAll(discreteUpper, facei)
+     {
+         const labelUList& fc = mesh.boundary()[patchi].faceCells();
+         const vectorField& pSf = mesh.Sf().boundaryField()[patchi];
++        const bool uAssignable = U.boundaryField()[patchi].assignable();
+         forAll(fc, f)
+         {
+             const label celli = fc[f];
+-            hBx[celli] += rAUAdj[celli]*pSf[f].x();
+-            hBy[celli] += rAUAdj[celli]*pSf[f].y();
+-            hBz[celli] += rAUAdj[celli]*pSf[f].z();
++            if (uAssignable)
++            {
++                hBx[celli] += alphaRel*rAUAdj[celli]*pSf[f].x();
++                hBy[celli] += alphaRel*rAUAdj[celli]*pSf[f].y();
++                hBz[celli] += alphaRel*rAUAdj[celli]*pSf[f].z();
++            }
+         }
+     }
+     forAll(discreteUpper, fi)
+@@ -2405,8 +2500,10 @@ forAll(discreteUpper, facei)
+             // hA[cell] lambdaP(own_f)=+coef, lambdaP(nei_f)=-coef regardless
+             // of which end the cell is (phi = P_own - P_nei + conv)
+             const scalar coefP = (o2 == own) ? w2 : (1.0 - w2);
+-            const scalar coP_o2 = coefP*rAUo2;
+-            const scalar coP_n2 = -coefP*rAUo2;
++            // BFINAL-003 (P<-U relaxation patch): alphaRel-scaled P-part
++            // (relaxed mobility); convCo (convTerm path) stays unchanged.
++            const scalar coP_o2 = alphaRel*coefP*rAUo2;
++            const scalar coP_n2 = -alphaRel*coefP*rAUo2;
+             const scalar convCo = (o2 == own) ? w2*rAUo2 : (1.0 - w2)*rAUo2;
+             for (direction c = 0; c < 3; ++c)
+             {
+@@ -2431,8 +2528,10 @@ forAll(discreteUpper, facei)
+             const label down2 = discretePhi[fp] >= 0.0 ? n2 : o2;
+             const vector vj2 = U[n2] - U[o2];
+             const scalar coefP = (o2 == nei) ? w2 : (1.0 - w2);
+-            const scalar coP_o2 = coefP*rAUn2;
+-            const scalar coP_n2 = -coefP*rAUn2;
++            // BFINAL-003 (P<-U relaxation patch): alphaRel-scaled P-part
++            // (relaxed mobility); convCo (convTerm path) stays unchanged.
++            const scalar coP_o2 = alphaRel*coefP*rAUn2;
++            const scalar coP_n2 = -alphaRel*coefP*rAUn2;
+             const scalar convCo = (o2 == nei) ? w2*rAUn2 : (1.0 - w2)*rAUn2;
+             for (direction c = 0; c < 3; ++c)
+             {
+@@ -2454,25 +2553,45 @@ forAll(mesh.boundary(), patchi)
+     const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+     const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+     const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
++    // BFINAL-003 (P<-U relaxation patch): boundary hB assignable-only and
++    // alphaRel-scaled; direct (1-alphaRel) relax-source transpose term on
++    // assignable faces only (mirrors applyDiscreteFlowJT boundary path).
++    const bool uAssignable = U.boundaryField()[patchi].assignable();
+     const vectorField icV(discretePrimalMomentum.internalCoeffs()[patchi]);
+ 
+     forAll(patchCells, facei)
+     {
+         const label celli = patchCells[facei];
+-        const scalar cav = (icV[facei].x() + icV[facei].y() + icV[facei].z())/3.0;
+-        const scalar Vinvc = 1.0/Foam::max(mesh.V()[celli], SMALL);
+-        const scalar rAUb = rAUAdj[celli];
+-        // hB = lambdaP_cell*rAU*Sf_b ; Stage2: U(cell,c) += Bdiag_c/V*hB[c]
+-        for (direction c = 0; c < 3; ++c)
++
++        if (uAssignable)
+         {
+-            const scalar Bdiag = (-icV[facei].component(c) + cav);
+-            addCoo
+-            (
+-                discreteUIndex(celli, c),
+-                discretePIndex(celli),
+-                Bdiag*Vinvc*rAUb*patchSf[facei].component(c)
+-            );
++            const scalar cav = (icV[facei].x() + icV[facei].y() + icV[facei].z())/3.0;
++            const scalar Vinvc = 1.0/Foam::max(mesh.V()[celli], SMALL);
++            const scalar rAUb = rAUAdj[celli];
++            // hB = lambdaP_cell*alphaRel*rAU*Sf_b ; Stage2:
++            // U(cell,c) += Bdiag_c/V*hB[c]
++            for (direction c = 0; c < 3; ++c)
++            {
++                const scalar Bdiag = (-icV[facei].component(c) + cav);
++                addCoo
++                (
++                    discreteUIndex(celli, c),
++                    discretePIndex(celli),
++                    Bdiag*Vinvc*(alphaRel*rAUb)*patchSf[facei].component(c)
++                );
++            }
++            // direct (1-alphaRel)*lambdaPc*patchSf -> U(cell,c)
++            for (direction c = 0; c < 3; ++c)
++            {
++                addCoo
++                (
++                    discreteUIndex(celli, c),
++                    discretePIndex(celli),
++                    (1.0 - alphaRel)*patchSf[facei].component(c)
++                );
++            }
+         }
++
+         // direct U-P (P row <- U): keep
+         if (!pressureFixed)
+         {
+@@ -3913,3 +4032,23 @@ if (optProperties.lookupOrDefault<Switch>("stageB4JacobianProbe", false))
+         << " c100=" << discreteAdjointVelocity[100]
+         << " c5000=" << discreteAdjointVelocity[5000] << endl;
+ }
++
++// ---------------------------------------------------------------------------
++// Stage B5 (BFINAL-002, DIAGNOSTIC_ONLY): boundary-consistent P-row oracle +
++// isolated dphi/dU relaxation oracle.  Guarded by optProperties switch
++// "stageB5BoundaryRelaxOracle" (default false).  When disabled this block is
++// a no-op (one dictionary lookup only): no fields created/modified, no files
++// written, no effect on production values/residuals.  When enabled it runs
++// once (static guard) on the first inclusion of this header (thermalCoupling
++// adjoint block) using the converged production state; it never modifies
++// production state.
++// ---------------------------------------------------------------------------
++if (optProperties.lookupOrDefault<Switch>("stageB5BoundaryRelaxOracle", false))
++{
++    static bool stageB5BoundaryRelaxOracleDone = false;
++    if (!stageB5BoundaryRelaxOracleDone)
++    {
++        stageB5BoundaryRelaxOracleDone = true;
++        #include "stageB5BoundaryRelaxOracle.H"
++    }
++}
+diff --git a/src/solveDiscreteFlowAdjointProduction.H b/src/solveDiscreteFlowAdjointProduction.H
+index 9a744ad..c1be2f6 100644
+--- a/src/solveDiscreteFlowAdjointProduction.H
++++ b/src/solveDiscreteFlowAdjointProduction.H
+@@ -72,6 +72,20 @@ for (label celli = 0; celli < prodNCells; ++celli)
+     prodRAU[celli] = 1.0/Foam::max(prodMomentum.A().ref()[celli], SMALL);
+ }
+ 
++// BFINAL-003 (P<-U relaxation patch): U-equation relaxation factor read from
++// fvSolution relaxationFactors/equations/U exactly as fvMatrix::relax() does
++// (guarded by relaxEquation, default 1.0 = no relaxation).  The production
++// SIMPLE P-row flux tangent uses the RELAXED momentum mapping:
++//   HbyA = rAU_rel*H_rel  with  rAU_rel = alphaRel*rAU_u  and the relax-source
++//   derivative (D_rel-D0)*dU = (1/alphaRel-1)*A_u*dU entering H, which yields
++//   dHbyA/dU = alphaRel*rAU_u*dH_u + (1-alphaRel)*dU.
++// No hard-coded 0.4/0.6/2.5: the coefficients follow the actual relaxation
++// factor (0.4 for the current case -> 0.4 mobility + 0.6 relax-source).
++// This file is included in the production branch only (the diagnostic branch
++// defines its own alphaRel in solveDiscreteFlowAdjoint.H).
++const scalar alphaRel =
++    mesh.relaxEquation("U") ? mesh.equationRelaxationFactor("U") : scalar(1.0);
++
+ // Explicit frozen deviatoric-stress transpose.  Kept identical to the
+ // Stage-B4 operator so the production solver uses the same validated J^T.
+ auto applyProdFrozenDeviatoricJT =
+@@ -364,13 +378,22 @@ auto applyProdFlowJT =
+         output[prodPIndex(nei)] +=
+             (1.0 - prodWeights[facei])*pressureTranspose;
+ 
+-        // Reduced SIMPLE flux transpose.
++        // Reduced SIMPLE flux transpose (BFINAL-003 P<-U relaxation patch):
++        //   forward: the P row is routed through the corrected P-U flux
++        //     dphi_PU = Sf&(alphaRel*rAU*dH + (1-alphaRel)*dUbar) + kf*(p_n-p_o)
++        //     while the velocityJump conv term keeps the OLD unrelaxed dphi,
++        //   so the adjoint scalar splits:
++        //     phiAdjointRel = convTerm + alphaRel*lambdaPdiff  (-> hA path)
++        //     + direct (1-alphaRel)*lambdaPdiff*(weight*Sf)    (-> U rows)
++        //   and the kf path (P-P) keeps phiAdjoint = lambdaPdiff + convTerm
++        //   unchanged (the P-P block is untouched by this patch).
+         const vector velocityJump = U[nei] - U[own];
+         const label downwind = prodPhi[facei] >= 0.0 ? nei : own;
+         const vector lambdaDown =
+             (downwind == nei) ? lambdaNei : lambdaOwn;
+-        const scalar phiAdjoint =
+-            (lambdaPown - lambdaPnei) + (lambdaDown & velocityJump);
++        const scalar convTerm = lambdaDown & velocityJump;
++        const scalar lambdaPdiff = lambdaPown - lambdaPnei;
++        const scalar phiAdjoint = lambdaPdiff + convTerm;
+ 
+         const scalar weight = prodWeights[facei];
+         const scalar mobilityFace =
+@@ -384,25 +407,55 @@ auto applyProdFlowJT =
+         output[prodPIndex(own)] -= kf*phiAdjoint;
+         output[prodPIndex(nei)] += kf*phiAdjoint;
+ 
++        const scalar phiAdjointRel = convTerm + alphaRel*lambdaPdiff;
+         const vector hOwn =
+-            phiAdjoint*weight*prodRAU[own]*prodSf[facei];
++            phiAdjointRel*weight*prodRAU[own]*prodSf[facei];
+         const vector hNei =
+-            phiAdjoint*(1.0 - weight)*prodRAU[nei]*prodSf[facei];
++            phiAdjointRel*(1.0 - weight)*prodRAU[nei]*prodSf[facei];
+         hAx[own] += hOwn.x(); hAy[own] += hOwn.y(); hAz[own] += hOwn.z();
+         hAx[nei] += hNei.x(); hAy[nei] += hNei.y(); hAz[nei] += hNei.z();
++
++        // direct relax-source transpose: U(own/nei) <- (1-alphaRel)*lambdaPdiff*Sf
++        const vector directRel =
++            (1.0 - alphaRel)*lambdaPdiff*prodSf[facei];
++        output[prodUIndex(own, 0)] += weight*directRel.x();
++        output[prodUIndex(own, 1)] += weight*directRel.y();
++        output[prodUIndex(own, 2)] += weight*directRel.z();
++        output[prodUIndex(nei, 0)] += (1.0 - weight)*directRel.x();
++        output[prodUIndex(nei, 1)] += (1.0 - weight)*directRel.y();
++        output[prodUIndex(nei, 2)] += (1.0 - weight)*directRel.z();
+     }
+ 
+     // Boundary reduced-flux transpose and direct U-p transpose.
++    // BFINAL-003 (P<-U relaxation patch): forward boundary dphi is 0 on
++    // non-assignable (fixedValue/noSlip) U patches and
++    // Sf_b&(alphaRel*rAU*dH + (1-alphaRel)*dU_cell) on assignable ones;
++    // the transpose mirrors that: alphaRel-scaled hB + direct
++    // (1-alphaRel)*lambdaPc*patchSf term, assignable-only.
+     forAll(mesh.boundary(), patchi)
+     {
+         const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+         const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
++        const bool uAssignable = U.boundaryField()[patchi].assignable();
+         forAll(patchCells, facei)
+         {
+             const label celli = patchCells[facei];
+-            const scalar lambdaPc = input[prodPIndex(celli)];
+-            const vector hB = lambdaPc*prodRAU[celli]*patchSf[facei];
+-            hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
++
++            if (uAssignable)
++            {
++                const scalar lambdaPc = input[prodPIndex(celli)];
++                const vector hB =
++                    lambdaPc*(alphaRel*prodRAU[celli])*patchSf[facei];
++                hAx[celli] += hB.x(); hAy[celli] += hB.y(); hAz[celli] += hB.z();
++
++                // direct relax-source transpose on the boundary face:
++                // U(cell) <- (1-alphaRel)*lambdaPc*patchSf
++                const vector dB =
++                    (1.0 - alphaRel)*lambdaPc*patchSf[facei];
++                output[prodUIndex(celli, 0)] += dB.x();
++                output[prodUIndex(celli, 1)] += dB.y();
++                output[prodUIndex(celli, 2)] += dB.z();
++            }
+ 
+             if (!p.boundaryField()[patchi].fixesValue())
+             {

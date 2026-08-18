@@ -1,0 +1,40 @@
+ABORTED_PREAUTHORIZATION
+=======================
+Status of this directory: NOT formal BFINAL-005 acceptance evidence.
+
+This directory (evidence/agent-group/BFINAL-005/cycle-1/) contains the
+accidental / pre-authorization execution of a BFINAL-005-style patch that
+predates the formally approved BFINAL-005 plan (PATCH_RX_PRESSURE_ROW,
+approved by Planner + Pre-Reviewer). It must NOT be mixed with, cited as, or
+counted toward the formal BFINAL-005 acceptance evidence (G1-G5 gates,
+FINAL_REPORT.md).
+
+What is inside (kept intact, not deleted, per task §12):
+  pre-state/   : repo identity + porcelain + unstaged/cached diff + hashes
+                 captured before that cycle's (unapproved) edit
+  step2_patch/ : the sensitivity.H diff of that cycle (01_sensitivity_diff.txt)
+                 + verification summary (04_step2_verification_summary.txt)
+  step3_build_run/ : build_bfinal005.sh, build_step3.log (WMAKE_EXIT=0,
+                 WMAKE_END=2026-08-16T22:37:36Z), run_bfinal005.sh
+                 (no run log: the run was never executed/collected)
+
+Why it is invalid (technical reason):
+  The cycle-1 sensitivity.H patch implemented the FORWARD R_P operator
+  applied to the design weight w=dAlphaDxh (R_P,xh = div(dphiHbyA_w - dflux_w)
+  with w inside the face assembly) followed by a POINTWISE -pc multiply:
+      gsenshPressureDrop[cell] += -pc[cell] * R_P,xh[cell]
+  This contracts to  -sum_c pc[c]*(J_P*dAlphaDxh)[c]*z[c], which is NOT equal
+  to  -pc^T J_P (dAlphaDxh*z) == -pc^T R_P,x d  because R_P = div(phi) is
+  NON-diagonal in alpha (J_P couples neighbouring cells through the face
+  fluxes). For the production chain (which contracts an xh-level field F with
+  the xh-tangent z via the EXISTING filter_chainrule.H) the correct form is
+  the TRANSPOSE field  F = -(J_P^T pc)*dAlphaDxh. The cycle-1 form would fail
+  Gate G1 and was rejected by the approved plan (alternatives_considered).
+  sensitivity.H was since reverted to the clean HEAD state
+  (sha256 1a3031d90a11d780ef163cd70c29e7b356a9c351045b9affb8ca2a82580568c5).
+
+Formal BFINAL-005 acceptance evidence lives under:
+  evidence/agent-group/BFINAL-005/cycle-2/ (formal pre-state, step1_prestate)
+  ...and the eventual evidence/agent-group/BFINAL-005/FINAL_REPORT.md
+
+Marked by: BFINAL-005 Executor (step1_prestate), 2026-08-17.

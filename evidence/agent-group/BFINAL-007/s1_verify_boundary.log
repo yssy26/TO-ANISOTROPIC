@@ -1,0 +1,11 @@
+outlet faces=84 unique cells=84
+outlet deltaCoeffs: min=5.333e+03 max=6.000e+03 avg=5.952e+03
+outlet magSf: min=1.250e-07 max=1.250e-07 avg=1.250e-07 sum=1.0500e-05
+rAtU avg (run.log) = 2.823378e-07
+boundary term avg = rAtU*delta*|Sf| = 2.101e-10
+boundary term min/max = 1.882e-10 / 2.118e-10
+identity rows in P block: [100800]
+row106400 stored=18 nz>1e-12=18 (physical continuity, NOT identity)
+exported J P-P diag on 84 outlet cells: min=-4.037e-09 max=-1.361e-09 (all negative = interior-only sum)
+=> missing boundary term ~2.10e-10 per outlet cell is the internalCoeffs diagonal -rAtU_b*|Sf|_b*deltaCoeffs_b (added by addBoundaryDiag)
+S1_VERIFY_DONE

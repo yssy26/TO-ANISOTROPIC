@@ -1,0 +1,13 @@
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/nullmode_analysis.py:74: RuntimeWarning: Mean of empty slice
+  solid.sum(), np.abs(p[solid]).mean(), np.abs(p[~solid]).mean()))
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-002/.venv_s4/lib/python3.11/site-packages/numpy/_core/_methods.py:142: RuntimeWarning: invalid value encountered in scalar divide
+  ret = ret.dtype.type(ret / rcount)
+cell centers: x 0.0003..0.0398 y 0.0003..0.0067 z 0.0002..0.0146
+alpha: min 9.0992e+01 max 1.0000e+08 mean 6.3518e+07  #(alpha>1e-3)=33600 #(alpha>0.5)=33600
+null-mode |U| per cell: max 3.124e+15
+null-mode P: max 6.600e+17 min -6.135e+17
+corr(|p_null|, alpha) = -0.0432
+|p|>p99: n=336  mean alpha(big)=2.2220e+07  mean alpha(rest)=6.3935e+07
+big-P x 0.037..0.040 y 0.000..0.007 z 0.001..0.007
+big-U(>p99.9): n=34 x 0.040..0.040 y 0.000..0.007 z 0.003..0.005
+solid cells: 33600  mean|p_null| solid=7.2148e+14 fluid=nan

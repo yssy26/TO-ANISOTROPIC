@@ -1,0 +1,208 @@
+diff --git a/src/sensitivity.H b/src/sensitivity.H
+index a3ab50b..3bb96d9 100644
+--- a/src/sensitivity.H
++++ b/src/sensitivity.H
+@@ -67,6 +67,203 @@ if (adjointMode == "discrete")
+     gsenshPressureDrop = -dAlphaDxh*(U & Uc);
+     gsenshPressureDrop.primitiveFieldRef() *= mesh.V();
+ 
++    // ------------------------------------------------------------------
++    // BFINAL-005 (PATCH_RX_PRESSURE_ROW): add the missing pressure/
++    // continuity-row design derivative -pc^T R_P,xh to the production
++    // pressure-drop sensitivity (discrete branch ONLY).
++    //
++    // BFINAL-004 (DIAGNOSTIC_ONLY, stageB6RxDesignOracle.H) proved that the
++    // fixed-state pressure-row design derivative is stable-nonzero at every
++    // layer (R_P,xh ~ 9.71e-5), that the analytic chain CLOSES to the
++    // central-FD oracle (RX-A/B/C relL2<=1.1e-4, cos>0.999, no shared
++    // formula), and that production == D_momentum = -Uc^T R_U,x d to ~1e-9
++    // while the lambda_P-weighted term -pc^T R_P,x d (15.5%/29.9%/20.6% of
++    // D_momentum for D1/D2/D3) is ABSENT.  This block ports the
++    // source-verified analytic chain from stageB6RxDesignOracle.H
++    // (assembleWeightedRPa) into the production assembly, with the per-cell
++    // weight w = dAlphaDxh (the already mask/alphamin-clipped xh derivative
++    // of alpha) entering INSIDE the face-flux assembly BEFORE the divergence
++    // (R_P = div(phi) is NON-diagonal in alpha; (J_P*1)*w pointwise would be
++    // wrong for space-varying w):
++    //   UEqn(phi,U) - laplacian(nuEffFrozen,U) + Sp(alpha,U) == -grad(p)
++    //     + fvOptions(U)  (minus div(nuEffFrozen*dev2(T(grad(U)))) when
++    //     ransFlowModel), relax, fvOptions.constrain  [LOCKED BFINAL-003
++    //     reduced-residual momentum layer, read-only]
++    //   rAU  = 1/UEqn.A() ; HbyA = constrainHbyA(rAU*UEqn.H(), U, p)
++    //   drAU = -rAU^2/alphaRel   (rAU = V/D_rel already carries V, NO extra V)
++    //   dHbyA = (rAU/alphaRel)*((1-alphaRel)*U - HbyA)
++    //   dphiHbyA_w[face] = Sf&(wf*(dHbyA*w)[own] + (1-wf)*(dHbyA*w)[nei]);
++    //                      boundary: Sf&(dHbyA*w) on assignable U patches, else 0
++    //   dflux_w = flux(fvm::laplacian(drAU*w as a scalarField, p))
++    //             (drAtU = drAU, consistent=false)
++    //   R_P,xh[cell] = div(dphiHbyA_w - dflux_w)   (raw face sum, NO 1/V)
++    //   gsenshPressureDrop += -pc*R_P,xh per cell  (NO extra mesh.V())
++    // The momentum term, the continuous branch and filter_chainrule.H are
++    // untouched; downstream filter_chainrule.H folds the complete field
++    // (momentum + pressure row) through designMask -> drho + eta correction
++    // -> adjoint filter -> designMask, reproducing D_total for every
++    // direction.  Read-only w.r.t. U/p/phi/alpha/x/xh/turbulence: no state
++    // variable is re-solved (only matrix assembly + A()/H()/flux()).
++    // ------------------------------------------------------------------
++    {
++        tmp<fvVectorMatrix> tBF5UEqn
++        (
++            fvm::div(phi, U)
++          - fvm::laplacian(nuEffFrozen, U)
++          + fvm::Sp(alpha, U)
++         ==
++           -fvc::grad(p)
++          + fvOptions(U)
++        );
++        fvVectorMatrix& bf5UEqn = tBF5UEqn.ref();
++
++        if (ransFlowModel)
++        {
++            bf5UEqn -= fvc::div
++            (
++                nuEffFrozen*dev2(Foam::T(fvc::grad(U)))
++            );
++        }
++
++        bf5UEqn.relax();
++        fvOptions.constrain(bf5UEqn);
++
++        const scalar bf5AlphaRel =
++            mesh.relaxEquation("U") ? mesh.equationRelaxationFactor("U")
++                                    : scalar(1.0);
++
++        volScalarField bf5rAU(1.0/bf5UEqn.A());
++        volVectorField bf5HbyA(constrainHbyA(bf5rAU*bf5UEqn.H(), U, p));
++
++        const label bf5Nc = mesh.nCells();
++        const label bf5Nint = mesh.nInternalFaces();
++        const label bf5Ntot = mesh.nFaces();
++
++        // per-cell (unweighted) derivatives
++        scalarField bf5DrAU(bf5Nc, 0.0);
++        vectorField bf5DHbyA(bf5Nc, vector::zero);
++        forAll(U, celli)
++        {
++            const scalar rAUc = bf5rAU[celli];
++            bf5DrAU[celli] = -rAUc*rAUc/bf5AlphaRel;
++            bf5DHbyA[celli] =
++                (rAUc/bf5AlphaRel)
++               *((1.0 - bf5AlphaRel)*U[celli] - bf5HbyA[celli]);
++        }
++
++        // weight w = dAlphaDxh applied BEFORE the face-flux assembly
++        scalarField bf5DrAUw(bf5Nc, 0.0);
++        vectorField bf5DHbyAw(bf5Nc, vector::zero);
++        forAll(U, celli)
++        {
++            const scalar w = dAlphaDxh[celli];
++            bf5DrAUw[celli] = bf5DrAU[celli]*w;
++            bf5DHbyAw[celli] = bf5DHbyA[celli]*w;
++        }
++
++        // dphiHbyA_w per face (internal then boundary)
++        scalarField bf5DphiHbyAw(bf5Ntot, 0.0);
++        forAll(mesh.owner(), fi)
++        {
++            const label own = mesh.owner()[fi];
++            const label nei = mesh.neighbour()[fi];
++            const scalar wf = mesh.weights()[fi];
++            bf5DphiHbyAw[fi] =
++                mesh.Sf()[fi]
++              & (wf*bf5DHbyAw[own] + (1.0 - wf)*bf5DHbyAw[nei]);
++        }
++        {
++            label bf = bf5Nint;
++            forAll(mesh.boundary(), patchi)
++            {
++                const labelUList& fc = mesh.boundary()[patchi].faceCells();
++                const vectorField& pSf = mesh.Sf().boundaryField()[patchi];
++                const bool uAssignable =
++                    U.boundaryField()[patchi].assignable();
++                forAll(fc, f)
++                {
++                    const label celli = fc[f];
++                    const vector dHb =
++                        uAssignable ? bf5DHbyAw[celli] : vector::zero;
++                    bf5DphiHbyAw[bf] = pSf[f] & dHb;
++                    ++bf;
++                }
++            }
++        }
++
++        // dflux_w = flux(fvm::laplacian(drAU*w, p)) (drAtU = drAU,
++        // consistent=false; no pEqn solve, matrix flux read-only)
++        volScalarField bf5DrAUwField
++        (
++            IOobject
++            (
++                "bf005_drAUw",
++                runTime.timeName(),
++                mesh,
++                IOobject::NO_READ,
++                IOobject::NO_WRITE
++            ),
++            mesh,
++            dimensionedScalar("d", dimTime, 0.0)
++        );
++        forAll(bf5DrAUwField.primitiveFieldRef(), celli)
++        {
++            bf5DrAUwField.primitiveFieldRef()[celli] = bf5DrAUw[celli];
++        }
++        bf5DrAUwField.correctBoundaryConditions();
++        fvScalarMatrix bf5DpEqnW(fvm::laplacian(bf5DrAUwField, p));
++        surfaceScalarField bf5DfluxW(bf5DpEqnW.flux());
++        scalarField bf5DfluxWFaces(bf5Ntot, 0.0);
++        for (label fi = 0; fi < bf5Nint; ++fi)
++        {
++            bf5DfluxWFaces[fi] = bf5DfluxW[fi];
++        }
++        {
++            label bf = bf5Nint;
++            forAll(bf5DfluxW.boundaryField(), patchi)
++            {
++                const scalarField& dfB = bf5DfluxW.boundaryField()[patchi];
++                forAll(dfB, f)
++                {
++                    bf5DfluxWFaces[bf] = dfB[f];
++                    ++bf;
++                }
++            }
++        }
++
++        // R_P,xh per cell = div(dphiHbyA_w - dflux_w) (raw face sum, NO 1/V)
++        scalarField bf5RPxh(bf5Nc, 0.0);
++        forAll(mesh.owner(), fi)
++        {
++            const label own = mesh.owner()[fi];
++            const label nei = mesh.neighbour()[fi];
++            bf5RPxh[own] += bf5DphiHbyAw[fi] - bf5DfluxWFaces[fi];
++            bf5RPxh[nei] -= bf5DphiHbyAw[fi] - bf5DfluxWFaces[fi];
++        }
++        {
++            label bf = bf5Nint;
++            forAll(mesh.boundary(), patchi)
++            {
++                const labelUList& fc = mesh.boundary()[patchi].faceCells();
++                forAll(fc, f)
++                {
++                    const label celli = fc[f];
++                    bf5RPxh[celli] +=
++                        bf5DphiHbyAw[bf] - bf5DfluxWFaces[bf];
++                    ++bf;
++                }
++            }
++        }
++
++        // gsenshPressureDrop += -pc*R_P,xh per cell (NO extra mesh.V() on
++        // the pressure term)
++        forAll(bf5RPxh, celli)
++        {
++            gsenshPressureDrop.primitiveFieldRef()[celli] +=
++                -pc[celli]*bf5RPxh[celli];
++        }
++    }
++
+     if (freezeColdFlowForValidation)
+     {
+         fsenshMeanT = dimensionedScalar

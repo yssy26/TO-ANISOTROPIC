@@ -1,0 +1,76 @@
+BFINAL-005 step1-pre-state verification summary (FORMAL, cycle-2)
+==================================================================
+Captured by: BFINAL-005 Executor (step1_prestate, read-only baseline capture)
+Date:        2026-08-17 (UTC)
+Mode:        PATCH — this is the pre-edit baseline REQUIRED by task §12 before
+             the first source edit (step2_patch). No source file was modified
+             in this step.
+
+Repository identity
+-------------------
+pwd                        : /home/ys/dsH/TO-ANISOTROPIC
+git rev-parse --show-toplevel : /home/ys/dsH/TO-ANISOTROPIC   (== configured workspace, OK)
+git rev-parse HEAD         : ca8a772b8339a36e7906ea32a7125061c47aa280
+git branch --show-current  : agent/dsH-stage-b-validation
+Workspace == git root      : CONFIRMED
+
+Dirty worktree (tracked modifications only)
+-------------------------------------------
+ M src/solveDiscreteFlowAdjoint.H           (LOCKED BFINAL-003 production diff, forbidden to touch)
+ M src/solveDiscreteFlowAdjointProduction.H (LOCKED BFINAL-003 production diff, forbidden to touch)
+No other tracked file is modified. src/sensitivity.H is CLEAN at HEAD (absent
+from `git status --porcelain=v1`; hash below).
+
+Hashes (see 04_sha256.txt)
+--------------------------
+src/sensitivity.H           = 1a3031d90a11d780ef163cd70c29e7b356a9c351045b9affb8ca2a82580568c5
+                              == the locked clean-at-HEAD baseline (MATCH)
+src/rxPressureRowTranspose.H= NOT PRESENT at pre-state (intended new helper
+                              path; to be created in step2_patch)
+src/solveDiscreteFlowAdjoint.H           = f0c814975cf8bc7f98b9f69efa2f0bc01bd251579920bbedda7d266b72927507  (LOCKED, MATCH)
+src/solveDiscreteFlowAdjointProduction.H = 8c4901bf8da4edbc7cc1efe73a7583963e4688bba93c8c58539c4c39cae1ad91  (LOCKED, MATCH)
+
+Diff scope
+----------
+02_git_diff_unstaged.txt (497 lines, `git diff --binary`): contains ONLY the
+  two LOCKED BFINAL-003 production heads
+  (diff headers: a/src/solveDiscreteFlowAdjoint.H, a/src/solveDiscreteFlowAdjointProduction.H).
+03_git_diff_cached.txt (`git diff --cached --binary`): EMPTY (0 bytes) — no staged changes.
+05_forbidden_diff_vs_HEAD_stat.txt: `git diff --stat HEAD -- <forbidden modules>`
+  lists ONLY the two LOCKED production heads (260 + 69 changed lines); every
+  other forbidden module (NS.H, AdjNS_*.H, costfunction.H, computeObjective.H,
+  filter_x.H, filter_chainrule.H, updateMaterialProperties.H,
+  createFrozenHotRegionFields.H, readTransportProperties.H, HeatTransfer.H,
+  AdjHeatTransfer.H, MTO_HF.C, MMA.h/MMA/, validate*.H, evaluateCandidate.H,
+  saveAcceptedState.H, restoreAcceptedState.H, enforceFixedDesignRegions.H,
+  stageB5BoundaryRelaxOracle.H, stageB6RxDesignOracle.H) has ZERO diff vs HEAD.
+
+Cycle-1 (pre-authorization) handling
+------------------------------------
+evidence/agent-group/BFINAL-005/cycle-1/ has been marked
+ABORTED_PREAUTHORIZATION (ABORTED_PREAUTHORIZATION.txt + note inside its
+pre-state/). Its sensitivity.H patch used the REJECTED forward-operator +
+pointwise -pc multiply form (NOT equal to -pc^T R_P,x d because J_P is
+non-diagonal); sensitivity.H has been reverted to clean (hash above). The
+cycle-1 directory is preserved intact and is NOT part of formal acceptance
+evidence.
+
+ACCEPTANCE (step1) — ALL MET
+  [x] cycle-2/pre-state/ exists with 00_repo_identity, 01_porcelain,
+      02_unstaged diff (binary), 03_cached diff (binary), 04_sha256,
+      05_forbidden stat
+  [x] HEAD == ca8a772b8339a36e7906ea32a7125061c47aa280, branch correct
+  [x] only tracked diffs == the two LOCKED BFINAL-003 heads
+  [x] src/sensitivity.H hash == 1a3031d90a11d780ef163cd70c29e7b356a9c351045b9affb8ca2a82580568c5 (clean)
+  [x] no forbidden module diff beyond the two LOCKED production heads
+  [x] cycle-1 marked ABORTED_PREAUTHORIZATION, not deleted
+
+Artifacts in this directory
+---------------------------
+00_repo_identity.txt
+01_git_status_porcelain.txt
+02_git_diff_unstaged.txt
+03_git_diff_cached.txt
+04_sha256.txt
+05_forbidden_diff_vs_HEAD_stat.txt
+06_verification_summary.txt   (this file)

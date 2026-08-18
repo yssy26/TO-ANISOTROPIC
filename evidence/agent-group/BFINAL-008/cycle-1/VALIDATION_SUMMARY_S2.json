@@ -1,0 +1,64 @@
+{
+  "task_id": "BFINAL-008",
+  "cycle": 1,
+  "step": "S2",
+  "mode": "PATCH",
+  "hypothesis_id": "BFINAL-008-JPP-ACTUAL-PRIMAL-CLOSURE",
+  "acceptance": {
+    "wmake_exit": 0,
+    "probe_switch_default_false": true,
+    "probe_switch_name": "stageB8JPPActualResidualFD",
+    "probe_switch_wired_in": "src/solveDiscreteFlowAdjoint.H end, stageB5/stageB6 pattern, static guard, no MTO_HF.C change",
+    "probe_reads_wPrime_TAN_D1": true,
+    "probe_writes_only_under_BFINAL008": true,
+    "probe_verified_noop_structurally": "switch-guarded block; absent/false -> one dictionary lookup only (same proven pattern as stageB5/stageB6/stageB7)"
+  },
+  "probe_runs": [
+    {
+      "run": "b8_scratch_on (switch true), binary after S2 probe build",
+      "MTO_RC": 0,
+      "wall_s": 493,
+      "log": "/home/ys/dsH/b8_scratch_on/Log.stageB8.on.txt",
+      "artifacts_dir": "evidence/agent-group/BFINAL-008/cycle-1/artifacts/",
+      "null_vector_check": "||w||=2.08447046292e+18 (matches BFINAL-006/007), ||n_P||=0.999978325577, n_P[PREF=cell0]=0",
+      "fixesValue_p_patch": "outlet, nFaces=84 (probe-derived, not hardcoded)",
+      "cells": "N=33600 internal=26208 otherBoundary=7308 outletAdjacent=84"
+    }
+  ],
+  "P1_gate_preliminary_evidence": {
+    "direction": "v1 = [0 (U); n_P] dp-only, n_P = normalized P block of wPrime_TAN_D1.mtx",
+    "metric_source": "authoritative Python recomputation from exported .mtx artifacts (Jv1, FD1_eps_*)",
+    "eps_1e-2_full_P_relL2": 1.443e-08,
+    "eps_1e-2_full_P_cos": 1.0,
+    "eps_1e-2_full_P_normRatio": 1.0,
+    "outlet_adjacent_relL2": 5.455e-09,
+    "off_outlet_relL2": 5.296e-08,
+    "Jv_P_vs_BFINAL007_FD_lin": 2.946e-09,
+    "FD_probe_vs_BFINAL007_FD_lin": 1.416e-08,
+    "FD_probe_vs_BFINAL007_FD_central": 6.136e-07,
+    "eps_plateau_full_P_relL2": {"1e-2": 1.443e-08, "1e-3": 1.167e-07, "1e-4": 1.038e-06, "1e-5": 8.233e-06},
+    "gate_status": "P1 gate itself evaluated in S3+ (this is the probe's raw evidence; relL2 <= 1e-6 acceptance, preferred <= 1e-8, achieved 1.44e-8 at eps=1e-2)"
+  },
+  "P3_gate_preliminary_evidence": {
+    "dir1_nP_P_total_relL2_eps1e-2": 1.443e-08,
+    "dir2_dpheavy_P_total_relL2_eps1e-2": 1.516e-04,
+    "dir3_mixed_P_total_relL2_eps1e-2": 1.528e-04,
+    "dir2_U_rows_relL2": 1.654e-04,
+    "dir3_U_rows_relL2": 1.653e-04,
+    "note": "P3 gate evaluation is S3+; dir2/dir3 U-row and P-total levels match the known O(1e-4) derivative floor (BFINAL-003 momentum 1.653e-4)"
+  },
+  "probe_implementation_notes": {
+    "semantics_fix": "P-row phiHbyA rebuilt from PRODUCTION p (p-independent in value, per BFINAL-007 Q1 verified semantics); only pEqn.flux() responds to dp.  U-row resU responds to pmod through the UEqn source -fvc::grad(pmod) (J's U-row dp contribution).  Initial probe version that rebuilt phiHbyA from pmod mismatched the verified FD at relL2=0.37 and was corrected (measured: fixed probe FD matches BFINAL-007 FD_lin at 1.4e-8).",
+    "metric_small_fix": "block metrics use VSMALL (not SMALL=1e-15) denominators because P-block squared norms are O(1e-18); SMALL clamping corrupted in-probe relL2/cos/normRatio prints (raw artifacts were always correct)."
+  },
+  "files_changed_this_step": [
+    "src/stageB8JPPActualResidualFD.H (new, switch-guarded probe)",
+    "src/solveDiscreteFlowAdjoint.H (+stageB8 include block at end, stageB5/stageB6 pattern)"
+  ],
+  "evidence_paths": [
+    "evidence/agent-group/BFINAL-008/cycle-1/pre-state-s2/sha256_pre_s2.txt",
+    "evidence/agent-group/BFINAL-008/cycle-1/pre-state-s2/sha256_post_s2_edit.txt",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/ (stageB8_dir{1,2,3}.mtx, stageB8_Jv{1,2,3}.mtx, stageB8_FD{1,2,3}_eps_*.mtx, stageB8_nP.mtx, stageB8_celltype.mtx, stageB8_outlet_cells.mtx, stageB8_metrics.txt)",
+    "/home/ys/dsH/b8_scratch_on/Log.stageB8.on.txt"
+  ]
+}

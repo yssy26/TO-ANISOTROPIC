@@ -1,0 +1,1771 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+Build  : 7-3bcbaf946ae9
+Exec   : /home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF
+Date   : Aug 16 2026
+Time   : 16:30:46
+Host   : "DESKTOP-DSG34PK"
+PID    : 185979
+I/O    : uncollated
+Case   : /home/ys/dsH/b2_case_smoke
+nProcs : 1
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+
+SIMPLE: No convergence criteria found
+
+No finite volume options present
+Reading optimization parameters
+
+Transaction mechanism configuration:
+  enableSSTAcceptanceCheck=false
+  initialMoveLimit=0.02
+  minimumMoveLimit=0.01
+  maximumMoveLimit=0.5
+  moveLimitReduction=0.5
+  moveLimitGrowth=1.2
+  maxCandidateRetries=3
+  relativeObjectiveTolerance=0.01
+  absoluteConstraintTolerance=0.01
+  enableCSVLog=true
+  enableOptimizerRestart=false
+Reading pseudo-density fields
+
+Creating heat source field Q
+
+Reading transportProperties
+
+Reading field p
+
+Reading field U
+
+Reading/calculating face flux field phi
+
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmegaSST
+Selecting patchDistMethod meshWave
+RAS
+{
+    RASModel        kOmegaSST;
+    turbulence      on;
+    printCoeffs     on;
+    alphaK1         0.85;
+    alphaK2         1;
+    alphaOmega1     0.5;
+    alphaOmega2     0.856;
+    gamma1          0.555555555556;
+    gamma2          0.44;
+    beta1           0.075;
+    beta2           0.0828;
+    betaStar        0.09;
+    a1              0.31;
+    b1              1;
+    c1              10;
+    F3              false;
+}
+
+Reading field pa
+
+Reading field Ua
+
+Reading field pb
+
+Reading field Ub
+
+Reading field pc
+
+Reading field Uc
+
+Reading thermal properties
+
+Anisotropic conductivity: solidK=(21.6 0 0 21.6 0 16.6)
+Principal mesh-axis conductivities: Kxx=21.6, Kyy=21.6, Kzz=16.6, relativeOffDiagonal=0
+--> FOAM Warning : 
+    From function int main(int, char**)
+    in file readThermalProperties.H at line 121
+    anisotropicConductivityValidated=false. Forward validation is permitted, but topology updates are blocked until the Stage A suite passes.
+Reading field T
+
+Reading field Tb
+
+Reading optional frozen-hot-region configuration
+
+Frozen-hot mode enabled:
+  hotZone=hotFluidZone, volume=1.96e-06
+  wallZone=separatorWallZone, volume=6.72e-07
+  hotVelocityField=UHotFrozen
+  hotRhoCpRatio=0.425273056469
+  max|UHotFrozen| outside hot zone=0
+  hot inlet flux=0.01764
+  hot outlet flux=0.01764
+  hot mass-balance error=1.96680666211e-16
+  max|div(phiHotFrozen)|=2.16840434497e-10
+  thermalObjectiveType=maximizeColdOutletTemperature
+  thermalReferenceTemperature=600
+  mmaUpdateEnabled=false
+Validating discrete objective derivatives
+Discrete objective derivative errors: thermal=2.7025486001e-11, pressure=7.07793481308e-12
+Cold-side flowModel=incompressibleRANSFrozen, frozenTurbulenceAdjoint=true, ransDirectionValidated=true, freezeTurbulenceForValidation=true
+Initialization
+
+Active MMA design cells: local=5040, global=5040, designVolume=6.3e-07
+Validation mode: recomputing xp/xh from raw x with fixed projection beta=8
+DICPCG:  Solving for xp, Initial residual = 0.0299209651934, Final residual = 2.71774758184e-10, No Iterations 9
+Frozen-gradient MMA gate: frozenGradientValidated=false, fullSSTGradientValidated=true, SSTcandidateAcceptance=false, mmaUpdateEnabled=false, stageB4JacobianProbe=true
+MTO_HF: Finished update.H
+MTO_HF: Starting NS.H
+NS.H solving, corrector 1
+smoothSolver:  Solving for Ux, Initial residual = 2.06168931905e-11, Final residual = 2.06168931905e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 4.35355851235e-08, Final residual = 4.19864820326e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.92113238729e-10, Final residual = 6.92113238729e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631087711e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131959983
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.876616 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631087711e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+RxProbe: running (U,p,phi fixed at current state)
+RxProbe Rx-A (fixed phi, Brinkman dR_U/dalpha): relL2=1.61351152954e-14 cos=1 (expect relL2<=1e-6, cos=1)
+RxProbe SpDiag: UEqn.A() avg=158965329.116 [min=487123.876616,max=250004681.441] ; alpha avg=63504814.0161 [min=90.991810737,max=100000000] ; alpha*V avg=0.00785393508534 [min=1.13739763421e-08,max=0.0125] ; A-alpha avg=95460515.0994 [min=393901.342191,max=150004681.441] ; rAU=1/A avg=2.82337769549e-07 [min=3.99992509834e-09,max=2.05286590948e-06]
+RxProbe Rx-B raw: rp nan=0 |dRp/dalpha|L2=8.14730839032e-10 max=2.38775794522e-11 hAlpha=100
+RxProbe Rx-B faces: internal |dPhi/dalpha|L2=2.13348655414e-09 max=4.83075344282e-11 (96860 faces, base-fixed boundary)
+RxProbe Rx-B (fixed U,p, phi(alpha) rebuilt, dRp/dalpha): |dRp/dalpha|L2=8.14730839032e-10 max|dRp/dalpha|=2.38775794522e-11 (current analytic Rx_P = 0)
+RxProbe baseline: ||RU||L2=0.0909379107551 max=0.0010602647343 ; ||phi||L2=0.00402706332999 max=9.70872498229e-05 (RU should be ~0 at convergence)
+RxProbe J-U exported (frozen-phi full residual, hU=0.388360522226)
+RxProbe rebuilt baseline: |phiRb0-phi|L2=3.49247878283e-11 max=2.83299462177e-12 (should be small)
+RxProbe deltaH: |dH_FD|L2=26772936.7349 ; frozen-analytic relL2=46673795.77 cos=110584.238146 ; deltaA |dA_FD|L2=0
+RxProbe dH decomposition: |dH_conv|=26780519.344 |dH_laplacian|=22732.2078318 |dH_Sp|=0
+RxProbe relaxPred: |(Drel-D0)*dU/V|L2=17910298592.8 max=173638407.991 (vs source-FD ~2.4e7 on adjoint basis)
+RxProbe H4 h=0.388360522226 |dH_FD|=26780519.344 |dH_offdiag|=0.00334751823012 |dH_boundary|=0.000389153645696 |dH_source|=0 ratio(offdiag/FD)=1.24998256648e-10
+RxProbe relaxPred: |(Drel-D0)*dU/V|L2=17910298592.8 max=173638407.991 (vs source-FD ~2.4e7 on adjoint basis)
+RxProbe H4 h=0.0388360522226 |dH_FD|=26780519.344 |dH_offdiag|=0.00334751823012 |dH_boundary|=0.000389153645696 |dH_source|=0 ratio(offdiag/FD)=1.24998256648e-10
+RxProbe relaxPred: |(Drel-D0)*dU/V|L2=17910298592.8 max=173638407.991 (vs source-FD ~2.4e7 on adjoint basis)
+RxProbe H4 h=0.00388360522226 |dH_FD|=26780519.344 |dH_offdiag|=0.00334751823012 |dH_boundary|=0.000389153645696 |dH_source|=0 ratio(offdiag/FD)=1.24998256648e-10
+RxProbe relaxPred: |(Drel-D0)*dU/V|L2=17910298592.8 max=173638407.991 (vs source-FD ~2.4e7 on adjoint basis)
+RxProbe H4 h=0.000388360522226 |dH_FD|=26780519.344 |dH_offdiag|=0.00334751823012 |dH_boundary|=0.000389153645698 |dH_source|=0 ratio(offdiag/FD)=1.24998256648e-10
+RxProbe stats: V[avg=1.23333333333e-10 min=1.2e-10 max=1.25e-10] upper[avg=-6.37680900014e-08 min=-3.60659402189e-06 max=0] lower[avg=-3.36115686755e-06 min=-9.70872498229e-05 max=0] upper/V[avg=-511.386202484 min=-28852.7521751 max=0] lower/V[avg=-26907.7477897 min=-776697.998583 max=0]
+RxProbe dH_conv /V-analytic vs FD: relL2=1.57492701438 cos=2.57492701438 |analytic|=10400496.4779 (H() divides by cell volume)
+RxProbe J-U rebuilt-phi P-row + face dphi/dU + dA/dH exported (hU=0.388360522226)
+NS rAtU: avg=2.82337769549e-07 min=3.99992509834e-09 max=2.05286590948e-06
+DICPCG:  Solving for p, Initial residual = 1.09866531e-07, Final residual = 9.82513712119e-10, No Iterations 9
+DICPCG:  Solving for p, Initial residual = 9.82513749329e-10, Final residual = 9.82513749329e-10, No Iterations 0
+time step continuity errors : sum local = 2.02886470978e-06, global = -3.43911878606e-07, cumulative = -3.43911878606e-07
+NS.H solving, corrector 2
+smoothSolver:  Solving for Ux, Initial residual = 1.9692260375e-11, Final residual = 1.9692260375e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 4.09745759024e-08, Final residual = 3.89776317972e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.60877053079e-10, Final residual = 6.60877053079e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631080924e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131963485
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.877976 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631080924e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769584e-07 min=3.99992509834e-09 max=2.05286590375e-06
+DICPCG:  Solving for p, Initial residual = 1.01300462252e-07, Final residual = 9.72652962669e-10, No Iterations 10
+DICPCG:  Solving for p, Initial residual = 9.7265299035e-10, Final residual = 9.7265299035e-10, No Iterations 0
+time step continuity errors : sum local = 2.00850203806e-06, global = -3.24289728025e-07, cumulative = -6.68201606631e-07
+NS.H solving, corrector 3
+smoothSolver:  Solving for Ux, Initial residual = 1.87602576629e-11, Final residual = 1.87602576629e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.86070791937e-08, Final residual = 3.60984598036e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.31242427805e-10, Final residual = 6.31242427805e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631074947e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713196641
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.879077 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631074947e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769618e-07 min=3.99992509834e-09 max=2.05286589911e-06
+DICPCG:  Solving for p, Initial residual = 9.3701306591e-08, Final residual = 9.22219051394e-10, No Iterations 11
+DICPCG:  Solving for p, Initial residual = 9.22219600161e-10, Final residual = 9.22219600161e-10, No Iterations 0
+time step continuity errors : sum local = 1.90435813608e-06, global = -3.33166218011e-07, cumulative = -1.00136782464e-06
+NS.H solving, corrector 4
+smoothSolver:  Solving for Ux, Initial residual = 1.78443135001e-11, Final residual = 1.78443135001e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.64960136341e-08, Final residual = 3.41055219984e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.06736024016e-10, Final residual = 6.06736024016e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631069269e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968844
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.880043 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631069269e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769649e-07 min=3.99992509834e-09 max=2.05286589504e-06
+DICPCG:  Solving for p, Initial residual = 8.69474012455e-08, Final residual = 9.9199606275e-10, No Iterations 12
+DICPCG:  Solving for p, Initial residual = 9.91995814025e-10, Final residual = 9.91995814025e-10, No Iterations 0
+time step continuity errors : sum local = 2.04844476306e-06, global = -3.37933292883e-07, cumulative = -1.33930111753e-06
+NS.H solving, corrector 5
+smoothSolver:  Solving for Ux, Initial residual = 1.69965066316e-11, Final residual = 1.69965066316e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.47284040854e-08, Final residual = 3.28703707115e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.86800045679e-10, Final residual = 5.86800045679e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631063789e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970859
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.880926 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631063789e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769678e-07 min=3.99992509834e-09 max=2.05286589132e-06
+DICPCG:  Solving for p, Initial residual = 8.06475343416e-08, Final residual = 9.78283068219e-10, No Iterations 15
+DICPCG:  Solving for p, Initial residual = 9.7828281767e-10, Final residual = 9.7828281767e-10, No Iterations 0
+time step continuity errors : sum local = 2.02012821347e-06, global = -3.0360534577e-07, cumulative = -1.6429064633e-06
+NS.H solving, corrector 6
+smoothSolver:  Solving for Ux, Initial residual = 1.62623647953e-11, Final residual = 1.62623647953e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.30988273924e-08, Final residual = 3.16990516227e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.68666422728e-10, Final residual = 5.68666422728e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631058655e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972493
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88168 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631058655e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769703e-07 min=3.99992509834e-09 max=2.05286588814e-06
+DICPCG:  Solving for p, Initial residual = 7.46635850132e-08, Final residual = 9.32657777787e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.32657775857e-10, Final residual = 9.32657775857e-10, No Iterations 0
+time step continuity errors : sum local = 1.92591349536e-06, global = -7.3054080695e-07, cumulative = -2.37344727024e-06
+NS.H solving, corrector 7
+smoothSolver:  Solving for Ux, Initial residual = 1.55581029576e-11, Final residual = 1.55581029576e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.14908566654e-08, Final residual = 3.02017469906e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.3750251759e-10, Final residual = 5.3750251759e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631053206e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973763
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882703 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631053206e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769725e-07 min=3.99992509834e-09 max=2.05286588383e-06
+DICPCG:  Solving for p, Initial residual = 6.90987893995e-08, Final residual = 9.88810411155e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.88810453252e-10, Final residual = 9.88810453252e-10, No Iterations 0
+time step continuity errors : sum local = 2.04186737729e-06, global = -7.73677022979e-07, cumulative = -3.14712429322e-06
+NS.H solving, corrector 8
+smoothSolver:  Solving for Ux, Initial residual = 1.49444527019e-11, Final residual = 1.49444527019e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.99515918899e-08, Final residual = 2.84406437934e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.13110934693e-10, Final residual = 5.13110934693e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631048261e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131974783
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88333 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631048261e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769745e-07 min=3.99992509834e-09 max=2.05286588119e-06
+DICPCG:  Solving for p, Initial residual = 6.40778188916e-08, Final residual = 9.40188799688e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.4018886153e-10, Final residual = 9.4018886153e-10, No Iterations 0
+time step continuity errors : sum local = 1.94146501761e-06, global = -7.97878600563e-07, cumulative = -3.94500289379e-06
+NS.H solving, corrector 9
+smoothSolver:  Solving for Ux, Initial residual = 1.43914943409e-11, Final residual = 1.43914943409e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.86342950454e-08, Final residual = 2.66760047548e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.93097702771e-10, Final residual = 4.93097702771e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631043516e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975559
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883846 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631043516e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769764e-07 min=3.99992509834e-09 max=2.05286587902e-06
+DICPCG:  Solving for p, Initial residual = 5.95182236762e-08, Final residual = 9.4067040783e-10, No Iterations 37
+DICPCG:  Solving for p, Initial residual = 9.40670362338e-10, Final residual = 9.40670362338e-10, No Iterations 0
+time step continuity errors : sum local = 1.94245922378e-06, global = 2.88241307041e-08, cumulative = -3.91617876308e-06
+NS.H solving, corrector 10
+smoothSolver:  Solving for Ux, Initial residual = 1.43737253419e-11, Final residual = 1.43737253419e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.76500069578e-08, Final residual = 2.52280415525e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.49786316351e-10, Final residual = 5.49786316351e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631039942e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976176
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885098 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631039942e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769682e-07 min=3.99992509834e-09 max=2.05286587374e-06
+DICPCG:  Solving for p, Initial residual = 5.52767656837e-08, Final residual = 9.94522011651e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.94521801158e-10, Final residual = 9.94521801158e-10, No Iterations 0
+time step continuity errors : sum local = 2.05366114764e-06, global = -5.35163162453e-07, cumulative = -4.45134192554e-06
+Frozen-RANS relative changes: U=5.69123095714e-09, p=3.61561715027e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 11
+smoothSolver:  Solving for Ux, Initial residual = 1.35854143986e-11, Final residual = 1.35854143986e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.64340138146e-08, Final residual = 2.39550962575e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.8759844054e-10, Final residual = 4.8759844054e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631035173e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976504
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88524 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631035173e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769737e-07 min=3.99992509834e-09 max=2.05286587314e-06
+DICPCG:  Solving for p, Initial residual = 5.12821074394e-08, Final residual = 9.88337233547e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.88337432865e-10, Final residual = 9.88337432865e-10, No Iterations 0
+time step continuity errors : sum local = 2.04089040876e-06, global = -3.19818900306e-07, cumulative = -4.77116082584e-06
+NS.H solving, corrector 12
+smoothSolver:  Solving for Ux, Initial residual = 1.29485297052e-11, Final residual = 1.29485297052e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.54743645188e-08, Final residual = 2.30942067898e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.45882235138e-10, Final residual = 4.45882235138e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631031439e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976744
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885854 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631031439e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769716e-07 min=3.99992509834e-09 max=2.05286587055e-06
+DICPCG:  Solving for p, Initial residual = 4.75469013532e-08, Final residual = 9.10732382953e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.10732572349e-10, Final residual = 9.10732572349e-10, No Iterations 0
+time step continuity errors : sum local = 1.88063860526e-06, global = -6.78241646184e-08, cumulative = -4.83898499046e-06
+NS.H solving, corrector 13
+smoothSolver:  Solving for Ux, Initial residual = 1.24316902918e-11, Final residual = 1.24316902918e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.44058971975e-08, Final residual = 2.24340287282e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.21074900205e-10, Final residual = 4.21074900205e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631027963e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976866
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886329 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631027963e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769696e-07 min=3.99992509834e-09 max=2.05286586855e-06
+DICPCG:  Solving for p, Initial residual = 4.40641010592e-08, Final residual = 9.51101154079e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.51101228546e-10, Final residual = 9.51101228546e-10, No Iterations 0
+time step continuity errors : sum local = 1.96399879927e-06, global = 1.36793259701e-07, cumulative = -4.70219173076e-06
+NS.H solving, corrector 14
+smoothSolver:  Solving for Ux, Initial residual = 1.19689365128e-11, Final residual = 1.19689365128e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.33758347886e-08, Final residual = 2.17483586586e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.06011426776e-10, Final residual = 4.06011426776e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631024629e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976881
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886699 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631024629e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769676e-07 min=3.99992509834e-09 max=2.05286586699e-06
+DICPCG:  Solving for p, Initial residual = 4.08672519494e-08, Final residual = 9.92833832984e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.9283350802e-10, Final residual = 9.9283350802e-10, No Iterations 0
+time step continuity errors : sum local = 2.05017511918e-06, global = 3.36226685872e-07, cumulative = -4.36596504489e-06
+NS.H solving, corrector 15
+smoothSolver:  Solving for Ux, Initial residual = 1.15560546653e-11, Final residual = 1.15560546653e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.23672141612e-08, Final residual = 2.08806356521e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.93077685667e-10, Final residual = 3.93077685667e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631021458e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976817
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886954 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631021458e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769657e-07 min=3.99992509834e-09 max=2.05286586592e-06
+DICPCG:  Solving for p, Initial residual = 3.79173597646e-08, Final residual = 8.41256504442e-10, No Iterations 12
+DICPCG:  Solving for p, Initial residual = 8.41256632568e-10, Final residual = 8.41256632568e-10, No Iterations 0
+time step continuity errors : sum local = 1.73717253936e-06, global = 2.85546709477e-07, cumulative = -4.08041833541e-06
+NS.H solving, corrector 16
+smoothSolver:  Solving for Ux, Initial residual = 1.12996035263e-11, Final residual = 1.12996035263e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.15141148051e-08, Final residual = 2.00152649912e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.92789163725e-10, Final residual = 3.92789163725e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631018284e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197667
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887272 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631018284e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769638e-07 min=3.99992509834e-09 max=2.05286586457e-06
+DICPCG:  Solving for p, Initial residual = 3.51649378079e-08, Final residual = 9.83931532437e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.8393148499e-10, Final residual = 9.8393148499e-10, No Iterations 0
+time step continuity errors : sum local = 2.03179200504e-06, global = 5.89557999284e-07, cumulative = -3.49086033613e-06
+NS.H solving, corrector 17
+smoothSolver:  Solving for Ux, Initial residual = 1.07872019511e-11, Final residual = 1.07872019511e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.06193307099e-08, Final residual = 1.90484983755e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.6958624896e-10, Final residual = 3.6958624896e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631015551e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976497
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887206 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631015551e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769624e-07 min=3.99992509834e-09 max=2.05286586485e-06
+DICPCG:  Solving for p, Initial residual = 3.26778945161e-08, Final residual = 9.35070729564e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.35070759658e-10, Final residual = 9.35070759658e-10, No Iterations 0
+time step continuity errors : sum local = 1.93089602886e-06, global = 7.6524391846e-07, cumulative = -2.72561641766e-06
+NS.H solving, corrector 18
+smoothSolver:  Solving for Ux, Initial residual = 1.03914309217e-11, Final residual = 1.03914309217e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.9776832783e-08, Final residual = 1.8063873666e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.51266335433e-10, Final residual = 3.51266335433e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263101298e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976275
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887235 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263101298e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769608e-07 min=3.99992509834e-09 max=2.05286586473e-06
+DICPCG:  Solving for p, Initial residual = 3.04307751461e-08, Final residual = 9.46915253498e-10, No Iterations 20
+DICPCG:  Solving for p, Initial residual = 9.4691518014e-10, Final residual = 9.4691518014e-10, No Iterations 0
+time step continuity errors : sum local = 1.95535476842e-06, global = 3.19949064788e-07, cumulative = -2.40566735288e-06
+NS.H solving, corrector 19
+smoothSolver:  Solving for Ux, Initial residual = 1.03295525416e-11, Final residual = 1.03295525416e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.9016595132e-08, Final residual = 1.71625728759e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.54240003248e-10, Final residual = 3.54240003248e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631009989e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975976
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88737 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631009989e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769598e-07 min=3.99992509834e-09 max=2.05286586416e-06
+DICPCG:  Solving for p, Initial residual = 2.84156830809e-08, Final residual = 8.64319100768e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.64318996178e-10, Final residual = 8.64318996178e-10, No Iterations 0
+time step continuity errors : sum local = 1.78479543612e-06, global = 7.87416517445e-07, cumulative = -1.61825083543e-06
+NS.H solving, corrector 20
+smoothSolver:  Solving for Ux, Initial residual = 9.85091680857e-12, Final residual = 9.85091680857e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.82283872301e-08, Final residual = 1.65292783539e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.33834071461e-10, Final residual = 3.33834071461e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263100823e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975705
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887041 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263100823e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769586e-07 min=3.99992509834e-09 max=2.05286586555e-06
+DICPCG:  Solving for p, Initial residual = 2.65812787892e-08, Final residual = 8.64170191318e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.6417006297e-10, Final residual = 8.6417006297e-10, No Iterations 0
+time step continuity errors : sum local = 1.78448800784e-06, global = 7.8512406897e-07, cumulative = -8.33126766462e-07
+Frozen-RANS relative changes: U=3.99041639037e-09, p=2.33209873449e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 21
+smoothSolver:  Solving for Ux, Initial residual = 9.44066404176e-12, Final residual = 9.44066404176e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.75943327716e-08, Final residual = 1.59783237088e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.1878694971e-10, Final residual = 3.1878694971e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631006194e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975374
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88685 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631006194e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769578e-07 min=3.99992509834e-09 max=2.05286586635e-06
+DICPCG:  Solving for p, Initial residual = 2.48749041122e-08, Final residual = 9.2702393719e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.27023990867e-10, Final residual = 9.27023990867e-10, No Iterations 0
+time step continuity errors : sum local = 1.91427956166e-06, global = 8.12266938164e-07, cumulative = -2.08598282978e-08
+NS.H solving, corrector 22
+smoothSolver:  Solving for Ux, Initial residual = 9.07832734098e-12, Final residual = 9.07832734098e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.70160299579e-08, Final residual = 1.54439510988e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.07014952967e-10, Final residual = 3.07014952967e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631004385e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197502
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886604 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631004385e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769572e-07 min=3.99992509834e-09 max=2.05286586739e-06
+DICPCG:  Solving for p, Initial residual = 2.32911069046e-08, Final residual = 9.04668178933e-10, No Iterations 29
+DICPCG:  Solving for p, Initial residual = 9.04668180151e-10, Final residual = 9.04668180151e-10, No Iterations 0
+time step continuity errors : sum local = 1.86811516654e-06, global = -1.34026711104e-07, cumulative = -1.54886539402e-07
+NS.H solving, corrector 23
+smoothSolver:  Solving for Ux, Initial residual = 9.21286375061e-12, Final residual = 9.21286375061e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.65163572569e-08, Final residual = 1.4817697949e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.42667194021e-10, Final residual = 3.42667194021e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631001738e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131974572
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885713 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631001738e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769673e-07 min=3.99992509834e-09 max=2.05286587114e-06
+DICPCG:  Solving for p, Initial residual = 2.18468067887e-08, Final residual = 9.04365359611e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.04365660602e-10, Final residual = 9.04365660602e-10, No Iterations 0
+time step continuity errors : sum local = 1.86749075752e-06, global = 4.72178474169e-07, cumulative = 3.17291934767e-07
+NS.H solving, corrector 24
+smoothSolver:  Solving for Ux, Initial residual = 8.67583615037e-12, Final residual = 8.67583615037e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.58173975338e-08, Final residual = 1.42093953956e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.07476232758e-10, Final residual = 3.07476232758e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631000766e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197422
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885683 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631000766e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769629e-07 min=3.99992509834e-09 max=2.05286587127e-06
+DICPCG:  Solving for p, Initial residual = 2.05477328207e-08, Final residual = 9.31464807696e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.31464561283e-10, Final residual = 9.31464561283e-10, No Iterations 0
+time step continuity errors : sum local = 1.92345011531e-06, global = 3.12622023206e-07, cumulative = 6.29913957973e-07
+NS.H solving, corrector 25
+smoothSolver:  Solving for Ux, Initial residual = 8.28505841112e-12, Final residual = 8.28505841112e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.52953837975e-08, Final residual = 1.36123496501e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.83009321134e-10, Final residual = 2.83009321134e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630999093e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973792
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88516 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630999093e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769667e-07 min=3.99992509834e-09 max=2.05286587348e-06
+DICPCG:  Solving for p, Initial residual = 1.93821108323e-08, Final residual = 7.96496055607e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 7.96496224904e-10, Final residual = 7.96496224904e-10, No Iterations 0
+time step continuity errors : sum local = 1.64474317195e-06, global = 1.77790134358e-07, cumulative = 8.07704092331e-07
+NS.H solving, corrector 26
+smoothSolver:  Solving for Ux, Initial residual = 7.99336772892e-12, Final residual = 7.99336772892e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.47859311369e-08, Final residual = 1.30084689141e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.66799721834e-10, Final residual = 2.66799721834e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630997477e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973352
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.884665 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630997477e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769705e-07 min=3.99992509834e-09 max=2.05286587556e-06
+DICPCG:  Solving for p, Initial residual = 1.83082201991e-08, Final residual = 8.83274014068e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.83274085056e-10, Final residual = 8.83274085056e-10, No Iterations 0
+time step continuity errors : sum local = 1.82393715325e-06, global = 7.98848779685e-08, cumulative = 8.87588970299e-07
+NS.H solving, corrector 27
+smoothSolver:  Solving for Ux, Initial residual = 7.73968994093e-12, Final residual = 7.73968994093e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.43485650357e-08, Final residual = 1.2496037282e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.59748071656e-10, Final residual = 2.59748071656e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630995903e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972894
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.884218 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630995903e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769744e-07 min=3.99992509834e-09 max=2.05286587745e-06
+DICPCG:  Solving for p, Initial residual = 1.73474599527e-08, Final residual = 9.73198122847e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.73197934235e-10, Final residual = 9.73197934235e-10, No Iterations 0
+time step continuity errors : sum local = 2.00962821559e-06, global = -1.15692816372e-08, cumulative = 8.76019688662e-07
+NS.H solving, corrector 28
+smoothSolver:  Solving for Ux, Initial residual = 7.5013430065e-12, Final residual = 7.5013430065e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.39686289615e-08, Final residual = 1.20709054972e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.5450928632e-10, Final residual = 2.5450928632e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630994302e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972423
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883835 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630994302e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769785e-07 min=3.99992509834e-09 max=2.05286587906e-06
+DICPCG:  Solving for p, Initial residual = 1.64946806311e-08, Final residual = 9.1285574315e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.12855734559e-10, Final residual = 9.12855734559e-10, No Iterations 0
+time step continuity errors : sum local = 1.8850228924e-06, global = -1.55565334513e-07, cumulative = 7.20454354149e-07
+NS.H solving, corrector 29
+smoothSolver:  Solving for Ux, Initial residual = 7.2865477353e-12, Final residual = 7.2865477353e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.35509653322e-08, Final residual = 1.16502983115e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.51050820981e-10, Final residual = 2.51050820981e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630992591e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131971936
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883569 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630992591e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769828e-07 min=3.99992509834e-09 max=2.05286588018e-06
+DICPCG:  Solving for p, Initial residual = 1.56965437148e-08, Final residual = 9.89870973311e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.89870976555e-10, Final residual = 9.89870976555e-10, No Iterations 0
+time step continuity errors : sum local = 2.04405702263e-06, global = 9.95646356035e-08, cumulative = 8.20018989753e-07
+NS.H solving, corrector 30
+smoothSolver:  Solving for Ux, Initial residual = 6.98237428441e-12, Final residual = 6.98237428441e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.31406558896e-08, Final residual = 1.12993777409e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.37806015003e-10, Final residual = 2.37806015003e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630991113e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131971477
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883383 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630991113e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769871e-07 min=3.99992509834e-09 max=2.05286588096e-06
+DICPCG:  Solving for p, Initial residual = 1.49318404656e-08, Final residual = 9.75907882155e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.75908001867e-10, Final residual = 9.75908001867e-10, No Iterations 0
+time step continuity errors : sum local = 2.01522362486e-06, global = -2.02085886753e-07, cumulative = 6.17933103e-07
+Frozen-RANS relative changes: U=2.99723173259e-09, p=2.68965537812e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 31
+smoothSolver:  Solving for Ux, Initial residual = 6.82814696108e-12, Final residual = 6.82814696108e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.27709525807e-08, Final residual = 1.08912019639e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.33043080331e-10, Final residual = 2.33043080331e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630989012e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970981
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88315 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630989012e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769917e-07 min=3.99992509834e-09 max=2.05286588195e-06
+DICPCG:  Solving for p, Initial residual = 1.42746752364e-08, Final residual = 9.76272914995e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.76272992272e-10, Final residual = 9.76272992272e-10, No Iterations 0
+time step continuity errors : sum local = 2.01597737452e-06, global = -1.54776206572e-07, cumulative = 4.63156896428e-07
+NS.H solving, corrector 32
+smoothSolver:  Solving for Ux, Initial residual = 6.6421489491e-12, Final residual = 6.6421489491e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.25502642088e-08, Final residual = 1.05772119408e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.2451904886e-10, Final residual = 2.2451904886e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630986936e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197053
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883014 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630986936e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769965e-07 min=3.99992509834e-09 max=2.05286588252e-06
+DICPCG:  Solving for p, Initial residual = 1.36435195891e-08, Final residual = 8.93934211159e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.9393420384e-10, Final residual = 8.9393420384e-10, No Iterations 0
+time step continuity errors : sum local = 1.84595029356e-06, global = -1.87038886871e-07, cumulative = 2.76118009557e-07
+NS.H solving, corrector 33
+smoothSolver:  Solving for Ux, Initial residual = 6.4582395339e-12, Final residual = 6.4582395339e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.22760760222e-08, Final residual = 1.02894199405e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.17091491551e-10, Final residual = 2.17091491551e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630984653e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970087
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882951 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630984653e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770015e-07 min=3.99992509834e-09 max=2.05286588279e-06
+DICPCG:  Solving for p, Initial residual = 1.30784043521e-08, Final residual = 9.78146317877e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.78146349054e-10, Final residual = 9.78146349054e-10, No Iterations 0
+time step continuity errors : sum local = 2.01984612667e-06, global = -1.2125309965e-08, cumulative = 2.63992699592e-07
+NS.H solving, corrector 34
+smoothSolver:  Solving for Ux, Initial residual = 6.19163161506e-12, Final residual = 6.19163161506e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.18347007209e-08, Final residual = 9.96696258293e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.07516637006e-10, Final residual = 2.07516637006e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630982371e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131969683
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882936 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630982371e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770066e-07 min=3.99992509834e-09 max=2.05286588285e-06
+DICPCG:  Solving for p, Initial residual = 1.2468199406e-08, Final residual = 8.754836825e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 8.75483768643e-10, Final residual = 8.75483768643e-10, No Iterations 0
+time step continuity errors : sum local = 1.80785036541e-06, global = -1.90213445371e-07, cumulative = 7.37792542217e-08
+NS.H solving, corrector 35
+smoothSolver:  Solving for Ux, Initial residual = 6.02675609993e-12, Final residual = 6.02675609993e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.15171829286e-08, Final residual = 9.63755202822e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.01804777677e-10, Final residual = 2.01804777677e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630979534e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131969295
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882961 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630979534e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777012e-07 min=3.99992509834e-09 max=2.05286588274e-06
+DICPCG:  Solving for p, Initial residual = 1.19502946632e-08, Final residual = 7.99688145587e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 7.99688469704e-10, Final residual = 7.99688469704e-10, No Iterations 0
+time step continuity errors : sum local = 1.65133492594e-06, global = -2.35050338985e-07, cumulative = -1.61271084763e-07
+NS.H solving, corrector 36
+smoothSolver:  Solving for Ux, Initial residual = 5.86634808691e-12, Final residual = 5.86634808691e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.11561118803e-08, Final residual = 9.28682778444e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.97023384349e-10, Final residual = 1.97023384349e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630976623e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968962
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883023 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630976623e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770174e-07 min=3.99992509834e-09 max=2.05286588248e-06
+DICPCG:  Solving for p, Initial residual = 1.14716961569e-08, Final residual = 7.44910542974e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 7.44910473765e-10, Final residual = 7.44910473765e-10, No Iterations 0
+time step continuity errors : sum local = 1.53822003635e-06, global = -2.93054323935e-07, cumulative = -4.54325408698e-07
+NS.H solving, corrector 37
+smoothSolver:  Solving for Ux, Initial residual = 5.7010173832e-12, Final residual = 5.7010173832e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.08003342798e-08, Final residual = 8.94600645232e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.9189442901e-10, Final residual = 1.9189442901e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630973537e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968684
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883116 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630973537e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777023e-07 min=3.99992509834e-09 max=2.05286588209e-06
+DICPCG:  Solving for p, Initial residual = 1.10100868891e-08, Final residual = 9.48447739867e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.48447689845e-10, Final residual = 9.48447689845e-10, No Iterations 0
+time step continuity errors : sum local = 1.95851969666e-06, global = -3.17610686912e-07, cumulative = -7.7193609561e-07
+NS.H solving, corrector 38
+smoothSolver:  Solving for Ux, Initial residual = 5.50710035839e-12, Final residual = 5.50710035839e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.04566049541e-08, Final residual = 8.65903731035e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.86083471181e-10, Final residual = 1.86083471181e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630970386e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968478
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883219 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630970386e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770284e-07 min=3.99992509834e-09 max=2.05286588166e-06
+DICPCG:  Solving for p, Initial residual = 1.05925246697e-08, Final residual = 9.05485505256e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.05485641236e-10, Final residual = 9.05485641236e-10, No Iterations 0
+time step continuity errors : sum local = 1.86980356551e-06, global = -4.1995743713e-07, cumulative = -1.19189353274e-06
+NS.H solving, corrector 39
+smoothSolver:  Solving for Ux, Initial residual = 5.32939141387e-12, Final residual = 5.32939141387e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.01414792321e-08, Final residual = 8.38699665295e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.80665796364e-10, Final residual = 1.80665796364e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630967051e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968333
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883362 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630967051e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777034e-07 min=3.99992509834e-09 max=2.05286588105e-06
+DICPCG:  Solving for p, Initial residual = 1.02138548494e-08, Final residual = 9.03514900637e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.03515209206e-10, Final residual = 9.03515209206e-10, No Iterations 0
+time step continuity errors : sum local = 1.86573452791e-06, global = -5.48739917296e-07, cumulative = -1.74063345004e-06
+NS.H solving, corrector 40
+smoothSolver:  Solving for Ux, Initial residual = 5.16600567099e-12, Final residual = 5.16600567099e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.82930046365e-09, Final residual = 8.1363331129e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.75504584174e-10, Final residual = 1.75504584174e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263096365e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968264
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883531 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263096365e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770396e-07 min=3.99992509834e-09 max=2.05286588034e-06
+DICPCG:  Solving for p, Initial residual = 9.85396712744e-09, Final residual = 9.55480488488e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.55480502344e-10, Final residual = 9.55480502344e-10, No Iterations 0
+time step continuity errors : sum local = 1.97304139494e-06, global = -7.0547882478e-07, cumulative = -2.44611227482e-06
+Frozen-RANS relative changes: U=2.31673185009e-09, p=1.21039952351e-10, k=0, omega=0, nut=0, consecutive=1
+NS.H solving, corrector 41
+smoothSolver:  Solving for Ux, Initial residual = 5.01672338907e-12, Final residual = 5.01672338907e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.52434743694e-09, Final residual = 7.86623609323e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.71370839065e-10, Final residual = 1.71370839065e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630960232e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968278
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883719 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630960232e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777045e-07 min=3.99992509834e-09 max=2.05286587955e-06
+DICPCG:  Solving for p, Initial residual = 9.49660938277e-09, Final residual = 8.94434920625e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 8.94434824457e-10, Final residual = 8.94434824457e-10, No Iterations 0
+time step continuity errors : sum local = 1.84698387489e-06, global = -8.91368073023e-07, cumulative = -3.33748034784e-06
+Frozen-RANS relative changes: U=2.25816757591e-09, p=1.55315335904e-10, k=0, omega=0, nut=0, consecutive=2
+NS.H solving, corrector 42
+smoothSolver:  Solving for Ux, Initial residual = 4.90006704999e-12, Final residual = 4.90006704999e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.18987205866e-09, Final residual = 7.53989443784e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.68509252918e-10, Final residual = 1.68509252918e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630956848e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968375
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88398 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630956848e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770503e-07 min=3.99992509834e-09 max=2.05286587845e-06
+DICPCG:  Solving for p, Initial residual = 9.10068014119e-09, Final residual = 9.40857112044e-10, No Iterations 33
+DICPCG:  Solving for p, Initial residual = 9.40857148234e-10, Final residual = 9.40857148234e-10, No Iterations 0
+time step continuity errors : sum local = 1.94284472489e-06, global = 7.8132449363e-08, cumulative = -3.25934789848e-06
+Frozen-RANS relative changes: U=2.19808443325e-09, p=8.16165587642e-09, k=0, omega=0, nut=0, consecutive=3
+NS.H solving, corrector 43
+smoothSolver:  Solving for Ux, Initial residual = 5.50517634065e-12, Final residual = 5.50517634065e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.02826287635e-09, Final residual = 7.24447044877e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.05401891354e-10, Final residual = 2.05401891354e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630954686e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968651
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.884845 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630954686e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770437e-07 min=3.99992509834e-09 max=2.0528658748e-06
+DICPCG:  Solving for p, Initial residual = 8.74403148207e-09, Final residual = 9.89091859223e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.89092108429e-10, Final residual = 9.89092108429e-10, No Iterations 0
+time step continuity errors : sum local = 2.04244878934e-06, global = -6.38802478105e-07, cumulative = -3.89815037658e-06
+Frozen-RANS relative changes: U=2.14233371396e-09, p=8.81322031623e-11, k=0, omega=0, nut=0, consecutive=4
+NS.H solving, corrector 44
+smoothSolver:  Solving for Ux, Initial residual = 5.01745730406e-12, Final residual = 5.01745730406e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 8.60255904105e-09, Final residual = 7.05106254331e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.80900339654e-10, Final residual = 1.80900339654e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630951174e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968901
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88464 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630951174e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06
+DICPCG:  Solving for p, Initial residual = 8.39311506566e-09, Final residual = 9.21047038248e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.21047088092e-10, Final residual = 9.21047088092e-10, No Iterations 0
+time step continuity errors : sum local = 1.901937373e-06, global = -4.60456487917e-07, cumulative = -4.3586068645e-06
+Frozen-RANS relative changes: U=2.09003485165e-09, p=1.54283226319e-10, k=0, omega=0, nut=0, consecutive=5
+Frozen-RANS flow converged after 44 correctors.
+MTO_HF: Finished NS.H
+MTO_HF: Starting HeatTransfer.H
+DILUPBiCGStab:  Solving for T, Initial residual = 0.0645973275797, Final residual = 8.85930451595e-13, No Iterations 46
+TEqn: initialResidual=0.0645973275797, finalResidual=8.85930451595e-13, nIterations=46
+MTO_HF: Finished HeatTransfer.H
+MTO_HF: Starting AdjHeatTransfer.H
+Thermal matrix transpose dot-test max relative error=1.09689091013e-13
+DILUPBiCGStab:  Solving for Tb, Initial residual = 1, Final residual = 6.57525213585e-13, No Iterations 66
+MTO_HF: Finished AdjHeatTransfer.H
+MTO_HF: Starting AdjNS_HT.H
+B0.2 flux-adjoint diagnostics: maxInternalThermalResidualFluxAdjoint=107.471904936 maxBoundaryThermalResidualFluxAdjoint=0 maxObjectiveFluxDerivative=114.359739701 maxCombinedFluxAdjoint=114.359739701
+AdjDiag: diagX avg=0.00786395722033 [min=2.82079672191e-07,max=0.0125001723572] ; alpha avg=63504814.0161 [min=90.991810737,max=100000000] ; phi avg=8.63360687398e-06 [min=-3.60659413202e-06,max=9.70872602317e-05] (thermalCoupling)
+AdjCoeff: upper[avg=-8.96069585396e-08 min=-3.63254458202e-06 max=-2.4912432e-08] lower[avg=-3.38699572201e-06 min=-9.71132106817e-05 max=-2.4912432e-08] upper/V[avg=-720.974638293 min=-29060.3566562 max=-207.6036]
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00500232614579 inputL2=224.471603923 inputMax=0.999999999989 in0=0.0129996338364 in1=0.0259970707657 in2=0.0389901142518
+AdjDeltaH: |dH|L2=40019286.1688 avg=218323.104912 max=1249311.00433
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00508466303059 inputL2=224.5321312 inputMax=0.999999999989 in0=0.0146994705852 in1=0.029395764819 in2=0.0440857070364
+AdjDeltaH: |dH|L2=40677963.6057 avg=221916.484928 max=1312699.30604
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00506378947702 inputL2=224.467274173 inputMax=0.999999999942 in0=0.0163992648526 in1=0.0327941190577 in2=0.0491801531543
+AdjDeltaH: |dH|L2=40510930.915 avg=221005.246894 max=1343790.25608
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00505588950182 inputL2=224.530756497 inputMax=0.99999999992 in0=0.018099011726 in1=0.0361920941967 in2=0.0542733200991
+AdjDeltaH: |dH|L2=40447690.0669 avg=220660.239783 max=1333199.15163
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00506220696612 inputL2=224.473184943 inputMax=0.999999999939 in0=0.0197987062934 in1=0.0395896509555 in2=0.0593650753979
+AdjDeltaH: |dH|L2=40498205.7381 avg=220935.825363 max=1297019.50416
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00508505307944 inputL2=224.52145568 inputMax=0.999999999587 in0=0.0214983436424 in1=0.0429867500583 in2=0.0644552866145
+AdjDeltaH: |dH|L2=40680978.3315 avg=221932.931606 max=1313711.11976
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00512525519703 inputL2=224.484753626 inputMax=0.999999999862 in0=0.0231979188613 in1=0.0463833522349 in2=0.0695438213526
+AdjDeltaH: |dH|L2=41002631.0897 avg=223687.691263 max=1285012.42627
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00517316440622 inputL2=224.508711881 inputMax=0.999999999938 in0=0.0248974270383 in1=0.0497794182203 in2=0.07463054726
+AdjDeltaH: |dH|L2=41385963.3687 avg=225778.940292 max=1245395.75329
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00519176572238 inputL2=224.497658978 inputMax=1 in0=0.0265968632616 in1=0.0531749087563 in2=0.0797153320309
+AdjDeltaH: |dH|L2=41534880.4082 avg=226591.349347 max=1254388.93537
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00523668606782 inputL2=224.496553827 inputMax=0.999999999912 in0=0.0282962226201 in1=0.0565697845909 in2=0.0847980434106
+AdjDeltaH: |dH|L2=41894281.7164 avg=228552.044228 max=1312765.82431
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00523283554012 inputL2=224.508309474 inputMax=0.999999999999 in0=0.0299955002025 in1=0.0599640064794 in2=0.089878549198
+AdjDeltaH: |dH|L2=41863492.7848 avg=228384.076835 max=1329405.92672
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00519967459919 inputL2=224.487996272 inputMax=0.999999999994 in0=0.0316946910979 in1=0.0633575351847 in2=0.0949567172494
+AdjDeltaH: |dH|L2=41598175.5622 avg=226936.652721 max=1341899.06749
+Reduced cold-flow operator transpose dot-test (thermalCoupling) max relative error=1.11402902087e-13 all=
+12
+(
+2.88976811558e-14
+1.82064092905e-14
+3.75325136842e-14
+7.88967958734e-15
+1.11402902087e-13
+4.03581748999e-14
+3.11449032221e-15
+2.13925117787e-14
+5.57167900973e-15
+1.44288362468e-14
+5.47967746821e-15
+1.19456507005e-15
+)
+
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0051028126697 inputL2=224.517518514 inputMax=1 in0=0.010999778168 in1=0.0219982253763 in2=0.0329940108261
+AdjDeltaH: |dH|L2=40823171.1446 avg=222708.656998 max=1351877.98416
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515224160761 inputL2=224.504042417 inputMax=1 in0=0.0229979722203 in1=0.0459837790496 in2=0.0689452615321
+AdjDeltaH: |dH|L2=41218583.0811 avg=224865.805962 max=1320588.12655
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00130920262547 inputL2=105.39527526 inputMax=0.999999990026 in0=0.0309950350719 in1=0.0619602863004 in2=0.0928659984621
+AdjDeltaH: |dH|L2=10474324.0602 avg=57142.1224515 max=791171.46833
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00493341223076 inputL2=224.491434671 inputMax=0.999999999964 in0=0.0119997120021 in1=0.0239976960664 in2=0.0359922245039
+AdjDeltaH: |dH|L2=39467796.2629 avg=215314.480819 max=1308169.74924
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00522512629157 inputL2=224.491581261 inputMax=0.999999999964 in0=0.0239976960664 in1=0.0479815701232 in2=0.0719378081223
+AdjDeltaH: |dH|L2=41801775.8906 avg=228047.383574 max=1337714.74392
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00133868660174 inputL2=105.390707433 inputMax=0.999999993076 in0=0.0319945389463 in1=0.0639563182803 in2=0.0958526119328
+AdjDeltaH: |dH|L2=10710311.4145 avg=58429.5390159 max=803622.351662
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00500232614579 inputL2=224.471603923 inputMax=0.999999999989 in0=0.0129996338364 in1=0.0259970707657 in2=0.0389901142518
+AdjDeltaH: |dH|L2=40019286.1688 avg=218323.104912 max=1249311.00433
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515625541098 inputL2=224.482408633 inputMax=0.999999999886 in0=0.0249973959147 in1=0.0499791692707 in2=0.0749297072727
+AdjDeltaH: |dH|L2=41250665.7037 avg=225040.831017 max=1330464.50228
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0013104654143 inputL2=105.36983755 inputMax=0.999999999831 in0=0.0329940108261 in1=0.065952094435 in2=0.0988383627307
+AdjDeltaH: |dH|L2=10484442.63 avg=57197.3237756 max=807180.572222
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00488429385001 inputL2=224.462084142 inputMax=0.999999999989 in0=0.0139995426711 in1=0.0279963414768 in2=0.041987653089
+AdjDeltaH: |dH|L2=39074839.2538 avg=213170.724582 max=1223381.86343
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00532700833946 inputL2=224.478738952 inputMax=0.999999999989 in0=0.0259970707657 in1=0.0519765685015 in2=0.0779209320563
+AdjDeltaH: |dH|L2=42616883.2346 avg=232494.158697 max=1355981.88494
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00131626579287 inputL2=105.339653104 inputMax=0.999999999831 in0=0.033993449712 in1=0.0679476067814 in2=0.101823223984
+AdjDeltaH: |dH|L2=10530901.678 avg=57450.7786614 max=739428.643839
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00509405523157 inputL2=224.463871307 inputMax=0.999999999999 in0=0.0149994375063 in1=0.0299955002025 in2=0.0449848140377
+AdjDeltaH: |dH|L2=40753146.2843 avg=222326.640066 max=1240147.27728
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515430454956 inputL2=224.481148177 inputMax=0.999999999999 in0=0.0269967196196 in1=0.0539737598261 in2=0.080911455552
+AdjDeltaH: |dH|L2=41235030.8034 avg=224955.535643 max=1336743.06651
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00133585866111 inputL2=105.30828516 inputMax=0.999999995784 in0=0.0349928546043 in1=0.0699428473375 in2=0.104807168829
+AdjDeltaH: |dH|L2=10687584.2049 avg=58305.5519229 max=812423.77996
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00499320163929 inputL2=224.475042236 inputMax=0.999999999989 in0=0.0159993173421 in1=0.0319945389463 in2=0.0479815701232
+AdjDeltaH: |dH|L2=39946114.7677 avg=217923.922193 max=1260630.69073
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0052699679636 inputL2=224.488541397 inputMax=0.999999999989 in0=0.0279963414768 in1=0.0559707352558 in2=0.0839012508451
+AdjDeltaH: |dH|L2=42160574.8299 avg=230004.792263 max=1342600.16667
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00132124361449 inputL2=105.283458416 inputMax=0.999999999743 in0=0.0359922245039 in1=0.0719378081223 in2=0.10779017041
+AdjDeltaH: |dH|L2=10570684.1958 avg=57667.8100888 max=790578.952895
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00511544931327 inputL2=224.491560882 inputMax=0.999999999954 in0=0.0169991811785 in1=0.033993449712 in2=0.050977894375
+AdjDeltaH: |dH|L2=40924297.2119 avg=223260.344924 max=1307158.19085
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00510978609682 inputL2=224.498562534 inputMax=0.999999999999 in0=0.0289959353376 in1=0.0579674868025 in2=0.0868902910276
+AdjDeltaH: |dH|L2=40878862.1663 avg=223012.476429 max=1317869.00163
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00131371058848 inputL2=105.270805859 inputMax=0.99999999538 in0=0.0369915584112 in1=0.073932481156 in2=0.11077220188
+AdjDeltaH: |dH|L2=10510435.1812 avg=57339.1247676 max=805598.466349
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00504594497408 inputL2=224.508503745 inputMax=0.999999999999 in0=0.0179990280157 in1=0.0359922245039 in2=0.0539737598261
+AdjDeltaH: |dH|L2=40368102.9097 avg=220226.056245 max=1320500.171
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00523283554012 inputL2=224.508309474 inputMax=0.999999999999 in0=0.0299955002025 in1=0.0599640064794 in2=0.089878549198
+AdjDeltaH: |dH|L2=41863492.7848 avg=228384.076835 max=1329405.92672
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00132238793041 inputL2=105.273149816 inputMax=0.999999999936 in0=0.0379908553269 in1=0.0759268584598 in2=0.113753236402
+AdjDeltaH: |dH|L2=10579789.9768 avg=57717.486197 max=811067.981469
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00513510966614 inputL2=224.521377475 inputMax=0.999999999936 in0=0.018998856854 in1=0.0379908553269 in2=0.0569691395137
+AdjDeltaH: |dH|L2=41081576.9248 avg=224118.376103 max=1348268.78196
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00509265219558 inputL2=224.515146719 inputMax=0.99999999974 in0=0.0309950350719 in1=0.0619602863004 in2=0.0928659984621
+AdjDeltaH: |dH|L2=40741782.4297 avg=222264.645156 max=1312791.79377
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00133140109745 inputL2=105.304094155 inputMax=0.999999998066 in0=0.0389901142518 in1=0.0779209320563 in2=0.116733247144
+AdjDeltaH: |dH|L2=10651984.089 avg=58111.3373681 max=793930.314023
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00509903043566 inputL2=224.527203755 inputMax=0.999999999886 in0=0.0199986666933 in1=0.0399893341866 in2=0.0599640064794
+AdjDeltaH: |dH|L2=40792853.6313 avg=222543.261403 max=1298306.91231
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0051776668103 inputL2=224.517394999 inputMax=0.999999999925 in0=0.0319945389463 in1=0.0639563182803 in2=0.0958526119328
+AdjDeltaH: |dH|L2=41422082.0456 avg=225975.983829 max=1325409.35615
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00130656689686 inputL2=105.286033818 inputMax=0.99999999984 in0=0.0399893341866 in1=0.0799146939692 in2=0.119712207289
+AdjDeltaH: |dH|L2=10453192.0633 avg=57026.8379572 max=804872.435038
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515284406661 inputL2=224.525127254 inputMax=0.999999999868 in0=0.020998456534 in1=0.041987653089 in2=0.0629583337695
+AdjDeltaH: |dH|L2=41223429.0073 avg=224892.242657 max=1310099.26034
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00507408078167 inputL2=224.514722999 inputMax=1 in0=0.0329940108261 in1=0.065952094435 in2=0.0988383627307
+AdjDeltaH: |dH|L2=40593218.2096 avg=221454.16089 max=1332684.91111
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00132566152015 inputL2=105.3017718 inputMax=0.999999995875 in0=0.0409885141321 in1=0.0819081362234 in2=0.122690090024
+AdjDeltaH: |dH|L2=10606077.2301 avg=57860.8949207 max=789058.197759
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00516860018036 inputL2=224.516436848 inputMax=0.99999999984 in0=0.0219982253763 in1=0.0439858040409 in2=0.065952094435
+AdjDeltaH: |dH|L2=41349491.0695 avg=225579.967588 max=1316983.97954
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.005112487454 inputL2=224.508155086 inputMax=1 in0=0.033993449712 in1=0.0679476067814 in2=0.101823223984
+AdjDeltaH: |dH|L2=40900569.4732 avg=223130.899497 max=1347221.78276
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00134029829941 inputL2=105.283584206 inputMax=0.999999999831 in0=0.041987653089 in1=0.0839012508451 in2=0.12566686855
+AdjDeltaH: |dH|L2=10723032.0879 avg=58498.9359788 max=803819.799018
+BlockDot (thermalCoupling): PU=7.99184409832e-14 PP=2.6655422681e-14 UU=7.3095183677e-14 UP=1.79609743792e-12 boundaryU=1.80391921425e-13
+--- Stage B4: flow Jacobian consistency probe ---
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00334657148198 inputL2=150.039713956 inputMax=0.999988276838 in0=0.267695074059 in1=0.133847537029 in2=-0.0803085222177
+AdjDeltaH: |dH|L2=26772936.7183 avg=146058.344152 max=878797.348374
+StageB4 dPhi_J stats: L2=1.27042968265e-05 max=2.46684000767e-07 ; P-row outJ L2=1.47703641608
+StageB4 dPhi_J + forward P-row exported (nFaces=96860)
+GateH1 same-basis dH: |an|L2=26606377.8496 |fd|L2=26787899.109 relL2=0.117010638336 cos=0.999433960379
+GateH1 4term: |FD|=26772936.7183 |offdiag/V|=26772936.7183 |boundary/V|=3113719.0442 |residual(FD-off-bnd)|=3113719.0442 (source+boundarySource contribution)
+GateH1 sourceFD: div=0 laplacian=2.01604447074e-20 Sp=0 (total source-FD ~2.41e7)
+H2 cell0=0 adjacent internal faces=3
+H2 c=0 face=0 own=0 nei=1 upG=-2.4912432e-08 loG=-4.2945940458e-08 upD=-2.4912432e-08 loD=-4.2945940458e-08 dUo=1 dUn=0 gateOwn=0 gateNei=4.2945940458e-08 discOwn=0 discNei=4.2945940458e-08
+H2 c=0 face=1 own=0 nei=80 upG=-2.4912432e-08 loG=-2.79090257498e-08 upD=-2.4912432e-08 loD=-2.79090257498e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.79090257498e-08 discOwn=0 discNei=2.79090257498e-08
+H2 c=0 face=2 own=0 nei=1120 upG=-4.80618209566e-08 loG=-2.703171875e-08 upD=-4.80618209566e-08 loD=-2.703171875e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.703171875e-08 discOwn=0 discNei=2.703171875e-08
+H2 c=0 nFaces=3 |gate|=5.79135678292e-08 |disc|=5.79135678292e-08 relL2=0 cos=1
+H2 c=1 face=0 own=0 nei=1 upG=-2.4912432e-08 loG=-4.2945940458e-08 upD=-2.4912432e-08 loD=-4.2945940458e-08 dUo=1 dUn=0 gateOwn=0 gateNei=4.2945940458e-08 discOwn=0 discNei=4.2945940458e-08
+H2 c=1 face=1 own=0 nei=80 upG=-2.4912432e-08 loG=-2.79090257498e-08 upD=-2.4912432e-08 loD=-2.79090257498e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.79090257498e-08 discOwn=0 discNei=2.79090257498e-08
+H2 c=1 face=2 own=0 nei=1120 upG=-4.80618209566e-08 loG=-2.703171875e-08 upD=-4.80618209566e-08 loD=-2.703171875e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.703171875e-08 discOwn=0 discNei=2.703171875e-08
+H2 c=1 nFaces=3 |gate|=5.79135678292e-08 |disc|=5.79135678292e-08 relL2=0 cos=1
+H2 c=2 face=0 own=0 nei=1 upG=-2.4912432e-08 loG=-4.2945940458e-08 upD=-2.4912432e-08 loD=-4.2945940458e-08 dUo=1 dUn=0 gateOwn=0 gateNei=4.2945940458e-08 discOwn=0 discNei=4.2945940458e-08
+H2 c=2 face=1 own=0 nei=80 upG=-2.4912432e-08 loG=-2.79090257498e-08 upD=-2.4912432e-08 loD=-2.79090257498e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.79090257498e-08 discOwn=0 discNei=2.79090257498e-08
+H2 c=2 face=2 own=0 nei=1120 upG=-4.80618209566e-08 loG=-2.703171875e-08 upD=-4.80618209566e-08 loD=-2.703171875e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.703171875e-08 discOwn=0 discNei=2.703171875e-08
+H2 c=2 nFaces=3 |gate|=5.79135678292e-08 |disc|=5.79135678292e-08 relL2=0 cos=1
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00334657148198 inputL2=150.039713956 inputMax=0.999988276838 in0=0.267695074059 in1=0.133847537029 in2=-0.0803085222177
+AdjDeltaH: |dH|L2=26772936.7183 avg=146058.344152 max=878797.348374
+GateH3 stateJ3_p: max=0 L2=0
+GateH3 applied applyDiscreteFlowJ(stateJ3); see AdjDeltaH offdiag(noV) above; outL2=1.47703641608
+GateH4 full-field: |off_discrete|L2=0.00334657148198 |off_reassemble|L2=0.00334657148198 relL2=0 cos=1 ; coeffDiffL2=0 (applyDiscreteFlowJ printed 0.0100397...)
+GateOracle h=0.001 A(dPhiHfd vs dPhiFD): relL2=1.65369048233e-11 B(dPhiJ vs dPhiHfd): relL2=2.02878652288e-11 cos=1 ; full(dPhiJ vs dPhiFD): relL2=2.59408555714e-11 cos=1
+GateDHsplit internal(26208): relL2=3.05156579003e-11 cos=1 |an|=25812067.9876 boundary(7392): relL2=2.04426813259e-11 cos=0.999999999999 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451929 bcV-only relL2=4.77026906667e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=0.001 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=1.46436377217e-10 cos=1 (internal cells only)
+GatePR h=0.001 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=1.12295958888e-10 cos=1
+GateOracle h=0.0003 A(dPhiHfd vs dPhiFD): relL2=5.51195970941e-11 B(dPhiJ vs dPhiHfd): relL2=7.02404853807e-11 cos=1 ; full(dPhiJ vs dPhiFD): relL2=9.06010735818e-11 cos=1
+GateDHsplit internal(26208): relL2=1.04892388212e-10 cos=1 |an|=25812067.9876 boundary(7392): relL2=7.17987140102e-11 cos=1 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451928 bcV-only relL2=4.77026906667e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=0.0003 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=5.08790648296e-10 cos=0.999999999994 (internal cells only)
+GatePR h=0.0003 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=3.88875195107e-10 cos=0.999999999998
+GateOracle h=0.0001 A(dPhiHfd vs dPhiFD): relL2=1.63123417577e-10 B(dPhiJ vs dPhiHfd): relL2=2.14736670108e-10 cos=0.999999999997 ; full(dPhiJ vs dPhiFD): relL2=2.72399164946e-10 cos=1
+GateDHsplit internal(26208): relL2=3.14306195462e-10 cos=1 |an|=25812067.9876 boundary(7392): relL2=2.13934702238e-10 cos=0.99999999999 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451925 bcV-only relL2=4.77026906662e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=0.0001 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=1.51946269951e-09 cos=0.999999999991 (internal cells only)
+GatePR h=0.0001 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=1.16216868141e-09 cos=0.999999999993
+GateOracle h=3e-05 A(dPhiHfd vs dPhiFD): relL2=5.5403669917e-10 B(dPhiJ vs dPhiHfd): relL2=7.14299156736e-10 cos=0.999999999997 ; full(dPhiJ vs dPhiFD): relL2=9.00345602252e-10 cos=0.999999999992
+GateDHsplit internal(26208): relL2=1.06856095002e-09 cos=0.999999999999 |an|=25812067.9876 boundary(7392): relL2=7.8003797535e-10 cos=1.00000000004 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451944 bcV-only relL2=4.77026906686e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=3e-05 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=5.01949109233e-09 cos=1.00000000001 (internal cells only)
+GatePR h=3e-05 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=3.83905889575e-09 cos=1
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=3.41464549796e-09 inputL2=0.000150071017978 inputMax=9.99999999487e-07 in0=3.69915584112e-08 in1=1.84957792056e-08 in2=-1.10974675234e-08
+AdjDeltaH: |dH|L2=27.3174919646 avg=0.149029136576 max=0.857425052916
+Stage B4 R0 components: |V*(M&U)|=0.0909378933062 |2H|=17479873079 |source|=2.83292429224e-06 |diag*U|=1.1196110296
+Stage B4 matrix norms: |upper|=9.02804110161e-05 |lower|=0.00417443717215 |diag|=1.80460150785
+Stage B4 fields: max|phi|=9.70872602317e-05 max|nuEffFrozen|=5.19009e-05 max|alpha|=100000000 max|U|=388.360567179
+Stage B4 norms: |R(U0)|=2.21112754645 |R(U1)|=2.21112754635 |Jdelta_mom|=1.47788149401e-06
+Stage B4 T1 (momentum U-U, dp=0): relL2=0.00852323456072 cos=0.999963676577 |J|/|FD|=0.999962823771 maxCellAbsErr=3.84162343025e-10 maxCellAbsFD=1.25002086562e-08
+Stage B4 T-cont (continuity row): relL2 = 0.000648577427676
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+Stage B4 T2 (dp!=0 continuity): relL2(J_P, div(dphi_SIMPLE))=7.51176551272e-21 |J_mom(dp)|=3.18615984048e-11
+Stage B4 T-fvm (frozen-phi fvm matrix part): relL2 = 0.999999999866
+Stage B4 T-dev (deviatoric part): relL2 = 5.36114041232e-05
+Stage B4 T-conv (convection phi-variation part): relL2 = 0.418119174867
+ExplicitJToracle: maxRelL2=3.91122615197e-16 maxCosErr=3.33066907388e-16 maxRelL_U=3.30401184989e-16 maxRelL_P=3.91364547208e-16
+SchurDiag: avg=129.237307843 min=0.960724668088 max=896.339157626
+PC mobility: avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06
+PC probe: cos(M*JT*v, v)=-0.26062061387 |M*JT*v|/|v|=67.3569610642 |JT*v|/|v|=67.3569610642
+PC sub-probe U: cos=0.77926663859 ratio=1.28294141096
+PC sub-probe P: cos=-0.538925147642 ratio=135.26608277 |JT_U|=58.3642692119 |JT_P|=17536.1435922 |M_U|=58.3642692119 |M_P|=17536.1435922
+  JT_U top cells: c=10560 |U|=1.14652098731 |vP|=0.0362757642223 alpha=90.991810737 U=(193.981161045 0.0266089449722 -0.099641655696) mob=1.02638023959e-06
+  JT_U top cells: c=10561 |U|=1.14648755591 |vP|=0.00728366060152 alpha=90.991810737 U=(194.05329955 0.0555676165467 -0.162417114168)
+  JT_U top cells: c=7201 |U|=1.14572821779 |vP|=0.057879099173 alpha=90.991810737 U=(194.037833093 0.0530115674421 -0.0628726070731)
+  scales: M=0.00786409044975 A=2.47771624976e-07 M/A=31739.2697832 |Sf|avg=2.47784431138e-07 avgDiag=0.00786395722033
+  P-cell0: vP=0.999579529469 JTvP[P]=0.999579529469 MvP[P]=0.999579529469 MvP[Ux]=6.34247326953e-05
+ILU: pre-decomp nnz=13210746 nan/inf=0
+ILU post-decomp nan=0 maxAbs=1
+Reduced discrete flow adjoint thermalCoupling: GMRES iterations=0, relative residual=1
+--> FOAM Warning : 
+    From function int main(int, char**)
+    in file solveDiscreteFlowAdjoint.H at line 3874
+    Reduced discrete flow adjoint thermalCoupling residual=1 > tolerance=1e-09 (continuing, diagnostic)
+UcFingerprint[afterSolve thermalCoupling]: sum=0 L2=0 max=0 c0=(0 0 0) c100=(0 0 0) c5000=(0 0 0)
+--- StageB5: boundary-consistent P-row + dphi/dU relaxation oracle (BFINAL-002, DIAGNOSTIC_ONLY) ---
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00334657148198 inputL2=150.039713956 inputMax=0.999988276838 in0=0.267695074059 in1=0.133847537029 in2=-0.0803085222177
+AdjDeltaH: |dH|L2=26772936.7183 avg=146058.344152 max=878797.348374
+StageB5 selfcheck (recomputed dH boundary + internal div vs outJ[P]): relL2=1.25301540502e-17
+StageB5 anchor (frozen-phi momentum FD, hU=0.388360567179):StageB5 momentum: |a|L2=1.47703641607 |b(FD)|L2=1.47704263118 |err|L2=0.000244173261124 relL2=0.000165312263823 cos=0.999999986345 maxDiff=1.42855642821e-05 @idx=18693
+StageB5 GateA eps=0.001:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949431 relL2=0.000165311363075 cos=0.999999986345 maxDiff=1.42858672819e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523157e-06 |err|L2=2.40303538019e-06 relL2=0.858360202896 cos=0.612374318494 maxDiff=8.48642692325e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910394e-06 |err|L2=3.79456365009e-06 relL2=1.14536990378 cos=0.152835235352 maxDiff=1.96946776841e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590832e-06 |err|L2=4.49146883915e-06 relL2=1.03551482702 cos=0.37043065291 maxDiff=1.96946776841e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=0.001 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=1.73257243936e-05 relL2=0.790384891004 cos=0.613553011756 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=2.18991866554e-06 relL2=1.38767994641 cos=0.578934378454 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=1.7463575508e-05 relL2=0.794616998153 cos=0.60733513992 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=0.001 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495264e-05 normRatio=0.590838293672 relL2=0.794616998153 cos=0.60733513992 intRel=0.790384891004 bndRel=1.38767994641
+StageB5 GateB eps=0.001 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168929e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=2.31838640667e-16 relL2=1.05762826749e-11 cos=1 maxDiff=1.54779389243e-17 @idx=24222
+StageB5  B-boundary-faces: |a|L2=1.57811509145e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=2.1000074221e-17 relL2=1.3307061275e-11 cos=1 maxDiff=7.92724238701e-18 @idx=96954
+StageB5  B-all-faces: |a|L2=2.19773495264e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=2.32787796982e-16 relL2=1.05921688465e-11 cos=1 maxDiff=1.54779389243e-17 @idx=24222
+StageB5 GateB eps=0.001 candB: |B|L2=2.19773495264e-05 |FD|L2=2.19773495264e-05 normRatio=1 relL2=1.05921688465e-11 cos=1 intRel=1.05762826749e-11 bndRel=1.3307061275e-11
+StageB5 GateA eps=0.0003:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949423 relL2=0.00016531136307 cos=0.999999986345 maxDiff=1.42858672726e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523156e-06 |err|L2=2.40303538019e-06 relL2=0.858360202898 cos=0.612374318492 maxDiff=8.48642692235e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910394e-06 |err|L2=3.7945636501e-06 relL2=1.14536990378 cos=0.152835235348 maxDiff=1.96946776844e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590832e-06 |err|L2=4.49146883916e-06 relL2=1.03551482702 cos=0.370430652907 maxDiff=1.96946776844e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=0.0003 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168928e-05 |err|L2=1.73257243936e-05 relL2=0.790384891005 cos=0.613553011755 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=2.18991866553e-06 relL2=1.38767994641 cos=0.578934378455 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=1.7463575508e-05 relL2=0.794616998154 cos=0.607335139919 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=0.0003 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495264e-05 normRatio=0.590838293673 relL2=0.794616998154 cos=0.607335139919 intRel=0.790384891005 bndRel=1.38767994641
+StageB5 GateB eps=0.0003 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168928e-05 |b(FD)|L2=2.19206168928e-05 |err|L2=7.59670877901e-16 relL2=3.46555428442e-11 cos=1 maxDiff=5.48823483819e-17 @idx=21583
+StageB5  B-boundary-faces: |a|L2=1.57811509144e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=6.81085405403e-17 relL2=4.31581580515e-11 cos=1 maxDiff=2.37024700235e-17 @idx=96949
+StageB5  B-all-faces: |a|L2=2.19773495264e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=7.62717913796e-16 relL2=3.47047269226e-11 cos=1 maxDiff=5.48823483819e-17 @idx=21583
+StageB5 GateB eps=0.0003 candB: |B|L2=2.19773495264e-05 |FD|L2=2.19773495264e-05 normRatio=1 relL2=3.47047269226e-11 cos=1 intRel=3.46555428442e-11 bndRel=4.31581580515e-11
+StageB5 GateA eps=0.0001:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949437 relL2=0.000165311363079 cos=0.999999986345 maxDiff=1.42858672611e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523158e-06 |err|L2=2.40303538018e-06 relL2=0.858360202891 cos=0.612374318497 maxDiff=8.48642692461e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910395e-06 |err|L2=3.79456365011e-06 relL2=1.14536990378 cos=0.152835235348 maxDiff=1.96946776855e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590834e-06 |err|L2=4.49146883916e-06 relL2=1.03551482701 cos=0.370430652909 maxDiff=1.96946776855e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=0.0001 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=1.73257243936e-05 relL2=0.790384891004 cos=0.613553011756 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509137e-06 |err|L2=2.18991866553e-06 relL2=1.38767994648 cos=0.578934378457 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=1.7463575508e-05 relL2=0.794616998153 cos=0.607335139921 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=0.0001 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495264e-05 normRatio=0.590838293672 relL2=0.794616998153 cos=0.607335139921 intRel=0.790384891004 bndRel=1.38767994648
+StageB5 GateB eps=0.0001 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168929e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=2.34184786393e-15 relL2=1.06833118583e-10 cos=1 maxDiff=1.7183746813e-16 @idx=24882
+StageB5  B-boundary-faces: |a|L2=1.57811509139e-06 |b(FD)|L2=1.57811509137e-06 |err|L2=2.35289506732e-16 relL2=1.49095277029e-10 cos=1 maxDiff=8.02725183179e-17 @idx=96946
+StageB5  B-all-faces: |a|L2=2.19773495264e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=2.35363815609e-15 relL2=1.07093812803e-10 cos=1 maxDiff=1.7183746813e-16 @idx=24882
+StageB5 GateB eps=0.0001 candB: |B|L2=2.19773495264e-05 |FD|L2=2.19773495264e-05 normRatio=1 relL2=1.07093812803e-10 cos=1 intRel=1.06833118583e-10 bndRel=1.49095277029e-10
+StageB5 GateA eps=3e-05:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949433 relL2=0.000165311363077 cos=0.999999986345 maxDiff=1.42858675156e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523141e-06 |err|L2=2.40303538021e-06 relL2=0.858360202954 cos=0.61237431846 maxDiff=8.48642692684e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910398e-06 |err|L2=3.79456365006e-06 relL2=1.14536990375 cos=0.152835235382 maxDiff=1.96946776686e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590825e-06 |err|L2=4.49146883913e-06 relL2=1.03551482703 cos=0.3704306529 maxDiff=1.96946776686e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=3e-05 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168927e-05 |err|L2=1.73257243936e-05 relL2=0.79038489101 cos=0.613553011747 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509142e-06 |err|L2=2.18991866551e-06 relL2=1.38767994642 cos=0.578934378465 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495262e-05 |err|L2=1.7463575508e-05 relL2=0.79461699816 cos=0.607335139911 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=3e-05 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495262e-05 normRatio=0.590838293678 relL2=0.79461699816 cos=0.607335139911 intRel=0.79038489101 bndRel=1.38767994642
+StageB5 GateB eps=3e-05 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168928e-05 |b(FD)|L2=2.19206168927e-05 |err|L2=7.73292221733e-15 relL2=3.52769370278e-10 cos=1 maxDiff=5.69972043628e-16 @idx=24383
+StageB5  B-boundary-faces: |a|L2=1.57811509141e-06 |b(FD)|L2=1.57811509142e-06 |err|L2=8.24036269328e-16 relL2=5.22164874924e-10 cos=1 maxDiff=2.760832357e-16 @idx=96954
+StageB5  B-all-faces: |a|L2=2.19773495263e-05 |b(FD)|L2=2.19773495262e-05 |err|L2=7.77670378711e-15 relL2=3.53850848932e-10 cos=1 maxDiff=5.69972043628e-16 @idx=24383
+StageB5 GateB eps=3e-05 candB: |B|L2=2.19773495263e-05 |FD|L2=2.19773495262e-05 normRatio=1.00000000001 relL2=3.53850848932e-10 cos=1 intRel=3.52769370278e-10 bndRel=5.22164874924e-10
+StageB5 GateA eps=1e-05:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949263 relL2=0.000165311362961 cos=0.999999986345 maxDiff=1.42858667058e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523157e-06 |err|L2=2.40303538012e-06 relL2=0.858360202869 cos=0.612374318517 maxDiff=8.48642690431e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910404e-06 |err|L2=3.79456365015e-06 relL2=1.14536990376 cos=0.15283523536 maxDiff=1.96946777363e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.3374259084e-06 |err|L2=4.49146883916e-06 relL2=1.035514827 cos=0.370430652921 maxDiff=1.96946777363e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=1e-05 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.1920616893e-05 |err|L2=1.73257243936e-05 relL2=0.790384890998 cos=0.613553011764 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509181e-06 |err|L2=2.18991866548e-06 relL2=1.38767994607 cos=0.578934378482 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495266e-05 |err|L2=1.7463575508e-05 relL2=0.794616998146 cos=0.60733513993 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=1e-05 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495266e-05 normRatio=0.590838293667 relL2=0.794616998146 cos=0.60733513993 intRel=0.790384890998 bndRel=1.38767994607
+StageB5 GateB eps=1e-05 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168931e-05 |b(FD)|L2=2.1920616893e-05 |err|L2=2.31233189324e-14 relL2=1.05486624967e-09 cos=1 maxDiff=1.64686868929e-15 @idx=21111
+StageB5  B-boundary-faces: |a|L2=1.5781150918e-06 |b(FD)|L2=1.57811509181e-06 |err|L2=1.73208825654e-15 relL2=1.09756776647e-09 cos=1 maxDiff=5.75517283783e-16 @idx=96954
+StageB5  B-all-faces: |a|L2=2.19773495267e-05 |b(FD)|L2=2.19773495266e-05 |err|L2=2.31881005729e-14 relL2=1.0550908582e-09 cos=1 maxDiff=1.64686868929e-15 @idx=21111
+StageB5 GateB eps=1e-05 candB: |B|L2=2.19773495267e-05 |FD|L2=2.19773495266e-05 normRatio=1 relL2=1.0550908582e-09 cos=1 intRel=1.05486624967e-09 bndRel=1.09756776647e-09
+StageB5 rAU: relaxFactorU(fvSolution)=0.4 ; rAUAdj(unrelaxed)[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] ; rAUrel(primalPressureMobility)[avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06] ; avgRatio(rAUAdj/rAUrel)=2.50000000002 ; normRatio(|rAUAdj|/|rAUrel|)=2.49999999999
+--- StageB5 oracle complete (artifacts: stageB5_*.mtx) ---
+MTO_HF: Finished AdjNS_HT.H
+MTO_HF: Starting AdjNS_PD.H
+AdjDiag: diagX avg=0.00786395722033 [min=2.82079672191e-07,max=0.0125001723572] ; alpha avg=63504814.0161 [min=90.991810737,max=100000000] ; phi avg=8.63360687398e-06 [min=-3.60659413202e-06,max=9.70872602317e-05] (pressureDrop)
+AdjCoeff: upper[avg=-8.96069585396e-08 min=-3.63254458202e-06 max=-2.4912432e-08] lower[avg=-3.38699572201e-06 min=-9.71132106817e-05 max=-2.4912432e-08] upper/V[avg=-720.974638293 min=-29060.3566562 max=-207.6036]
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00500232614579 inputL2=224.471603923 inputMax=0.999999999989 in0=0.0129996338364 in1=0.0259970707657 in2=0.0389901142518
+AdjDeltaH: |dH|L2=40019286.1688 avg=218323.104912 max=1249311.00433
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00508466303059 inputL2=224.5321312 inputMax=0.999999999989 in0=0.0146994705852 in1=0.029395764819 in2=0.0440857070364
+AdjDeltaH: |dH|L2=40677963.6057 avg=221916.484928 max=1312699.30604
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00506378947702 inputL2=224.467274173 inputMax=0.999999999942 in0=0.0163992648526 in1=0.0327941190577 in2=0.0491801531543
+AdjDeltaH: |dH|L2=40510930.915 avg=221005.246894 max=1343790.25608
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00505588950182 inputL2=224.530756497 inputMax=0.99999999992 in0=0.018099011726 in1=0.0361920941967 in2=0.0542733200991
+AdjDeltaH: |dH|L2=40447690.0669 avg=220660.239783 max=1333199.15163
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00506220696612 inputL2=224.473184943 inputMax=0.999999999939 in0=0.0197987062934 in1=0.0395896509555 in2=0.0593650753979
+AdjDeltaH: |dH|L2=40498205.7381 avg=220935.825363 max=1297019.50416
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00508505307944 inputL2=224.52145568 inputMax=0.999999999587 in0=0.0214983436424 in1=0.0429867500583 in2=0.0644552866145
+AdjDeltaH: |dH|L2=40680978.3315 avg=221932.931606 max=1313711.11976
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00512525519703 inputL2=224.484753626 inputMax=0.999999999862 in0=0.0231979188613 in1=0.0463833522349 in2=0.0695438213526
+AdjDeltaH: |dH|L2=41002631.0897 avg=223687.691263 max=1285012.42627
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00517316440622 inputL2=224.508711881 inputMax=0.999999999938 in0=0.0248974270383 in1=0.0497794182203 in2=0.07463054726
+AdjDeltaH: |dH|L2=41385963.3687 avg=225778.940292 max=1245395.75329
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00519176572238 inputL2=224.497658978 inputMax=1 in0=0.0265968632616 in1=0.0531749087563 in2=0.0797153320309
+AdjDeltaH: |dH|L2=41534880.4082 avg=226591.349347 max=1254388.93537
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00523668606782 inputL2=224.496553827 inputMax=0.999999999912 in0=0.0282962226201 in1=0.0565697845909 in2=0.0847980434106
+AdjDeltaH: |dH|L2=41894281.7164 avg=228552.044228 max=1312765.82431
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00523283554012 inputL2=224.508309474 inputMax=0.999999999999 in0=0.0299955002025 in1=0.0599640064794 in2=0.089878549198
+AdjDeltaH: |dH|L2=41863492.7848 avg=228384.076835 max=1329405.92672
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00519967459919 inputL2=224.487996272 inputMax=0.999999999994 in0=0.0316946910979 in1=0.0633575351847 in2=0.0949567172494
+AdjDeltaH: |dH|L2=41598175.5622 avg=226936.652721 max=1341899.06749
+Reduced cold-flow operator transpose dot-test (pressureDrop) max relative error=1.11402902087e-13 all=
+12
+(
+2.88976811558e-14
+1.82064092905e-14
+3.75325136842e-14
+7.88967958734e-15
+1.11402902087e-13
+4.03581748999e-14
+3.11449032221e-15
+2.13925117787e-14
+5.57167900973e-15
+1.44288362468e-14
+5.47967746821e-15
+1.19456507005e-15
+)
+
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0051028126697 inputL2=224.517518514 inputMax=1 in0=0.010999778168 in1=0.0219982253763 in2=0.0329940108261
+AdjDeltaH: |dH|L2=40823171.1446 avg=222708.656998 max=1351877.98416
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515224160761 inputL2=224.504042417 inputMax=1 in0=0.0229979722203 in1=0.0459837790496 in2=0.0689452615321
+AdjDeltaH: |dH|L2=41218583.0811 avg=224865.805962 max=1320588.12655
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00130920262547 inputL2=105.39527526 inputMax=0.999999990026 in0=0.0309950350719 in1=0.0619602863004 in2=0.0928659984621
+AdjDeltaH: |dH|L2=10474324.0602 avg=57142.1224515 max=791171.46833
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00493341223076 inputL2=224.491434671 inputMax=0.999999999964 in0=0.0119997120021 in1=0.0239976960664 in2=0.0359922245039
+AdjDeltaH: |dH|L2=39467796.2629 avg=215314.480819 max=1308169.74924
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00522512629157 inputL2=224.491581261 inputMax=0.999999999964 in0=0.0239976960664 in1=0.0479815701232 in2=0.0719378081223
+AdjDeltaH: |dH|L2=41801775.8906 avg=228047.383574 max=1337714.74392
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00133868660174 inputL2=105.390707433 inputMax=0.999999993076 in0=0.0319945389463 in1=0.0639563182803 in2=0.0958526119328
+AdjDeltaH: |dH|L2=10710311.4145 avg=58429.5390159 max=803622.351662
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00500232614579 inputL2=224.471603923 inputMax=0.999999999989 in0=0.0129996338364 in1=0.0259970707657 in2=0.0389901142518
+AdjDeltaH: |dH|L2=40019286.1688 avg=218323.104912 max=1249311.00433
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515625541098 inputL2=224.482408633 inputMax=0.999999999886 in0=0.0249973959147 in1=0.0499791692707 in2=0.0749297072727
+AdjDeltaH: |dH|L2=41250665.7037 avg=225040.831017 max=1330464.50228
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0013104654143 inputL2=105.36983755 inputMax=0.999999999831 in0=0.0329940108261 in1=0.065952094435 in2=0.0988383627307
+AdjDeltaH: |dH|L2=10484442.63 avg=57197.3237756 max=807180.572222
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00488429385001 inputL2=224.462084142 inputMax=0.999999999989 in0=0.0139995426711 in1=0.0279963414768 in2=0.041987653089
+AdjDeltaH: |dH|L2=39074839.2538 avg=213170.724582 max=1223381.86343
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00532700833946 inputL2=224.478738952 inputMax=0.999999999989 in0=0.0259970707657 in1=0.0519765685015 in2=0.0779209320563
+AdjDeltaH: |dH|L2=42616883.2346 avg=232494.158697 max=1355981.88494
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00131626579287 inputL2=105.339653104 inputMax=0.999999999831 in0=0.033993449712 in1=0.0679476067814 in2=0.101823223984
+AdjDeltaH: |dH|L2=10530901.678 avg=57450.7786614 max=739428.643839
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00509405523157 inputL2=224.463871307 inputMax=0.999999999999 in0=0.0149994375063 in1=0.0299955002025 in2=0.0449848140377
+AdjDeltaH: |dH|L2=40753146.2843 avg=222326.640066 max=1240147.27728
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515430454956 inputL2=224.481148177 inputMax=0.999999999999 in0=0.0269967196196 in1=0.0539737598261 in2=0.080911455552
+AdjDeltaH: |dH|L2=41235030.8034 avg=224955.535643 max=1336743.06651
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00133585866111 inputL2=105.30828516 inputMax=0.999999995784 in0=0.0349928546043 in1=0.0699428473375 in2=0.104807168829
+AdjDeltaH: |dH|L2=10687584.2049 avg=58305.5519229 max=812423.77996
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00499320163929 inputL2=224.475042236 inputMax=0.999999999989 in0=0.0159993173421 in1=0.0319945389463 in2=0.0479815701232
+AdjDeltaH: |dH|L2=39946114.7677 avg=217923.922193 max=1260630.69073
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0052699679636 inputL2=224.488541397 inputMax=0.999999999989 in0=0.0279963414768 in1=0.0559707352558 in2=0.0839012508451
+AdjDeltaH: |dH|L2=42160574.8299 avg=230004.792263 max=1342600.16667
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00132124361449 inputL2=105.283458416 inputMax=0.999999999743 in0=0.0359922245039 in1=0.0719378081223 in2=0.10779017041
+AdjDeltaH: |dH|L2=10570684.1958 avg=57667.8100888 max=790578.952895
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00511544931327 inputL2=224.491560882 inputMax=0.999999999954 in0=0.0169991811785 in1=0.033993449712 in2=0.050977894375
+AdjDeltaH: |dH|L2=40924297.2119 avg=223260.344924 max=1307158.19085
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00510978609682 inputL2=224.498562534 inputMax=0.999999999999 in0=0.0289959353376 in1=0.0579674868025 in2=0.0868902910276
+AdjDeltaH: |dH|L2=40878862.1663 avg=223012.476429 max=1317869.00163
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00131371058848 inputL2=105.270805859 inputMax=0.99999999538 in0=0.0369915584112 in1=0.073932481156 in2=0.11077220188
+AdjDeltaH: |dH|L2=10510435.1812 avg=57339.1247676 max=805598.466349
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00504594497408 inputL2=224.508503745 inputMax=0.999999999999 in0=0.0179990280157 in1=0.0359922245039 in2=0.0539737598261
+AdjDeltaH: |dH|L2=40368102.9097 avg=220226.056245 max=1320500.171
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00523283554012 inputL2=224.508309474 inputMax=0.999999999999 in0=0.0299955002025 in1=0.0599640064794 in2=0.089878549198
+AdjDeltaH: |dH|L2=41863492.7848 avg=228384.076835 max=1329405.92672
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00132238793041 inputL2=105.273149816 inputMax=0.999999999936 in0=0.0379908553269 in1=0.0759268584598 in2=0.113753236402
+AdjDeltaH: |dH|L2=10579789.9768 avg=57717.486197 max=811067.981469
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00513510966614 inputL2=224.521377475 inputMax=0.999999999936 in0=0.018998856854 in1=0.0379908553269 in2=0.0569691395137
+AdjDeltaH: |dH|L2=41081576.9248 avg=224118.376103 max=1348268.78196
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00509265219558 inputL2=224.515146719 inputMax=0.99999999974 in0=0.0309950350719 in1=0.0619602863004 in2=0.0928659984621
+AdjDeltaH: |dH|L2=40741782.4297 avg=222264.645156 max=1312791.79377
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00133140109745 inputL2=105.304094155 inputMax=0.999999998066 in0=0.0389901142518 in1=0.0779209320563 in2=0.116733247144
+AdjDeltaH: |dH|L2=10651984.089 avg=58111.3373681 max=793930.314023
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00509903043566 inputL2=224.527203755 inputMax=0.999999999886 in0=0.0199986666933 in1=0.0399893341866 in2=0.0599640064794
+AdjDeltaH: |dH|L2=40792853.6313 avg=222543.261403 max=1298306.91231
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.0051776668103 inputL2=224.517394999 inputMax=0.999999999925 in0=0.0319945389463 in1=0.0639563182803 in2=0.0958526119328
+AdjDeltaH: |dH|L2=41422082.0456 avg=225975.983829 max=1325409.35615
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00130656689686 inputL2=105.286033818 inputMax=0.99999999984 in0=0.0399893341866 in1=0.0799146939692 in2=0.119712207289
+AdjDeltaH: |dH|L2=10453192.0633 avg=57026.8379572 max=804872.435038
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00515284406661 inputL2=224.525127254 inputMax=0.999999999868 in0=0.020998456534 in1=0.041987653089 in2=0.0629583337695
+AdjDeltaH: |dH|L2=41223429.0073 avg=224892.242657 max=1310099.26034
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00507408078167 inputL2=224.514722999 inputMax=1 in0=0.0329940108261 in1=0.065952094435 in2=0.0988383627307
+AdjDeltaH: |dH|L2=40593218.2096 avg=221454.16089 max=1332684.91111
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00132566152015 inputL2=105.3017718 inputMax=0.999999995875 in0=0.0409885141321 in1=0.0819081362234 in2=0.122690090024
+AdjDeltaH: |dH|L2=10606077.2301 avg=57860.8949207 max=789058.197759
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00516860018036 inputL2=224.516436848 inputMax=0.99999999984 in0=0.0219982253763 in1=0.0439858040409 in2=0.065952094435
+AdjDeltaH: |dH|L2=41349491.0695 avg=225579.967588 max=1316983.97954
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.005112487454 inputL2=224.508155086 inputMax=1 in0=0.033993449712 in1=0.0679476067814 in2=0.101823223984
+AdjDeltaH: |dH|L2=40900569.4732 avg=223130.899497 max=1347221.78276
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00134029829941 inputL2=105.283584206 inputMax=0.999999999831 in0=0.041987653089 in1=0.0839012508451 in2=0.12566686855
+AdjDeltaH: |dH|L2=10723032.0879 avg=58498.9359788 max=803819.799018
+BlockDot (pressureDrop): PU=7.99184409832e-14 PP=2.6655422681e-14 UU=7.3095183677e-14 UP=1.79609743792e-12 boundaryU=1.80391921425e-13
+--- Stage B4: flow Jacobian consistency probe ---
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00334657148198 inputL2=150.039713956 inputMax=0.999988276838 in0=0.267695074059 in1=0.133847537029 in2=-0.0803085222177
+AdjDeltaH: |dH|L2=26772936.7183 avg=146058.344152 max=878797.348374
+StageB4 dPhi_J stats: L2=1.27042968265e-05 max=2.46684000767e-07 ; P-row outJ L2=1.47703641608
+StageB4 dPhi_J + forward P-row exported (nFaces=96860)
+GateH1 same-basis dH: |an|L2=26606377.8496 |fd|L2=26787899.109 relL2=0.117010638336 cos=0.999433960379
+GateH1 4term: |FD|=26772936.7183 |offdiag/V|=26772936.7183 |boundary/V|=3113719.0442 |residual(FD-off-bnd)|=3113719.0442 (source+boundarySource contribution)
+GateH1 sourceFD: div=0 laplacian=2.01604447074e-20 Sp=0 (total source-FD ~2.41e7)
+H2 cell0=0 adjacent internal faces=3
+H2 c=0 face=0 own=0 nei=1 upG=-2.4912432e-08 loG=-4.2945940458e-08 upD=-2.4912432e-08 loD=-4.2945940458e-08 dUo=1 dUn=0 gateOwn=0 gateNei=4.2945940458e-08 discOwn=0 discNei=4.2945940458e-08
+H2 c=0 face=1 own=0 nei=80 upG=-2.4912432e-08 loG=-2.79090257498e-08 upD=-2.4912432e-08 loD=-2.79090257498e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.79090257498e-08 discOwn=0 discNei=2.79090257498e-08
+H2 c=0 face=2 own=0 nei=1120 upG=-4.80618209566e-08 loG=-2.703171875e-08 upD=-4.80618209566e-08 loD=-2.703171875e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.703171875e-08 discOwn=0 discNei=2.703171875e-08
+H2 c=0 nFaces=3 |gate|=5.79135678292e-08 |disc|=5.79135678292e-08 relL2=0 cos=1
+H2 c=1 face=0 own=0 nei=1 upG=-2.4912432e-08 loG=-4.2945940458e-08 upD=-2.4912432e-08 loD=-4.2945940458e-08 dUo=1 dUn=0 gateOwn=0 gateNei=4.2945940458e-08 discOwn=0 discNei=4.2945940458e-08
+H2 c=1 face=1 own=0 nei=80 upG=-2.4912432e-08 loG=-2.79090257498e-08 upD=-2.4912432e-08 loD=-2.79090257498e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.79090257498e-08 discOwn=0 discNei=2.79090257498e-08
+H2 c=1 face=2 own=0 nei=1120 upG=-4.80618209566e-08 loG=-2.703171875e-08 upD=-4.80618209566e-08 loD=-2.703171875e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.703171875e-08 discOwn=0 discNei=2.703171875e-08
+H2 c=1 nFaces=3 |gate|=5.79135678292e-08 |disc|=5.79135678292e-08 relL2=0 cos=1
+H2 c=2 face=0 own=0 nei=1 upG=-2.4912432e-08 loG=-4.2945940458e-08 upD=-2.4912432e-08 loD=-4.2945940458e-08 dUo=1 dUn=0 gateOwn=0 gateNei=4.2945940458e-08 discOwn=0 discNei=4.2945940458e-08
+H2 c=2 face=1 own=0 nei=80 upG=-2.4912432e-08 loG=-2.79090257498e-08 upD=-2.4912432e-08 loD=-2.79090257498e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.79090257498e-08 discOwn=0 discNei=2.79090257498e-08
+H2 c=2 face=2 own=0 nei=1120 upG=-4.80618209566e-08 loG=-2.703171875e-08 upD=-4.80618209566e-08 loD=-2.703171875e-08 dUo=1 dUn=0 gateOwn=0 gateNei=2.703171875e-08 discOwn=0 discNei=2.703171875e-08
+H2 c=2 nFaces=3 |gate|=5.79135678292e-08 |disc|=5.79135678292e-08 relL2=0 cos=1
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00334657148198 inputL2=150.039713956 inputMax=0.999988276838 in0=0.267695074059 in1=0.133847537029 in2=-0.0803085222177
+AdjDeltaH: |dH|L2=26772936.7183 avg=146058.344152 max=878797.348374
+GateH3 stateJ3_p: max=0 L2=0
+GateH3 applied applyDiscreteFlowJ(stateJ3); see AdjDeltaH offdiag(noV) above; outL2=1.47703641608
+GateH4 full-field: |off_discrete|L2=0.00334657148198 |off_reassemble|L2=0.00334657148198 relL2=0 cos=1 ; coeffDiffL2=0 (applyDiscreteFlowJ printed 0.0100397...)
+GateOracle h=0.001 A(dPhiHfd vs dPhiFD): relL2=1.65369048233e-11 B(dPhiJ vs dPhiHfd): relL2=2.02878652288e-11 cos=1 ; full(dPhiJ vs dPhiFD): relL2=2.59408555714e-11 cos=1
+GateDHsplit internal(26208): relL2=3.05156579003e-11 cos=1 |an|=25812067.9876 boundary(7392): relL2=2.04426813259e-11 cos=0.999999999999 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451929 bcV-only relL2=4.77026906667e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=0.001 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=1.46436377217e-10 cos=1 (internal cells only)
+GatePR h=0.001 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=1.12295958888e-10 cos=1
+GateOracle h=0.0003 A(dPhiHfd vs dPhiFD): relL2=5.51195970941e-11 B(dPhiJ vs dPhiHfd): relL2=7.02404853807e-11 cos=1 ; full(dPhiJ vs dPhiFD): relL2=9.06010735818e-11 cos=1
+GateDHsplit internal(26208): relL2=1.04892388212e-10 cos=1 |an|=25812067.9876 boundary(7392): relL2=7.17987140102e-11 cos=1 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451928 bcV-only relL2=4.77026906667e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=0.0003 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=5.08790648296e-10 cos=0.999999999994 (internal cells only)
+GatePR h=0.0003 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=3.88875195107e-10 cos=0.999999999998
+GateOracle h=0.0001 A(dPhiHfd vs dPhiFD): relL2=1.63123417577e-10 B(dPhiJ vs dPhiHfd): relL2=2.14736670108e-10 cos=0.999999999997 ; full(dPhiJ vs dPhiFD): relL2=2.72399164946e-10 cos=1
+GateDHsplit internal(26208): relL2=3.14306195462e-10 cos=1 |an|=25812067.9876 boundary(7392): relL2=2.13934702238e-10 cos=0.99999999999 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451925 bcV-only relL2=4.77026906662e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=0.0001 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=1.51946269951e-09 cos=0.999999999991 (internal cells only)
+GatePR h=0.0001 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=1.16216868141e-09 cos=0.999999999993
+GateOracle h=3e-05 A(dPhiHfd vs dPhiFD): relL2=5.5403669917e-10 B(dPhiJ vs dPhiHfd): relL2=7.14299156736e-10 cos=0.999999999997 ; full(dPhiJ vs dPhiFD): relL2=9.00345602252e-10 cos=0.999999999992
+GateDHsplit internal(26208): relL2=1.06856095002e-09 cos=0.999999999999 |an|=25812067.9876 boundary(7392): relL2=7.8003797535e-10 cos=1.00000000004 |an|=7108254.83005 (J-dHx vs dH_FD)
+GateBndAB icV-only relL2=2.85140451944 bcV-only relL2=4.77026906686e+14 (boundary cells, vs dH_FD; icV+bcV was 0.482)
+GatePRint h=3e-05 nInt=26208 |J_P|=2.65039396759e-06 |FD_P|=2.65039396759e-06 relL2=5.01949109233e-09 cos=1.00000000001 (internal cells only)
+GatePR h=3e-05 |J_P|=3.59205265047e-06 |FD_P|=3.59205265047e-06 relL2=3.83905889575e-09 cos=1
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=3.41464549796e-09 inputL2=0.000150071017978 inputMax=9.99999999487e-07 in0=3.69915584112e-08 in1=1.84957792056e-08 in2=-1.10974675234e-08
+AdjDeltaH: |dH|L2=27.3174919646 avg=0.149029136576 max=0.857425052916
+Stage B4 R0 components: |V*(M&U)|=0.0909378933062 |2H|=17479873079 |source|=2.83292429224e-06 |diag*U|=1.1196110296
+Stage B4 matrix norms: |upper|=9.02804110161e-05 |lower|=0.00417443717215 |diag|=1.80460150785
+Stage B4 fields: max|phi|=9.70872602317e-05 max|nuEffFrozen|=5.19009e-05 max|alpha|=100000000 max|U|=388.360567179
+Stage B4 norms: |R(U0)|=2.21112754645 |R(U1)|=2.21112754635 |Jdelta_mom|=1.47788149401e-06
+Stage B4 T1 (momentum U-U, dp=0): relL2=0.00852323456072 cos=0.999963676577 |J|/|FD|=0.999962823771 maxCellAbsErr=3.84162343025e-10 maxCellAbsFD=1.25002086562e-08
+Stage B4 T-cont (continuity row): relL2 = 0.000648577427676
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0 inputL2=0 inputMax=0 in0=0 in1=0 in2=0
+AdjDeltaH: |dH|L2=0 avg=0 max=0
+Stage B4 T2 (dp!=0 continuity): relL2(J_P, div(dphi_SIMPLE))=7.51176551272e-21 |J_mom(dp)|=3.18615984048e-11
+Stage B4 T-fvm (frozen-phi fvm matrix part): relL2 = 0.999999999866
+Stage B4 T-dev (deviatoric part): relL2 = 5.36114041232e-05
+Stage B4 T-conv (convection phi-variation part): relL2 = 0.418119174867
+ExplicitJToracle: maxRelL2=3.91122615197e-16 maxCosErr=3.33066907388e-16 maxRelL_U=3.30401184989e-16 maxRelL_P=3.91364547208e-16
+SchurDiag: avg=129.237307843 min=0.960724668088 max=896.339157626
+PC mobility: avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06
+PC probe: cos(M*JT*v, v)=-0.26062061387 |M*JT*v|/|v|=67.3569610642 |JT*v|/|v|=67.3569610642
+PC sub-probe U: cos=0.77926663859 ratio=1.28294141096
+PC sub-probe P: cos=-0.538925147642 ratio=135.26608277 |JT_U|=58.3642692119 |JT_P|=17536.1435922 |M_U|=58.3642692119 |M_P|=17536.1435922
+  JT_U top cells: c=10560 |U|=1.14652098731 |vP|=0.0362757642223 alpha=90.991810737 U=(193.981161045 0.0266089449722 -0.099641655696) mob=1.02638023959e-06
+  JT_U top cells: c=10561 |U|=1.14648755591 |vP|=0.00728366060152 alpha=90.991810737 U=(194.05329955 0.0555676165467 -0.162417114168)
+  JT_U top cells: c=7201 |U|=1.14572821779 |vP|=0.057879099173 alpha=90.991810737 U=(194.037833093 0.0530115674421 -0.0628726070731)
+  scales: M=0.00786409044975 A=2.47771624976e-07 M/A=31739.2697832 |Sf|avg=2.47784431138e-07 avgDiag=0.00786395722033
+  P-cell0: vP=0.999579529469 JTvP[P]=0.999579529469 MvP[P]=0.999579529469 MvP[Ux]=6.34247326953e-05
+ILU: pre-decomp nnz=13210746 nan/inf=0
+ILU post-decomp nan=0 maxAbs=1
+Loaded explicit solution "/home/ys/b2_case_smoke/explicitSol_pressureDrop.mtx" relRes=3.4765473443e-09
+Reduced discrete flow adjoint pressureDrop: GMRES iterations=0, relative residual=3.4765473443e-09
+--> FOAM Warning : 
+    From function int main(int, char**)
+    in file solveDiscreteFlowAdjoint.H at line 3874
+    Reduced discrete flow adjoint pressureDrop residual=3.4765473443e-09 > tolerance=1e-09 (continuing, diagnostic)
+UcFingerprint[afterSolve pressureDrop]: sum=-53118.1201485 L2=46984.3666147 max=14632.9536071 c0=(-0.0518288331713 -0.0394968248296 -0.0933233564062) c100=(3.94066649215e-06 4.57539347585e-06 5.38156985115e-07) c5000=(1.13640258733e-11 6.20279510956e-11 3.90360382336e-11)
+--- StageB5: boundary-consistent P-row + dphi/dU relaxation oracle (BFINAL-002, DIAGNOSTIC_ONLY) ---
+AdjRAU: rAUAdj[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] A()[avg=63586131.6461]
+AdjDeltaH offdiag(noV): |dH_off|L2=0.00334657148198 inputL2=150.039713956 inputMax=0.999988276838 in0=0.267695074059 in1=0.133847537029 in2=-0.0803085222177
+AdjDeltaH: |dH|L2=26772936.7183 avg=146058.344152 max=878797.348374
+StageB5 selfcheck (recomputed dH boundary + internal div vs outJ[P]): relL2=1.25301540502e-17
+StageB5 anchor (frozen-phi momentum FD, hU=0.388360567179):StageB5 momentum: |a|L2=1.47703641607 |b(FD)|L2=1.47704263118 |err|L2=0.000244173261124 relL2=0.000165312263823 cos=0.999999986345 maxDiff=1.42855642821e-05 @idx=18693
+StageB5 GateA eps=0.001:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949431 relL2=0.000165311363075 cos=0.999999986345 maxDiff=1.42858672819e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523157e-06 |err|L2=2.40303538019e-06 relL2=0.858360202896 cos=0.612374318494 maxDiff=8.48642692325e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910394e-06 |err|L2=3.79456365009e-06 relL2=1.14536990378 cos=0.152835235352 maxDiff=1.96946776841e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590832e-06 |err|L2=4.49146883915e-06 relL2=1.03551482702 cos=0.37043065291 maxDiff=1.96946776841e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=0.001 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=1.73257243936e-05 relL2=0.790384891004 cos=0.613553011756 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=2.18991866554e-06 relL2=1.38767994641 cos=0.578934378454 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=1.7463575508e-05 relL2=0.794616998153 cos=0.60733513992 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=0.001 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495264e-05 normRatio=0.590838293672 relL2=0.794616998153 cos=0.60733513992 intRel=0.790384891004 bndRel=1.38767994641
+StageB5 GateB eps=0.001 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168929e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=2.31838640667e-16 relL2=1.05762826749e-11 cos=1 maxDiff=1.54779389243e-17 @idx=24222
+StageB5  B-boundary-faces: |a|L2=1.57811509145e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=2.1000074221e-17 relL2=1.3307061275e-11 cos=1 maxDiff=7.92724238701e-18 @idx=96954
+StageB5  B-all-faces: |a|L2=2.19773495264e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=2.32787796982e-16 relL2=1.05921688465e-11 cos=1 maxDiff=1.54779389243e-17 @idx=24222
+StageB5 GateB eps=0.001 candB: |B|L2=2.19773495264e-05 |FD|L2=2.19773495264e-05 normRatio=1 relL2=1.05921688465e-11 cos=1 intRel=1.05762826749e-11 bndRel=1.3307061275e-11
+StageB5 GateA eps=0.0003:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949423 relL2=0.00016531136307 cos=0.999999986345 maxDiff=1.42858672726e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523156e-06 |err|L2=2.40303538019e-06 relL2=0.858360202898 cos=0.612374318492 maxDiff=8.48642692235e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910394e-06 |err|L2=3.7945636501e-06 relL2=1.14536990378 cos=0.152835235348 maxDiff=1.96946776844e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590832e-06 |err|L2=4.49146883916e-06 relL2=1.03551482702 cos=0.370430652907 maxDiff=1.96946776844e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=0.0003 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168928e-05 |err|L2=1.73257243936e-05 relL2=0.790384891005 cos=0.613553011755 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=2.18991866553e-06 relL2=1.38767994641 cos=0.578934378455 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=1.7463575508e-05 relL2=0.794616998154 cos=0.607335139919 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=0.0003 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495264e-05 normRatio=0.590838293673 relL2=0.794616998154 cos=0.607335139919 intRel=0.790384891005 bndRel=1.38767994641
+StageB5 GateB eps=0.0003 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168928e-05 |b(FD)|L2=2.19206168928e-05 |err|L2=7.59670877901e-16 relL2=3.46555428442e-11 cos=1 maxDiff=5.48823483819e-17 @idx=21583
+StageB5  B-boundary-faces: |a|L2=1.57811509144e-06 |b(FD)|L2=1.57811509145e-06 |err|L2=6.81085405403e-17 relL2=4.31581580515e-11 cos=1 maxDiff=2.37024700235e-17 @idx=96949
+StageB5  B-all-faces: |a|L2=2.19773495264e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=7.62717913796e-16 relL2=3.47047269226e-11 cos=1 maxDiff=5.48823483819e-17 @idx=21583
+StageB5 GateB eps=0.0003 candB: |B|L2=2.19773495264e-05 |FD|L2=2.19773495264e-05 normRatio=1 relL2=3.47047269226e-11 cos=1 intRel=3.46555428442e-11 bndRel=4.31581580515e-11
+StageB5 GateA eps=0.0001:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949437 relL2=0.000165311363079 cos=0.999999986345 maxDiff=1.42858672611e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523158e-06 |err|L2=2.40303538018e-06 relL2=0.858360202891 cos=0.612374318497 maxDiff=8.48642692461e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910395e-06 |err|L2=3.79456365011e-06 relL2=1.14536990378 cos=0.152835235348 maxDiff=1.96946776855e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590834e-06 |err|L2=4.49146883916e-06 relL2=1.03551482701 cos=0.370430652909 maxDiff=1.96946776855e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=0.0001 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=1.73257243936e-05 relL2=0.790384891004 cos=0.613553011756 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509137e-06 |err|L2=2.18991866553e-06 relL2=1.38767994648 cos=0.578934378457 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=1.7463575508e-05 relL2=0.794616998153 cos=0.607335139921 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=0.0001 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495264e-05 normRatio=0.590838293672 relL2=0.794616998153 cos=0.607335139921 intRel=0.790384891004 bndRel=1.38767994648
+StageB5 GateB eps=0.0001 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168929e-05 |b(FD)|L2=2.19206168929e-05 |err|L2=2.34184786393e-15 relL2=1.06833118583e-10 cos=1 maxDiff=1.7183746813e-16 @idx=24882
+StageB5  B-boundary-faces: |a|L2=1.57811509139e-06 |b(FD)|L2=1.57811509137e-06 |err|L2=2.35289506732e-16 relL2=1.49095277029e-10 cos=1 maxDiff=8.02725183179e-17 @idx=96946
+StageB5  B-all-faces: |a|L2=2.19773495264e-05 |b(FD)|L2=2.19773495264e-05 |err|L2=2.35363815609e-15 relL2=1.07093812803e-10 cos=1 maxDiff=1.7183746813e-16 @idx=24882
+StageB5 GateB eps=0.0001 candB: |B|L2=2.19773495264e-05 |FD|L2=2.19773495264e-05 normRatio=1 relL2=1.07093812803e-10 cos=1 intRel=1.06833118583e-10 bndRel=1.49095277029e-10
+StageB5 GateA eps=3e-05:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949433 relL2=0.000165311363077 cos=0.999999986345 maxDiff=1.42858675156e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523141e-06 |err|L2=2.40303538021e-06 relL2=0.858360202954 cos=0.61237431846 maxDiff=8.48642692684e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910398e-06 |err|L2=3.79456365006e-06 relL2=1.14536990375 cos=0.152835235382 maxDiff=1.96946776686e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.33742590825e-06 |err|L2=4.49146883913e-06 relL2=1.03551482703 cos=0.3704306529 maxDiff=1.96946776686e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=3e-05 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.19206168927e-05 |err|L2=1.73257243936e-05 relL2=0.79038489101 cos=0.613553011747 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509142e-06 |err|L2=2.18991866551e-06 relL2=1.38767994642 cos=0.578934378465 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495262e-05 |err|L2=1.7463575508e-05 relL2=0.79461699816 cos=0.607335139911 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=3e-05 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495262e-05 normRatio=0.590838293678 relL2=0.79461699816 cos=0.607335139911 intRel=0.79038489101 bndRel=1.38767994642
+StageB5 GateB eps=3e-05 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168928e-05 |b(FD)|L2=2.19206168927e-05 |err|L2=7.73292221733e-15 relL2=3.52769370278e-10 cos=1 maxDiff=5.69972043628e-16 @idx=24383
+StageB5  B-boundary-faces: |a|L2=1.57811509141e-06 |b(FD)|L2=1.57811509142e-06 |err|L2=8.24036269328e-16 relL2=5.22164874924e-10 cos=1 maxDiff=2.760832357e-16 @idx=96954
+StageB5  B-all-faces: |a|L2=2.19773495263e-05 |b(FD)|L2=2.19773495262e-05 |err|L2=7.77670378711e-15 relL2=3.53850848932e-10 cos=1 maxDiff=5.69972043628e-16 @idx=24383
+StageB5 GateB eps=3e-05 candB: |B|L2=2.19773495263e-05 |FD|L2=2.19773495262e-05 normRatio=1.00000000001 relL2=3.53850848932e-10 cos=1 intRel=3.52769370278e-10 bndRel=5.22164874924e-10
+StageB5 GateA eps=1e-05:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949263 relL2=0.000165311362961 cos=0.999999986345 maxDiff=1.42858667058e-05 @idx=18693
+StageB5  P-internal: |a|L2=2.65039396759e-06 |b(FD)|L2=2.79956523157e-06 |err|L2=2.40303538012e-06 relL2=0.858360202869 cos=0.612374318517 maxDiff=8.48642690431e-08 @idx=6161
+StageB5  P-boundary: |a|L2=2.42451109717e-06 |b(FD)|L2=3.31295910404e-06 |err|L2=3.79456365015e-06 relL2=1.14536990376 cos=0.15283523536 maxDiff=1.96946777363e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5  P-total: |a|L2=3.59205265047e-06 |b(FD)|L2=4.3374259084e-06 |err|L2=4.49146883916e-06 relL2=1.035514827 cos=0.370430652921 maxDiff=1.96946777363e-07 @idx=7761 (P cell 7761 patch sideWalls)
+StageB5 GateB eps=1e-05 Candidate A (J unrelaxed):StageB5  A-internal-faces: |a|L2=1.27042968265e-05 |b(FD)|L2=2.1920616893e-05 |err|L2=1.73257243936e-05 relL2=0.790384890998 cos=0.613553011764 maxDiff=1.48625365084e-07 @idx=83557
+StageB5  A-boundary-faces: |a|L2=2.68563165573e-06 |b(FD)|L2=1.57811509181e-06 |err|L2=2.18991866548e-06 relL2=1.38767994607 cos=0.578934378482 maxDiff=1.24347377629e-07 @idx=102762
+StageB5  A-all-faces: |a|L2=1.29850596936e-05 |b(FD)|L2=2.19773495266e-05 |err|L2=1.7463575508e-05 relL2=0.794616998146 cos=0.60733513993 maxDiff=1.48625365084e-07 @idx=83557
+StageB5 GateB eps=1e-05 candA: |A|L2=1.29850596936e-05 |FD|L2=2.19773495266e-05 normRatio=0.590838293667 relL2=0.794616998146 cos=0.60733513993 intRel=0.790384890998 bndRel=1.38767994607
+StageB5 GateB eps=1e-05 Candidate B (production relaxed):StageB5  B-internal-faces: |a|L2=2.19206168931e-05 |b(FD)|L2=2.1920616893e-05 |err|L2=2.31233189324e-14 relL2=1.05486624967e-09 cos=1 maxDiff=1.64686868929e-15 @idx=21111
+StageB5  B-boundary-faces: |a|L2=1.5781150918e-06 |b(FD)|L2=1.57811509181e-06 |err|L2=1.73208825654e-15 relL2=1.09756776647e-09 cos=1 maxDiff=5.75517283783e-16 @idx=96954
+StageB5  B-all-faces: |a|L2=2.19773495267e-05 |b(FD)|L2=2.19773495266e-05 |err|L2=2.31881005729e-14 relL2=1.0550908582e-09 cos=1 maxDiff=1.64686868929e-15 @idx=21111
+StageB5 GateB eps=1e-05 candB: |B|L2=2.19773495267e-05 |FD|L2=2.19773495266e-05 normRatio=1 relL2=1.0550908582e-09 cos=1 intRel=1.05486624967e-09 bndRel=1.09756776647e-09
+StageB5 rAU: relaxFactorU(fvSolution)=0.4 ; rAUAdj(unrelaxed)[avg=7.05844426338e-07 min=9.99981274586e-09 max=5.1321646829e-06] ; rAUrel(primalPressureMobility)[avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06] ; avgRatio(rAUAdj/rAUrel)=2.50000000002 ; normRatio(|rAUAdj|/|rAUrel|)=2.49999999999
+--- StageB5 oracle complete (artifacts: stageB5_*.mtx) ---
+MTO_HF: Finished AdjNS_PD.H
+MTO_HF: Starting costfunction.H
+cost function
+Frozen-hot diagnostics: Qhot=221.129995616 W, Qcold=221.594195657 W, balanceError=0.00209482039528, max|Ucold| in hot/wall=0.0883548402758, relativeColdLeakage=0.000227507238744
+Thermal objective type=maximizeColdOutletTemperature, objective mode=outletTemperature, thermal metric=687.840220155, normalized thermal term=-1.14640036692, total objective=-1.14640036692
+Forward residuals: U(init=8.60446234012e-09,fin=1.80971282085e-10), P(init=9.21047088092e-10,fin=9.21047088092e-10), T(init=0.0645973275797,fin=8.85930451595e-13), primalIters=44
+Phase K: Writing CSV log (enableCSVLog=true)...
+CSV log written: "/home/ys/dsH/b2_case_smoke/optimization_history.csv" (trial=0, accepted=1)
+Fixed-region design error=0
+Frozen-RANS diagnostics: min(k)=1e-10, min(omega)=73800, min(nut)=0, max(nutFrozen/nu)=0, max fixed-region nutFrozen=0, cold mass imbalance=4.68440113243e-10, converged=1
+MTO_HF: Finished costfunction.H
+MTO_HF: Starting sensitivity.H
+sensitivity analysis
+UcFingerprint[beforeSens]: sum=-53118.1201485 L2=46984.3666147 max=14632.9536071 c0=(-0.0518288331713 -0.0394968248296 -0.0933233564062) c100=(3.94066649215e-06 4.57539347585e-06 5.38156985115e-07) c5000=(1.13640258733e-11 6.20279510956e-11 3.90360382336e-11)
+E5 DIAG: BEFORE drho:
+  gsenshVol sum=1 max=0.000198412698413
+  drho sum=29811.6540142 max=7.99958992739
+  dProjectionDeta sum=-25108.7974544 max=6.99958993173
+  projectionEtaDenominator=-3.1385996818e-06
+  volumeEtaCorrection=1587301.5873
+E5 DIAG: AFTER eta correction:
+  gsenshVol sum=1 max=0.000198412698413
+DICPCG:  Solving for fsensMeanT, Initial residual = 1, Final residual = 1.33869628944e-10, No Iterations 11
+DICPCG:  Solving for gsensPowerDiss, Initial residual = 0, Final residual = 0, No Iterations 0
+DICPCG:  Solving for gsensPressureDrop, Initial residual = 1, Final residual = 4.45992125251e-10, No Iterations 11
+DICPCG:  Solving for gsensVol, Initial residual = 1, Final residual = 8.55139506617e-10, No Iterations 10
+Active gradient ranges: dJ=[-6.68797222931e-05, 0.000137785125209], dV=[0.000198412698111, 0.000198412698776], dDP=[-0.0200726738411, 0.0194203165319]
+mmaUpdateEnabled=false: primal/adjoint fields evaluated without advancing the design.
+MTO_HF: Finished sensitivity.H
+ 
+ExecutionTime = 500.69 s  ClockTime = 501 s
+

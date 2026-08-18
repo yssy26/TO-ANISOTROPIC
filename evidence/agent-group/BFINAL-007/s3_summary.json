@@ -1,0 +1,74 @@
+{
+ "runId": "BFINAL-007",
+ "step": "S3",
+ "mode": "DIAGNOSTIC_ONLY",
+ "head": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+ "Q1": {
+  "FD_lin_maxabs": 3.89837940632e-10,
+  "FD_lin_L2": 1.7683e-09,
+  "outlet_mass_fraction": 0.686248475277,
+  "top1pct_mass_fraction": 0.946,
+  "outlet_mean_ratio": 274.5,
+  "selfcheck_vs_minusLprod_nP": 2.86464345754e-10
+ },
+ "Q2": {
+  "internalCoeffs_b_range": [
+   -1.7063e-09,
+   -5.48e-10
+  ],
+  "boundaryCoeffs_b": 0.0,
+  "candidate_diag_range": [
+   5.48e-10,
+   1.7063e-09
+  ],
+  "delta_b": 4000.0,
+  "magSf_b": 2.5e-07
+ },
+ "Q3": {
+  "J_PP_eq_Lint_relL2": 1.7e-16,
+  "upper_relL2": 1.382e-16,
+  "prod_minus_export_offoutlet_max": 2.482e-24,
+  "prod_minus_export_outlet_range": [
+   -1.7063e-09,
+   -5.48e-10
+  ],
+  "source_maxabs": 8.935e-20
+ },
+ "Q4": {
+  "nullvec_Jexp": 2.717e-19,
+  "nullvec_Jcand": 3.02e-09,
+  "Q4b_candPPn_vs_FDlin": 2.946e-09,
+  "Q4b_candPPn_vs_FDcd": 6.137e-07,
+  "sign_identity_JexpPPn_plus_FD_eq_cand": 9.588e-09,
+  "Q4c_Jv_cand_vs_exp": 0.0,
+  "Q4c_Jexp_vs_oracle": 3.966e-16,
+  "G1_candA": 2.985065e-05,
+  "G1_candB": 1.059217e-11,
+  "G2_momentum": 0.0001653114,
+  "G2_Ptotal": 0.0001528289,
+  "sigma_min_Jexp": 7.382e-27,
+  "sigma_min_Jcand_mean": 9.304105482082182e-12,
+  "sigma_min_Jcand_min": 8.01654476527667e-12
+ },
+ "Q5": {
+  "dflux_b_current": 0.0,
+  "drAtU_outlet_range": [
+   -7.507464800203773e-12,
+   -7.278553569573332e-13
+  ],
+  "pc_outlet_range": [
+   -65.0620425279,
+   36.7822175684
+  ],
+  "term_range": [
+   -1.4388295963821038e-13,
+   5.386249825678602e-14
+  ],
+  "term_L2": 5.358176626141303e-13,
+  "ratio_term_vs_Jp_w": 0.0008609656731655011,
+  "deltaAlpha_outlet_nnz": 0,
+  "designMask_outlet_max": 0.0,
+  "rx_dot_test_relErr": 2.57680498181e-15
+ },
+ "conclusion": "missing term = outlet fixedValue internalCoeffs_b diagonal (=-cand; residual conv +rAtU_c*delta_b*|Sf|_b) on the 84 outlet cells; candidate J_PP=-L_prod removes null mode, closes actual-residual FD at ~1e-9, BFINAL-003 anchors byte-for-byte unchanged; R_P,x boundary term structurally present but exactly zero in validated directions (design support excludes outlet)"
+}

@@ -1,0 +1,18 @@
+====================================================================================================
+BFINAL-005 Fixer — production activation check (switch OFF vs switch ON)
+====================================================================================================
+C1/C2 gsenshPressureDrop: byte-identical switch-ON vs switch-OFF = True
+C1/C2 gsensPressureDrop: byte-identical switch-ON vs switch-OFF = True
+C3 switch-ON  dDP line: Active gradient ranges: dJ=[-6.68797222931e-05, 0.000137785125209], dV=[0.000198412698111, 0.000198412698776], dDP=[-0.0277320682043, 0.0259232358427]
+C3 switch-OFF dDP line: Active gradient ranges: dJ=[-6.68797222931e-05, 0.000137785125209], dV=[0.000198412698111, 0.000198412698776], dDP=[-0.0277320682043, 0.0259232358427]
+C3 prod dDP range: [-0.0277320682043, 0.0259232358427]  == patched? True  == momentum-only? False
+C4 prod log dot-test line present (should be False): False
+C4 prod log xh-fields line present (should be False): False
+C4 switch-ON dot-test line (should be present): RxPressureRowTranspose: sum(T*w)="-2.696485451749351e-08" sum(pc*(J_P*w))="-2.696485451749358e-08" relErr=2.57680498181e-15 alphaRel=0.4 |T|L2=0.000256656999292 |J_P*w|L2=6.22344977639e-10 |g0_bnd|max=0.0650620425279 w-support=5040
+C5 switch-ON |pressureRow|L2 (pre-chain) = 1.456805677049e-02  (non-zero: True)
+C5 written fields are POST-chain; byte-identity of C1/C2 + dDP range C3
+   + G3-in-production projection are the production-activation proofs.
+C5 G3-in-production D1: proj=-5.6235633242968569e-02 oracle=-0.0562356333787 relErr=2.414e-09 signOK=True
+C5 G3-in-production D2: proj=2.9767243191247350e-01 oracle=0.297672431753 relErr=5.357e-10 signOK=True
+C5 G3-in-production D3: proj=-3.6341429801969256e-02 oracle=-0.0363414298395 relErr=1.033e-09 signOK=True
+====================================================================================================

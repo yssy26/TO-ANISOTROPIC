@@ -1,0 +1,14 @@
+# cycle-2 step2 compile sanity check (wmake, header-only incremental)
+# command:
+#   export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+#   source /opt/openfoam7/etc/bashrc >/dev/null 2>&1
+#   export PATH="/home/ys/OpenFOAM/ys-7/platforms/linux64GccDPInt32Opt/bin:$PATH"
+#   export FOAM_USER_APPBIN=/home/ys/dsH/TO-ANISOTROPIC/build/bin
+#   unset FOAM_SIGFPE
+#   cd /home/ys/dsH/TO-ANISOTROPIC/src && wmake
+# result: WMAKE_EXIT=0 (completed 2026-08-17 02:46)
+# only MTO_HF.C recompiled (MTO_HF.o 7964192 bytes, mtime 02:46) and relinked
+# new binary /home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF = 4747104 bytes, mtime 02:46
+# warnings observed are pre-existing (solveDiscreteFlowAdjoint.H unused vars,
+# NS.H unused vars, createFields.H unused var) -- none from the new
+# stageB6RxDesignOracle.H code (compile exit 0).

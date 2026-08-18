@@ -1,0 +1,8 @@
+=== pwd ===
+/home/ys/dsH/TO-ANISOTROPIC
+=== git rev-parse --show-toplevel ===
+/home/ys/dsH/TO-ANISOTROPIC
+=== git rev-parse HEAD ===
+ca8a772b8339a36e7906ea32a7125061c47aa280
+=== git branch --show-current ===
+agent/dsH-stage-b-validation

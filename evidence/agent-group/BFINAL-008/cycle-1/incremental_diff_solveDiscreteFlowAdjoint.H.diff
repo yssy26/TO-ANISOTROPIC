@@ -1,0 +1,169 @@
+--- /tmp/prestate_repo/src/solveDiscreteFlowAdjoint.H	2026-08-18 08:43:39.683362778 +0800
++++ /home/ys/dsH/TO-ANISOTROPIC/src/solveDiscreteFlowAdjoint.H	2026-08-18 08:42:59.264158028 +0800
+@@ -656,14 +656,18 @@
+         //   dphi/dU = Sf & (alphaRel*rAU_u*dH_u + (1-alphaRel)*dUbar)
+         // where alphaRel is the actual fvSolution U-equation relaxation factor
+         // and the (1-alphaRel)*dUbar term is the relaxation-source derivative
+-        // (D_rel-D0)*dU entering H.  The P-P part (mobF*(p_nei-p_own)*dcfF*mafF)
+-        // is mathematically unchanged.  The OLD deltaPhiFace is kept ONLY for
+-        // the momentum velocityJump (convective) term below, which is part of
++        // (D_rel-D0)*dU entering H.  The relaxation U-part is unchanged.
++        // BFINAL-008 (J_PP actual-primal closure): the P-P part below now
++        // carries the ACTUAL pressure-residual sign, dR_P/dp = -L_prod:
++        //   - mobF*(p_nei-p_own)*dcfF*mafF   (exported +L_int -> -L_int),
++        // with the fixedValue-p boundary internalCoeffs diagonal added in the
++        // boundary loop below.  The OLD deltaPhiFace is kept ONLY for the
++        // momentum velocityJump (convective) term below, which is part of
+         // the J_UU block and must stay byte-for-byte unchanged.
+         const vector interpDU = wf*deltaUOwn + (1.0 - wf)*deltaUNei;
+         const scalar deltaPhiFacePU =
+             (discreteSf[facei] & (alphaRel*rAUdH + (1.0 - alphaRel)*interpDU))
+-          + mobF*(input[discretePIndex(nei)] - input[discretePIndex(own)])
++          - mobF*(input[discretePIndex(nei)] - input[discretePIndex(own)])
+            *dcfF*mafF;
+         if (collectDPhiJ)
+         {
+@@ -749,6 +753,24 @@
+                         pressureContribution.component(cmpt);
+                 }
+             }
++
++            // BFINAL-008 (J_PP actual-primal closure): fixedValue-p boundary
++            // P-P diagonal from the production fvm::laplacian(rAtU,p)
++            // addBoundaryDiag internalCoeffs, residual convention
++            // dR_P/dp:  diag(cell) += -internalCoeffs_b
++            //                    = +rAtU_c*deltaCoeffs_b*|Sf|_b.
++            // boundaryCoeffs source is 0 (p_b = 0 on fixedValue p), so there
++            // is NO source term; zeroGradient p patches contribute 0; no
++            // cell-center identity row is inserted (the term is a
++            // boundary-FACE flux linearization, not a Dirichlet row).
++            if (pressureFixed)
++            {
++                output[discretePIndex(celli)] +=
++                    primalPressureMobility[celli]
++                   *mesh.deltaCoeffs().boundaryField()[patchi][facei]
++                   *mesh.magSf().boundaryField()[patchi][facei]
++                   *input[discretePIndex(celli)];
++            }
+         }
+     }
+ };
+@@ -820,14 +842,19 @@
+         //   so the adjoint scalar splits:
+         //     phiAdjointRel = convTerm + alphaRel*lambdaPdiff  (-> hA path)
+         //     + direct (1-alphaRel)*lambdaPdiff*(wf*Sf)        (-> U rows)
+-        //   and the kf path (P-P) keeps phiAdjoint = lambdaPdiff + convTerm
+-        //   unchanged (the P-P block is untouched by this patch).
++        //   BFINAL-008 (J_PP actual-primal closure): the kf path is the exact
++        //   transpose of the corrected forward P-P block (dR_P/dp = -L_int:
++        //   diag +kf, off-diag -kf).  Only the lambdaPdiff coefficient flips
++        //   sign (P(own) += kf*lambdaPdiff, P(nei) -= kf*lambdaPdiff); the
++        //   convTerm (J_UP^T via the OLD velocityJump dphi) keeps its
++        //   unchanged -kf/+kf routing; phiAdjointRel/hA/directRel (J_PU) are
++        //   byte-identical.
+         const vector velocityJump = U[nei] - U[own];
+         const label downwind = discretePhi[facei] >= 0.0 ? nei : own;
+         const vector lambdaDown = (downwind == nei) ? lambdaNei : lambdaOwn;
+         const scalar convTerm = lambdaDown & velocityJump;
+         const scalar lambdaPdiff = lambdaPown - lambdaPnei;
+-        const scalar phiAdjoint = lambdaPdiff + convTerm;
++        const scalar phiAdjointPP = lambdaPdiff - convTerm;
+ 
+         const scalar wf = discreteWeights[facei];
+         const scalar mobF =
+@@ -836,8 +863,8 @@
+         const scalar kf =
+             mobF*mesh.deltaCoeffs().primitiveField()[facei]
+                *mesh.magSf().primitiveField()[facei];
+-        output[discretePIndex(own)] -= kf*phiAdjoint;
+-        output[discretePIndex(nei)] += kf*phiAdjoint;
++        output[discretePIndex(own)] += kf*phiAdjointPP;
++        output[discretePIndex(nei)] -= kf*phiAdjointPP;
+ 
+         const scalar phiAdjointRel = convTerm + alphaRel*lambdaPdiff;
+         const vector hOwn =
+@@ -870,6 +897,7 @@
+         // the transpose mirrors that: alphaRel-scaled hB + direct
+         // (1-alphaRel)*lambdaPc*patchSf term, assignable-only.
+         const bool uAssignable = U.boundaryField()[patchi].assignable();
++        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
+ 
+         forAll(patchCells, facei)
+         {
+@@ -891,7 +919,7 @@
+                 output[discreteUIndex(celli, 2)] += dB.z();
+             }
+ 
+-            if (!p.boundaryField()[patchi].fixesValue())
++            if (!pressureFixed)
+             {
+                 vector lambdaCell
+                 (
+@@ -902,6 +930,19 @@
+                 output[discretePIndex(celli)] +=
+                     patchSf[facei] & lambdaCell;
+             }
++
++            // BFINAL-008 (J_PP actual-primal closure): the fixedValue-p
++            // boundary P-P diagonal is symmetric (diagonal-only), so J^T
++            // carries the identical +rAtU_c*deltaCoeffs_b*|Sf|_b entry,
++            // matching the corrected forward boundary loop above.
++            if (pressureFixed)
++            {
++                output[discretePIndex(celli)] +=
++                    primalPressureMobility[celli]
++                   *mesh.deltaCoeffs().boundaryField()[patchi][facei]
++                   *mesh.magSf().boundaryField()[patchi][facei]
++                   *input[discretePIndex(celli)];
++            }
+         }
+     }
+ 
+@@ -2410,12 +2451,15 @@
+         addCoo(discretePIndex(nei), discreteUIndex(nei, c), -(1.0 - weight)*sf.component(c));
+     }
+ 
+-    // kf path: P(own) -= kf*phiAdjoint ; P(nei) += kf*phiAdjoint
+-    //   phiAdjoint = (lambdaP_own - lambdaP_nei) + (lambdaDown & velJump)
+-    addCoo(discretePIndex(own), discretePIndex(own), -kf);
+-    addCoo(discretePIndex(own), discretePIndex(nei),  kf);
+-    addCoo(discretePIndex(nei), discretePIndex(own),  kf);
+-    addCoo(discretePIndex(nei), discretePIndex(nei), -kf);
++    // kf path (BFINAL-008 J_PP actual-primal closure): the corrected P-P
++    // block is dR_P/dp = -L_int, i.e. diag +kf, off-diag -kf (the exact
++    // transpose of the corrected matrix-free P-P: P(own) += kf*lambdaPdiff,
++    // P(nei) -= kf*lambdaPdiff).  The convTerm entries below (velocityJump
++    // via the OLD dphi, J_UP^T) keep the unchanged -kf/+kf routing.
++    addCoo(discretePIndex(own), discretePIndex(own),  kf);
++    addCoo(discretePIndex(own), discretePIndex(nei), -kf);
++    addCoo(discretePIndex(nei), discretePIndex(own), -kf);
++    addCoo(discretePIndex(nei), discretePIndex(nei),  kf);
+     for (direction c2 = 0; c2 < 3; ++c2)
+     {
+         addCoo(discretePIndex(own), discreteUIndex(downwind, c2), -kf*velocityJump.component(c2));
+@@ -2600,6 +2644,25 @@
+                 addCoo(discretePIndex(celli), discreteUIndex(celli, c), patchSf[facei].component(c));
+             }
+         }
++
++        // BFINAL-008 (J_PP actual-primal closure): fixedValue-p boundary P-P
++        // diagonal = +rAtU_c*deltaCoeffs_b*|Sf|_b (production
++        // fvm::laplacian(rAtU,p) addBoundaryDiag internalCoeffs, residual
++        // convention dR_P/dp; boundaryCoeffs source = 0 since p_b = 0, so no
++        // source entry; zeroGradient p patches contribute 0).  Diagonal-only
++        // => symmetric, so the exported J^T carries the corrected boundary
++        // term, matching the matrix-free forward/transpose boundary loops.
++        if (pressureFixed)
++        {
++            addCoo
++            (
++                discretePIndex(celli),
++                discretePIndex(celli),
++                primalPressureMobility[celli]
++               *mesh.deltaCoeffs().boundaryField()[patchi][facei]
++               *mesh.magSf().boundaryField()[patchi][facei]
++            );
++        }
+     }
+ }
+ 

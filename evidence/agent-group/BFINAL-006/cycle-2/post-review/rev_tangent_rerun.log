@@ -1,0 +1,15 @@
+=== Post-Reviewer independent tangent-solve rerun ===
+re-pinned J built nnz=6209552 (t=1.5s)
+[LU] splu(J, COLAMD) ...
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/post-review/rev_tangent_rerun.py:25: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+splu done (t=1953.3s)
+[sigma_min] 2 fresh random solves
+  trial 0: sigma_min~7.382e-27 (||x||=4.972e+28)
+  trial 1: sigma_min~8.640e-26 (||x||=4.251e+27)
+  sigma_min: min=7.382e-27
+[solves] D1/D2/D3 with iterative refinement (30 iters)
+  D1: ||rhs||=5.663185e-01 trueRelRes=3.647081e-04 Urel=3.647055e-04 Prel=4.021298e-03 ||wPrime||=2.084470e+18 w[PREF]=0.000e+00
+  D2: ||rhs||=8.615839e-01 trueRelRes=4.044110e-05 Urel=4.044098e-05 Prel=1.926119e-04 ||wPrime||=5.539179e+17 w[PREF]=0.000e+00
+  D3: ||rhs||=8.516528e-01 trueRelRes=3.092642e-03 Urel=3.092637e-03 Prel=1.843539e-02 ||wPrime||=3.796498e+19 w[PREF]=0.000e+00
+REV_TANGENT_RERUN_DONE (t=2067.3s)

@@ -1,0 +1,55 @@
+# CI for TO-ANISOTROPIC
+#
+# The solver itself builds inside an OpenFOAM-7 environment, which is not
+# available on standard GitHub-hosted runners. The pure-Python Stage A /
+# projection unit tests (no numpy/scipy) run here, plus a repository-hygiene
+# check that guards against accidentally committing oversized binaries or
+# virtualenv/build artifacts.
+
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  python-tests:
+    name: Python unit tests (Stage A / projection)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.8"
+      - name: Run anisotropic material model test
+        run: python3 src/tests/test_anisotropic_material_model.py
+      - name: Run projection chain test
+        run: python3 src/tests/test_projection_chain.py
+      - name: Run processor-patch sensitivity test
+        run: python3 src/tests/test_processor_patch_sensitivity.py
+
+  repo-hygiene:
+    name: Repository hygiene (no oversized / binary junk)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: No tracked file over 50 MB
+        run: |
+          set -e
+          bad=0
+          for f in $(git ls-files); do
+            sz=$(stat -c%s "$f" 2>/dev/null || echo 0)
+            if [ "$sz" -gt 52428800 ]; then
+              echo "oversized tracked file: $f ($sz bytes)"
+              bad=1
+            fi
+          done
+          [ "$bad" -eq 0 ]
+      - name: No virtualenv / build dirs tracked
+        run: |
+          set -e
+          git ls-files | grep -E '(^|/)\.venv|(^|/)build/' && { echo "venv/build dirs must not be tracked"; exit 1; } || true
+      - name: No Windows Zone.Identifier junk tracked
+        run: |
+          set -e
+          git ls-files | grep -E ':Zone\.Identifier$' && { echo "Zone.Identifier files must not be tracked"; exit 1; } || true

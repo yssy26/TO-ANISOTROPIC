@@ -1,0 +1,79 @@
+{
+  "run_id": "AG-SMOKE-V5-001",
+  "cycle": 1,
+  "stage": "B-final",
+  "mode": "VALIDATION_ONLY",
+  "risk_level": "L0",
+  "hypothesis_id": "SMOKE-V5-001-WS",
+  "hypothesis": "The TO-ANISOTROPIC workspace resolves correctly and read-only: git repo root == /home/ys/dsH/TO-ANISOTROPIC, HEAD is a known commit, and the worktree state can be captured without modifying any project artifact.",
+  "head": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+  "head_matches_plan": true,
+  "executor": "deepseek-v4-flash (Flash Executor)",
+  "step": "validate (plan.validation entries)",
+  "checks": [
+    {
+      "name": "git_repo_root",
+      "command": "git rev-parse --show-toplevel",
+      "pass_criterion": "output exactly equals /home/ys/dsH/TO-ANISOTROPIC",
+      "actual": "/home/ys/dsH/TO-ANISOTROPIC",
+      "exit_code": 0,
+      "pass": true
+    },
+    {
+      "name": "git_head",
+      "command": "git rev-parse HEAD",
+      "pass_criterion": "40-hex SHA matching ca8a772b8339a36e7906ea32a7125061c47aa280",
+      "actual": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+      "exit_code": 0,
+      "is_40_hex": true,
+      "pass": true
+    },
+    {
+      "name": "git_status_short",
+      "command": "git status --short",
+      "pass_criterion": "exits 0; no new modification to src/, cases, tests, or scripts caused by this run",
+      "exit_code": 0,
+      "entries": 42,
+      "modified_tracked": [
+        "src/MTO_HF.C",
+        "src/sensitivity.H",
+        "src/solveDiscreteFlowAdjoint.H",
+        "src/solveDiscreteFlowAdjointProduction.H"
+      ],
+      "untracked_dirs": [
+        "build/",
+        "evidence/agent-group/AG-SMOKE-V5-001/",
+        "evidence/agent-group/BFINAL-002/",
+        "evidence/agent-group/BFINAL-003/",
+        "evidence/agent-group/BFINAL-004-FIX/",
+        "evidence/agent-group/BFINAL-004/",
+        "evidence/agent-group/BFINAL-005/",
+        "evidence/agent-group/BFINAL-006/",
+        "evidence/agent-group/BFINAL-007/"
+      ],
+      "untracked_src_files": [
+        "src/rxPressureRowTranspose.H",
+        "src/stageB5BoundaryRelaxOracle.H",
+        "src/stageB6RxDesignOracle.H",
+        "src/stageB7PressureBCDiagnostic.H"
+      ],
+      "untracked_src_build_logs": 25,
+      "note": "All entries are pre-existing (4 modified tracked src files; untracked build/, evidence/agent-group/BFINAL-002..007, 4 src .H oracle/diagnostic files, 25 src validation_stage_*.log) or the planned evidence directory itself. This run executed only read-only identity commands plus evidence writes; no src/, case, test, or script file was modified.",
+      "pass": true
+    }
+  ],
+  "pwd_check": {
+    "command": "pwd",
+    "actual": "/home/ys/dsH/TO-ANISOTROPIC",
+    "exit_code": 0,
+    "pass": true
+  },
+  "stop_if_triggered": "none",
+  "block_reason": "",
+  "overall": "PASS",
+  "evidence_paths": [
+    "evidence/agent-group/AG-SMOKE-V5-001/cycle-1/VALIDATION_SUMMARY.json",
+    "evidence/agent-group/AG-SMOKE-V5-001/VALIDATION_SUMMARY.json",
+    "evidence/agent-group/AG-SMOKE-001/smoke-output.md"
+  ]
+}

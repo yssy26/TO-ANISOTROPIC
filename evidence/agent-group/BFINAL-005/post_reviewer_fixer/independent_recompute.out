@@ -1,0 +1,44 @@
+=== (E) decomposition cellwise self-check ===
+max|total-(mom+pr)| = 5.204e-18
+
+=== per-direction independent recomputation ===
+
+--- D1 ---
+  D_momentum anchor            val=-4.8686755427656596e-02 ref=-4.8686755427699999e-02 relErr=8.915e-13 OK
+  D_pressure anchor            val=-7.5488779510571756e-03 ref=-7.5488779510599997e-03 relErr=3.741e-13 OK
+  D_total    anchor            val=-5.6235633378713769e-02 ref=-5.6235633378700002e-02 relErr=2.448e-13 OK
+  G1 pressurerow vs oracle     val=-7.5488779510571504e-03 ref=-7.5488779510571756e-03 relErr=3.332e-15 OK
+  G2 momentum   vs oracle      val=-4.8686755427656603e-02 ref=-4.8686755427656596e-02 relErr=1.425e-16 OK
+  G2 total      vs oracle      val=-5.6235633378713790e-02 ref=-5.6235633378713769e-02 relErr=3.702e-16 OK
+  G3 rawdesign  vs oracle      val=-5.6235633242873936e-02 ref=-5.6235633378713769e-02 relErr=2.416e-09 OK
+  G5 volume     vs anchor      val=+1.5551865111446814e-01 ref=+1.5551865111446861e-01 relErr=3.034e-15 OK
+  |D_pressure/D_total| = 0.134237
+
+--- D2 ---
+  D_momentum anchor            val=+2.2907966236169819e-01 ref=+2.2907966236200000e-01 relErr=1.318e-12 OK
+  D_pressure anchor            val=+6.8592769390886349e-02 ref=+6.8592769390900005e-02 relErr=1.991e-13 OK
+  D_total    anchor            val=+2.9767243175258451e-01 ref=+2.9767243175300001e-01 relErr=1.396e-12 OK
+  G1 pressurerow vs oracle     val=+6.8592769390886404e-02 ref=+6.8592769390886349e-02 relErr=8.093e-16 OK
+  G2 momentum   vs oracle      val=+2.2907966236169816e-01 ref=+2.2907966236169819e-01 relErr=1.212e-16 OK
+  G2 total      vs oracle      val=+2.9767243175258457e-01 ref=+2.9767243175258451e-01 relErr=1.865e-16 OK
+  G3 rawdesign  vs oracle      val=+2.9767243191274856e-01 ref=+2.9767243175258451e-01 relErr=5.381e-10 OK
+  G5 volume     vs anchor      val=-8.4496677416589033e-02 ref=-8.4496677416588908e-02 relErr=1.478e-15 OK
+  |D_pressure/D_total| = 0.230430
+
+--- D3 ---
+  D_momentum anchor            val=-3.0131401620778143e-02 ref=-3.0131401620800000e-02 relErr=7.254e-13 OK
+  D_pressure anchor            val=-6.2100282187406977e-03 ref=-6.2100282187400003e-03 relErr=1.123e-13 OK
+  D_total    anchor            val=-3.6341429839518838e-02 ref=-3.6341429839499999e-02 relErr=5.184e-13 OK
+  G1 pressurerow vs oracle     val=-6.2100282187406109e-03 ref=-6.2100282187406977e-03 relErr=1.397e-14 OK
+  G2 momentum   vs oracle      val=-3.0131401620778060e-02 ref=-3.0131401620778143e-02 relErr=2.763e-15 OK
+  G2 total      vs oracle      val=-3.6341429839518692e-02 ref=-3.6341429839518838e-02 relErr=4.010e-15 OK
+  G3 rawdesign  vs oracle      val=-3.6341429801673028e-02 ref=-3.6341429839518838e-02 relErr=1.041e-09 OK
+  G5 volume     vs anchor      val=+6.3962376844327026e-02 ref=+6.3962376844326860e-02 relErr=2.604e-15 OK
+  |D_pressure/D_total| = 0.170880
+
+=== BFINAL-004 locked anchor reproduction (D_pressure oracle) ===
+  D1: D_pressure oracle = -7.5488779510571756e-03  (locked +7.5488779510599997e-03)
+  D2: D_pressure oracle = +6.8592769390886349e-02  (locked -6.8592769390900005e-02)
+  D3: D_pressure oracle = -6.2100282187406977e-03  (locked +6.2100282187400003e-03)
+
+ALL CHECKS PASS (<=1e-3): True

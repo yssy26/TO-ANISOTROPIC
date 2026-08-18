@@ -1,0 +1,10 @@
+=== S3 Q4a: sigma_min(candidate J) via random solves (diagnostic-only) ===
+candidate J built (nnz=6209549 t=7.5s)
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-007/s3_q4a_sigma.py:45: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu=spla.splu(Jc,permc_spec="COLAMD")
+splu done (t=1998.6s)
+trial 0: ||z||=3.6685e+02 ||x||=4.5761e+13 sigma_min~8.017e-12
+trial 1: ||z||=3.6626e+02 ||x||=3.4642e+13 sigma_min~1.057e-11
+trial 2: ||z||=3.6616e+02 ||x||=3.9274e+13 sigma_min~9.323e-12
+sigma_min(candidate J): min=8.017e-12 mean=9.304e-12
+S3_Q4A_SIGMA_DONE

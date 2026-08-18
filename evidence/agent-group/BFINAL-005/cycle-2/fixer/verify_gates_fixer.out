@@ -1,0 +1,80 @@
+====================================================================================================
+BFINAL-005 cycle-2 step4_verify — independent G1-G5 (python, from raw .mtx)
+====================================================================================================
+decomposition self-check: max|total-(momentum+pressurerow)| = 5.204e-18
+
+--- D1 (independent oracle recomputation) ---
+  D_momentum oracle   = -4.8686755427656533e-02
+  D_pressure oracle   = -7.5488779510572059e-03
+  D_total oracle      = -5.6235633378713741e-02
+  G1 D_pressure prod  = -7.5488779510571730e-03  relErr=4.366e-15  signOK=True
+  G2 D_momentum prod  = -4.8686755427656665e-02  relErr=2.708e-15
+  G2 D_total prod     = -5.6235633378713810e-02  relErr=1.234e-15  signOK=True
+  G3 raw-design prod  = -5.6235633242873749e-02  relErr=2.416e-09  signOK=True
+  |D_pressure/D_total|= 0.134237
+  G5 volume proj      =  1.5551865111446861e-01
+
+--- D2 (independent oracle recomputation) ---
+  D_momentum oracle   =  2.2907966236169880e-01
+  D_pressure oracle   =  6.8592769390886446e-02
+  D_total oracle      =  2.9767243175258523e-01
+  G1 D_pressure prod  =  6.8592769390886585e-02  relErr=2.023e-15  signOK=True
+  G2 D_momentum prod  =  2.2907966236169891e-01  relErr=4.846e-16
+  G2 D_total prod     =  2.9767243175258451e-01  relErr=2.424e-15  signOK=True
+  G3 raw-design prod  =  2.9767243191274928e-01  relErr=5.381e-10  signOK=True
+  |D_pressure/D_total|= 0.230430
+  G5 volume proj      = -8.4496677416588895e-02
+
+--- D3 (independent oracle recomputation) ---
+  D_momentum oracle   = -3.0131401620773057e-02
+  D_pressure oracle   = -6.2100282187409978e-03
+  D_total oracle      = -3.6341429839514057e-02
+  G1 D_pressure prod  = -6.2100282187407150e-03  relErr=4.553e-14  signOK=True
+  G2 D_momentum prod  = -3.0131401620776741e-02  relErr=1.223e-13
+  G2 D_total prod     = -3.6341429839518644e-02  relErr=1.262e-13  signOK=True
+  G3 raw-design prod  = -3.6341429801673833e-02  relErr=1.041e-09  signOK=True
+  |D_pressure/D_total|= 0.170880
+  G5 volume proj      =  6.3962376844326860e-02
+
+====================================================================================================
+G4/G5 — locked anchors re-grepped from raw run log
+====================================================================================================
+  momentum_relL2: StageB5 GateA eps=0.001:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949431 relL2=0.000165311363075 cos=0.999999986345 maxDiff=1.42858672819e-05 @idx=18693
+  ptotal_relL2: StageB5  P-total: |a|L2=4.33741818206e-06 |b(FD)|L2=4.33742590832e-06 |err|L2=6.62884082228e-10 relL2=0.000152828911949 cos=0.999999988323 maxDiff=4.1943182655e-11 @idx=7680 (P cell 7680 patch inlet)
+  jdot: Reduced cold-flow operator transpose dot-test (pressureDrop) max relative error=6.42244770078e-14 all=
+  explicit: ExplicitJToracle: maxRelL2=3.97863790105e-16 maxCosErr=2.22044604925e-16 maxRelL_U=3.52693970502e-16 maxRelL_P=3.98062510668e-16
+  gatepr: GatePR h=0.001 |J_P|=4.33741818206e-06 |FD_P|=6.2437647062e-06 relL2=1.03546813403 cos=0.306822860167
+  gatea_mom: StageB5 GateA eps=0.001:StageB5  momentum: |a|L2=1.47703641607 |b(FD)|L2=1.4770427446 |err|L2=0.000244171949431 relL2=0.000165311363075 cos=0.999999986345 maxDiff=1.42858672819e-05 @idx=18693
+  discrete: Discrete objective derivative errors: thermal=2.7025486001e-11, pressure=7.07793481308e-12
+  anisok: Anisotropic conductivity: solidK=(21.6 0 0 21.6 0 16.6)
+  projeta: StageB6 RX-C projection: eta5=0.748005161603 del=8 projectionEtaDenominator=-3.1385996818e-06
+  rxA_rp: None
+  rxB_rp: None
+  rxc_d1_rp: None
+  dot_test: RxPressureRowTranspose: sum(T*w)="-2.696485451749351e-08" sum(pc*(J_P*w))="-2.696485451749358e-08" relErr=2.57680498181e-15 alphaRel=0.4 |T|L2=0.000256656999292 |J_P*w|L2=6.22344977639e-10 |g0_bnd|max=0.0650620425279 w-support=5040
+
+G5 volume anchors (independent dot vs log):
+  D1: independent= 1.5551865111446861e-01  log=StageB6 volume-anchor D1: projV="0.1555186511144686"
+  D2: independent=-8.4496677416588895e-02  log=StageB6 volume-anchor D2: projV="-0.08449667741658891"
+  D3: independent= 6.3962376844326860e-02  log=StageB6 volume-anchor D3: projV="0.06396237684432686"
+
+====================================================================================================
+GATE TABLE
+====================================================================================================
+Gate  dir             production                 oracle       relErr sign  PASS 
+G1    D1  -7.5488779510571730e-03 -7.5488779510572059e-03    4.366e-15 True  True 
+G2    D1  -5.6235633378713810e-02 -5.6235633378713741e-02    1.234e-15 True  True 
+G3    D1  -5.6235633242873749e-02 -5.6235633378713741e-02    2.416e-09 True  True 
+G5    D1  volume proj = 1.5551865111446861e-01 (anchor D1=0.1555186511144686)
+G1    D2  6.8592769390886585e-02 6.8592769390886446e-02    2.023e-15 True  True 
+G2    D2  2.9767243175258451e-01 2.9767243175258523e-01    2.424e-15 True  True 
+G3    D2  2.9767243191274928e-01 2.9767243175258523e-01    5.381e-10 True  True 
+G5    D2  volume proj = -8.4496677416588895e-02 (anchor D1=0.1555186511144686)
+G1    D3  -6.2100282187407150e-03 -6.2100282187409978e-03    4.553e-14 True  True 
+G2    D3  -3.6341429839518644e-02 -3.6341429839514057e-02    1.262e-13 True  True 
+G3    D3  -3.6341429801673833e-02 -3.6341429839514057e-02    1.041e-09 True  True 
+G5    D3  volume proj = 6.3962376844326860e-02 (anchor D1=0.1555186511144686)
+
+preferred (<=1e-4) achieved for all G1/G2/G3: True
+ALL GATES PASS (relErr<=1e-3 & sign): True
+max|decomp-(mom+pr)| = 5.204e-18

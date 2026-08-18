@@ -1,0 +1,28 @@
+diff --git a/src/solveDiscreteFlowAdjoint.H b/src/solveDiscreteFlowAdjoint.H
+index 7562789..add84c1 100644
+--- a/src/solveDiscreteFlowAdjoint.H
++++ b/src/solveDiscreteFlowAdjoint.H
+@@ -3913,3 +3913,23 @@ if (optProperties.lookupOrDefault<Switch>("stageB4JacobianProbe", false))
+         << " c100=" << discreteAdjointVelocity[100]
+         << " c5000=" << discreteAdjointVelocity[5000] << endl;
+ }
++
++// ---------------------------------------------------------------------------
++// Stage B5 (BFINAL-002, DIAGNOSTIC_ONLY): boundary-consistent P-row oracle +
++// isolated dphi/dU relaxation oracle.  Guarded by optProperties switch
++// "stageB5BoundaryRelaxOracle" (default false).  When disabled this block is
++// a no-op (one dictionary lookup only): no fields created/modified, no files
++// written, no effect on production values/residuals.  When enabled it runs
++// once (static guard) on the first inclusion of this header (thermalCoupling
++// adjoint block) using the converged production state; it never modifies
++// production state.
++// ---------------------------------------------------------------------------
++if (optProperties.lookupOrDefault<Switch>("stageB5BoundaryRelaxOracle", false))
++{
++    static bool stageB5BoundaryRelaxOracleDone = false;
++    if (!stageB5BoundaryRelaxOracleDone)
++    {
++        stageB5BoundaryRelaxOracleDone = true;
++        #include "stageB5BoundaryRelaxOracle.H"
++    }
++}

@@ -1,0 +1,114 @@
+N=33600 nFaces=104740 nInternal=96860 nBoundary=7880
+
+=== [independent] Gate A: J*v vs production-consistent FD, per eps ===
+eps        | momentum relL2/cos | P-int relL2/cos | P-bnd relL2/cos | P-tot relL2/cos
+  eps=0.001 momentum: |a|L2=1.477036e+00 |FD|L2=1.477043e+00 |err|L2=2.441719e-04 relL2=1.653114e-04 cos=0.999999986 maxDiff=1.428587e-05 @idx=18693
+  eps=0.001 P-internal: |a|L2=2.650394e-06 |FD|L2=2.799565e-06 |err|L2=2.403035e-06 relL2=8.583602e-01 cos=0.612374318 maxDiff=8.486427e-08 @idx=6161
+  eps=0.001 P-boundary: |a|L2=2.424511e-06 |FD|L2=3.312959e-06 |err|L2=3.794564e-06 relL2=1.145370e+00 cos=0.152835235 maxDiff=1.969468e-07 @idx=7761
+  eps=0.001 P-total: |a|L2=3.592053e-06 |FD|L2=4.337426e-06 |err|L2=4.491469e-06 relL2=1.035515e+00 cos=0.370430653 maxDiff=1.969468e-07 @idx=7761
+  1.0e-03   1.653e-04/1.000000   8.584e-01/0.612374   1.145e+00/0.152835   1.036e+00/0.370431
+  eps=0.0003 momentum: |a|L2=1.477036e+00 |FD|L2=1.477043e+00 |err|L2=2.441719e-04 relL2=1.653114e-04 cos=0.999999986 maxDiff=1.428587e-05 @idx=18693
+  eps=0.0003 P-internal: |a|L2=2.650394e-06 |FD|L2=2.799565e-06 |err|L2=2.403035e-06 relL2=8.583602e-01 cos=0.612374318 maxDiff=8.486427e-08 @idx=6161
+  eps=0.0003 P-boundary: |a|L2=2.424511e-06 |FD|L2=3.312959e-06 |err|L2=3.794564e-06 relL2=1.145370e+00 cos=0.152835235 maxDiff=1.969468e-07 @idx=7761
+  eps=0.0003 P-total: |a|L2=3.592053e-06 |FD|L2=4.337426e-06 |err|L2=4.491469e-06 relL2=1.035515e+00 cos=0.370430653 maxDiff=1.969468e-07 @idx=7761
+  3.0e-04   1.653e-04/1.000000   8.584e-01/0.612374   1.145e+00/0.152835   1.036e+00/0.370431
+  eps=0.0001 momentum: |a|L2=1.477036e+00 |FD|L2=1.477043e+00 |err|L2=2.441719e-04 relL2=1.653114e-04 cos=0.999999986 maxDiff=1.428587e-05 @idx=18693
+  eps=0.0001 P-internal: |a|L2=2.650394e-06 |FD|L2=2.799565e-06 |err|L2=2.403035e-06 relL2=8.583602e-01 cos=0.612374318 maxDiff=8.486427e-08 @idx=6161
+  eps=0.0001 P-boundary: |a|L2=2.424511e-06 |FD|L2=3.312959e-06 |err|L2=3.794564e-06 relL2=1.145370e+00 cos=0.152835235 maxDiff=1.969468e-07 @idx=7761
+  eps=0.0001 P-total: |a|L2=3.592053e-06 |FD|L2=4.337426e-06 |err|L2=4.491469e-06 relL2=1.035515e+00 cos=0.370430653 maxDiff=1.969468e-07 @idx=7761
+  1.0e-04   1.653e-04/1.000000   8.584e-01/0.612374   1.145e+00/0.152835   1.036e+00/0.370431
+  eps=3e-05 momentum: |a|L2=1.477036e+00 |FD|L2=1.477043e+00 |err|L2=2.441719e-04 relL2=1.653114e-04 cos=0.999999986 maxDiff=1.428587e-05 @idx=18693
+  eps=3e-05 P-internal: |a|L2=2.650394e-06 |FD|L2=2.799565e-06 |err|L2=2.403035e-06 relL2=8.583602e-01 cos=0.612374318 maxDiff=8.486427e-08 @idx=6161
+  eps=3e-05 P-boundary: |a|L2=2.424511e-06 |FD|L2=3.312959e-06 |err|L2=3.794564e-06 relL2=1.145370e+00 cos=0.152835235 maxDiff=1.969468e-07 @idx=7761
+  eps=3e-05 P-total: |a|L2=3.592053e-06 |FD|L2=4.337426e-06 |err|L2=4.491469e-06 relL2=1.035515e+00 cos=0.370430653 maxDiff=1.969468e-07 @idx=7761
+  3.0e-05   1.653e-04/1.000000   8.584e-01/0.612374   1.145e+00/0.152835   1.036e+00/0.370431
+  eps=1e-05 momentum: |a|L2=1.477036e+00 |FD|L2=1.477043e+00 |err|L2=2.441719e-04 relL2=1.653114e-04 cos=0.999999986 maxDiff=1.428587e-05 @idx=18693
+  eps=1e-05 P-internal: |a|L2=2.650394e-06 |FD|L2=2.799565e-06 |err|L2=2.403035e-06 relL2=8.583602e-01 cos=0.612374319 maxDiff=8.486427e-08 @idx=6161
+  eps=1e-05 P-boundary: |a|L2=2.424511e-06 |FD|L2=3.312959e-06 |err|L2=3.794564e-06 relL2=1.145370e+00 cos=0.152835235 maxDiff=1.969468e-07 @idx=7761
+  eps=1e-05 P-total: |a|L2=3.592053e-06 |FD|L2=4.337426e-06 |err|L2=4.491469e-06 relL2=1.035515e+00 cos=0.370430653 maxDiff=1.969468e-07 @idx=7761
+  1.0e-05   1.653e-04/1.000000   8.584e-01/0.612374   1.145e+00/0.152835   1.036e+00/0.370431
+
+=== [independent] Gate B: dphi candidates vs FD, per eps ===
+eps=0.001: Candidate A (J, unrelaxed):
+    A internal faces: |a|L2=1.270430e-05 |FD|L2=2.192062e-05 |err|L2=1.732572e-05 relL2=7.903849e-01 cos=0.613553012 maxDiff=1.486254e-07 @idx=83557
+    A boundary faces: |a|L2=2.685632e-06 |FD|L2=1.578115e-06 |err|L2=2.189919e-06 relL2=1.387680e+00 cos=0.578934378 maxDiff=1.243474e-07 @idx=102762
+    A all faces: |a|L2=1.298506e-05 |FD|L2=2.197735e-05 |err|L2=1.746358e-05 relL2=7.946170e-01 cos=0.607335140 maxDiff=1.486254e-07 @idx=83557
+   A normRatio=0.590838294
+eps=0.001: Candidate B (production relaxed):
+    B internal faces: |a|L2=2.192062e-05 |FD|L2=2.192062e-05 |err|L2=2.318386e-16 relL2=1.057628e-11 cos=1.000000000 maxDiff=1.547799e-17 @idx=24222
+    B boundary faces: |a|L2=1.578115e-06 |FD|L2=1.578115e-06 |err|L2=2.100002e-17 relL2=1.330702e-11 cos=1.000000000 maxDiff=7.927242e-18 @idx=96954
+    B all faces: |a|L2=2.197735e-05 |FD|L2=2.197735e-05 |err|L2=2.327878e-16 relL2=1.059217e-11 cos=1.000000000 maxDiff=1.547799e-17 @idx=24222
+   B normRatio=1.000000000
+eps=0.0003: Candidate A (J, unrelaxed):
+    A internal faces: |a|L2=1.270430e-05 |FD|L2=2.192062e-05 |err|L2=1.732572e-05 relL2=7.903849e-01 cos=0.613553012 maxDiff=1.486254e-07 @idx=83557
+    A boundary faces: |a|L2=2.685632e-06 |FD|L2=1.578115e-06 |err|L2=2.189919e-06 relL2=1.387680e+00 cos=0.578934378 maxDiff=1.243474e-07 @idx=102762
+    A all faces: |a|L2=1.298506e-05 |FD|L2=2.197735e-05 |err|L2=1.746358e-05 relL2=7.946170e-01 cos=0.607335140 maxDiff=1.486254e-07 @idx=83557
+   A normRatio=0.590838294
+eps=0.0003: Candidate B (production relaxed):
+    B internal faces: |a|L2=2.192062e-05 |FD|L2=2.192062e-05 |err|L2=7.596708e-16 relL2=3.465554e-11 cos=1.000000000 maxDiff=5.488240e-17 @idx=21583
+    B boundary faces: |a|L2=1.578115e-06 |FD|L2=1.578115e-06 |err|L2=6.810856e-17 relL2=4.315817e-11 cos=1.000000000 maxDiff=2.370252e-17 @idx=96949
+    B all faces: |a|L2=2.197735e-05 |FD|L2=2.197735e-05 |err|L2=7.627179e-16 relL2=3.470472e-11 cos=1.000000000 maxDiff=5.488240e-17 @idx=21583
+   B normRatio=1.000000000
+eps=0.0001: Candidate A (J, unrelaxed):
+    A internal faces: |a|L2=1.270430e-05 |FD|L2=2.192062e-05 |err|L2=1.732572e-05 relL2=7.903849e-01 cos=0.613553012 maxDiff=1.486254e-07 @idx=83557
+    A boundary faces: |a|L2=2.685632e-06 |FD|L2=1.578115e-06 |err|L2=2.189919e-06 relL2=1.387680e+00 cos=0.578934378 maxDiff=1.243474e-07 @idx=102762
+    A all faces: |a|L2=1.298506e-05 |FD|L2=2.197735e-05 |err|L2=1.746358e-05 relL2=7.946170e-01 cos=0.607335140 maxDiff=1.486254e-07 @idx=83557
+   A normRatio=0.590838294
+eps=0.0001: Candidate B (production relaxed):
+    B internal faces: |a|L2=2.192062e-05 |FD|L2=2.192062e-05 |err|L2=2.341848e-15 relL2=1.068331e-10 cos=1.000000000 maxDiff=1.718375e-16 @idx=24882
+    B boundary faces: |a|L2=1.578115e-06 |FD|L2=1.578115e-06 |err|L2=2.352895e-16 relL2=1.490953e-10 cos=1.000000000 maxDiff=8.027249e-17 @idx=96946
+    B all faces: |a|L2=2.197735e-05 |FD|L2=2.197735e-05 |err|L2=2.353638e-15 relL2=1.070938e-10 cos=1.000000000 maxDiff=1.718375e-16 @idx=24882
+   B normRatio=1.000000000
+eps=3e-05: Candidate A (J, unrelaxed):
+    A internal faces: |a|L2=1.270430e-05 |FD|L2=2.192062e-05 |err|L2=1.732572e-05 relL2=7.903849e-01 cos=0.613553012 maxDiff=1.486254e-07 @idx=83557
+    A boundary faces: |a|L2=2.685632e-06 |FD|L2=1.578115e-06 |err|L2=2.189919e-06 relL2=1.387680e+00 cos=0.578934378 maxDiff=1.243474e-07 @idx=102762
+    A all faces: |a|L2=1.298506e-05 |FD|L2=2.197735e-05 |err|L2=1.746358e-05 relL2=7.946170e-01 cos=0.607335140 maxDiff=1.486254e-07 @idx=83557
+   A normRatio=0.590838294
+eps=3e-05: Candidate B (production relaxed):
+    B internal faces: |a|L2=2.192062e-05 |FD|L2=2.192062e-05 |err|L2=7.732922e-15 relL2=3.527694e-10 cos=1.000000000 maxDiff=5.699721e-16 @idx=24383
+    B boundary faces: |a|L2=1.578115e-06 |FD|L2=1.578115e-06 |err|L2=8.240363e-16 relL2=5.221649e-10 cos=1.000000000 maxDiff=2.760832e-16 @idx=96954
+    B all faces: |a|L2=2.197735e-05 |FD|L2=2.197735e-05 |err|L2=7.776704e-15 relL2=3.538508e-10 cos=1.000000000 maxDiff=5.699721e-16 @idx=24383
+   B normRatio=1.000000000
+eps=1e-05: Candidate A (J, unrelaxed):
+    A internal faces: |a|L2=1.270430e-05 |FD|L2=2.192062e-05 |err|L2=1.732572e-05 relL2=7.903849e-01 cos=0.613553012 maxDiff=1.486254e-07 @idx=83557
+    A boundary faces: |a|L2=2.685632e-06 |FD|L2=1.578115e-06 |err|L2=2.189919e-06 relL2=1.387680e+00 cos=0.578934378 maxDiff=1.243474e-07 @idx=102762
+    A all faces: |a|L2=1.298506e-05 |FD|L2=2.197735e-05 |err|L2=1.746358e-05 relL2=7.946170e-01 cos=0.607335140 maxDiff=1.486254e-07 @idx=83557
+   A normRatio=0.590838294
+eps=1e-05: Candidate B (production relaxed):
+    B internal faces: |a|L2=2.192062e-05 |FD|L2=2.192062e-05 |err|L2=2.312332e-14 relL2=1.054866e-09 cos=1.000000000 maxDiff=1.646869e-15 @idx=21111
+    B boundary faces: |a|L2=1.578115e-06 |FD|L2=1.578115e-06 |err|L2=1.732088e-15 relL2=1.097568e-09 cos=1.000000000 maxDiff=5.755173e-16 @idx=96954
+    B all faces: |a|L2=2.197735e-05 |FD|L2=2.197735e-05 |err|L2=2.318810e-14 relL2=1.055091e-09 cos=1.000000000 maxDiff=1.646869e-15 @idx=21111
+   B normRatio=1.000000000
+
+=== [X1] per-patch boundary dphi (eps=1e-3 block) ===
+patch        nFaces  |dphi_FD|L2   |dphi_A|L2 A-vs-FD relL2  A-vs-FD cos
+inlet            84   0.0000e+00   2.5590e-09           nan          nan
+outlet           84   1.5781e-06   1.5773e-06    1.6868e-01     0.985766
+hotInlet        196   0.0000e+00   8.1182e-12           nan          nan
+hotOutlet       196   0.0000e+00   8.1291e-12           nan          nan
+solidEndWalls    280   0.0000e+00   1.2078e-09           nan          nan
+bottomWall     1120   0.0000e+00   1.4133e-08           nan          nan
+topWall        1120   0.0000e+00   4.0641e-12           nan          nan
+sideWalls      4800   0.0000e+00   2.1736e-06           nan          nan
+|dphi_FD| on 7 pinned patches: 0.0000e+00 (expect ~1e-11, constrainHbyA pinning)
+|dphi_FD| on outlet patch   : 1.5781e-06 (the only assignable-U patch)
+
+=== [X2] div(dphi_FD) per cell vs Gate-A P-row FD per cell ===
+Sf orientation check: 0/96860 internal faces point neighbour->owner
+Sf orientation check: 3940/7880 boundary faces point inward
+|sum_f dphi_FD|L2(all)      = 4.337426e-06
+|GateA P-row FD|L2(all)    = 4.337426e-06
+all cells:      relL2=3.193e-11 cos=1.000000000
+internal cells: relL2=4.666e-11
+boundary cells: relL2=1.390e-11
+div(Candidate A): |.|L2=2.884485e+04
+div(Candidate B): |.|L2=3.509034e+04
+
+=== [X3] production-tangent algebra check ===
+|FD|=2.197735e-05 |A|=1.298506e-05 |FD-0.4A|=1.926982e-05
+|A|/|FD|=0.590838 (0.591, not 0.4: the 0.6*dU/V relax-source term is NOT small)
+|X_theory=flux(0.6 dU/V)|L2 = 1.925111e-05
+X vs (FD-0.4A): relL2=4.628e-02 cos=0.998929
+  internal faces only: relL2=1.030e-02
+
+[done]

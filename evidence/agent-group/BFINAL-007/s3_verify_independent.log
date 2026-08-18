@@ -1,0 +1,10 @@
+Q3: |J_PP - L_int| relL2 (excl pRef row/col)=1.656e-16
+Q3: L_prod - J_PP: off-outlet max=2.482e-24 ; outlet range=[-1.706e-09,2.068e-25] (expect icB [-1.71e-9,-5.48e-10])
+Q4a: |candPP - (-expPP + diag(cand))| relL2 (excl pRef)=2.244e-10
+Q4a: ||J_exp . n||/||n||=2.717e-19  ||J_cand . n||/||n||=3.020e-09
+Q4b: candPP.n_P vs FD_lin: relL2=2.414e-09 ; vs FD_cd(1e-4): relL2=6.137e-07 ; |FD_lin-FD_cd|/|FD_cd|=6.137e-07
+Q4b: candPP.n_P vs -(L_prod.n_P): relL2=0.000e+00 ; FD_lin vs -(L_prod.n_P): relL2=2.414e-09
+Q4c G1 eps=1e-03: candA all=2.985065e-05 candB all=1.059217e-11 (BFINAL-003: 2.98506496e-5 / 1.05921670e-11 @1e-3)
+Q4c G1 eps=1e-04: candA all=2.985065e-05 candB all=3.470472e-11 (BFINAL-003: 2.98506496e-5 / 1.05921670e-11 @1e-3)
+Q4c G1 eps=1e-05: candA all=2.985065e-05 candB all=1.070938e-10 (BFINAL-003: 2.98506496e-5 / 1.05921670e-11 @1e-3)
+REV_INDEPENDENT_DONE

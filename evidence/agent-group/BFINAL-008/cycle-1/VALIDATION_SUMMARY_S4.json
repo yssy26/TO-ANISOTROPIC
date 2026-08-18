@@ -1,0 +1,220 @@
+{
+  "task_id": "BFINAL-008",
+  "cycle": 1,
+  "step": "S4",
+  "mode": "PATCH",
+  "hypothesis_id": "BFINAL-008-JPP-ACTUAL-PRIMAL-CLOSURE",
+  "provenance": {
+    "workspace": "/home/ys/dsH/TO-ANISOTROPIC",
+    "git_root": "/home/ys/dsH/TO-ANISOTROPIC",
+    "branch": "agent/dsH-stage-b-validation",
+    "HEAD": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+    "python": "/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-002/.venv_s4/bin/python3 (scipy 1.17.1 numpy 2.4.6)",
+    "scripts": [
+      "cycle-1/s4_p1_p3_p4_p5_p7_fast.py",
+      "cycle-1/s4_p2_p8_nullspace_tangent.py"
+    ],
+    "artifacts": "cycle-1/artifacts/ (stageB8_*), cycle-1/artifacts/s3/ (corrected explicitJT.mtx 5ca1f592…, stageB6_*), BFINAL-007/artifacts (laplacian/boundary exports, unchanged), BFINAL-006/cycle-2/artifacts/wPrime_TAN_D1.mtx"
+  },
+  "tests": [
+    {
+      "name": "P1_null_vector_actual_residual_closure_fullP",
+      "metric": "relL2 Jv1 vs actual-residual central FD (eps=1e-2)",
+      "value": 1.44285092837e-08,
+      "threshold": 1e-6,
+      "preferred": 1e-8,
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P1_outlet_adjacent",
+      "metric": "relL2 (84 outlet cells)",
+      "value": 5.45485423692e-09,
+      "threshold": 1e-6,
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P1_off_outlet",
+      "metric": "relL2",
+      "value": 5.29563863101e-08,
+      "threshold": 1e-6,
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P1_eps_plateau",
+      "metric": "full-P relL2 at eps 1e-2/1e-3/1e-4/1e-5",
+      "value": [1.44e-08, 1.17e-07, 1.04e-06, 8.23e-06],
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P2_Jn_over_n",
+      "metric": "||J_corrected n||/||n|| (n = BFINAL-006 null vector)",
+      "value": 3.019933e-09,
+      "threshold": "old 2.717e-19 -> must be ~1e-9 (candidate 3.020e-09)",
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.log"
+    },
+    {
+      "name": "P2_identity_rows",
+      "metric": "unique identity row in P block",
+      "value": "[100800]",
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.log"
+    },
+    {
+      "name": "P2_row106400_physical",
+      "metric": "nnz of row 106400",
+      "value": 34,
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.log"
+    },
+    {
+      "name": "P2_sigma_min",
+      "metric": "sigma_min (splu, 3 random solves)",
+      "value": [1.18734961773e-11, 8.62017046628e-12, 1.21604412674e-11],
+      "threshold": ">= 1e-13, consistent ~7.9e-12",
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.json"
+    },
+    {
+      "name": "P2_near_null_geometry",
+      "metric": "corrected-J v_min P-block top-1%/outlet mass",
+      "value": [0.0307074646742, 6.53451773772e-07],
+      "threshold": "not outlet-concentrated (old mode top-1% 0.895)",
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.json"
+    },
+    {
+      "name": "P3_dir1_P_total",
+      "metric": "relL2 (eps=1e-2)",
+      "value": 1.44285092837e-08,
+      "threshold": 1e-3,
+      "preferred": 1e-4,
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P3_dir2_P_total",
+      "metric": "relL2 (eps=1e-2)",
+      "value": 1.51584205321e-04,
+      "threshold": 1e-3,
+      "preferred": 1e-4,
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P3_dir3_P_total",
+      "metric": "relL2 (eps=1e-2)",
+      "value": 1.52803849179e-04,
+      "threshold": 1e-3,
+      "preferred": 1e-4,
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P4_PP_block_dot",
+      "metric": "BlockDot PP (both labels)",
+      "value": 2.29255815574e-14,
+      "threshold": 1e-10,
+      "pass": true,
+      "raw_evidence": "artifacts/s3/Log.stageB8.r1.txt"
+    },
+    {
+      "name": "P4_full_dot",
+      "metric": "reduced cold-flow dot max rel err (both labels)",
+      "value": 6.86412558997e-14,
+      "threshold": 1e-10,
+      "pass": true,
+      "raw_evidence": "artifacts/s3/Log.stageB8.r1.txt"
+    },
+    {
+      "name": "P5_ExplicitJToracle",
+      "metric": "maxRelL2 (explicit J^T vs matrix-free J^T)",
+      "value": 3.75731177462e-16,
+      "threshold": "~1e-16",
+      "pass": true,
+      "raw_evidence": "artifacts/s3/Log.stageB8.r1.txt"
+    },
+    {
+      "name": "P5_forward_clean_dirs",
+      "metric": "explicit J vs matrix-free Jv relL2 (dir1/dir2, v[pRef]=0)",
+      "value": [4.00058516842e-16, 3.93112527741e-16],
+      "threshold": "~1e-16",
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P5_PP_vs_minusLprod",
+      "metric": "explicit PP diag vs -L_prod diag relL2 / PP symmetry / outlet bnd relL2",
+      "value": [2.42370093494e-10, 0.0, 5.93330710245e-09],
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P6_momentum_anchor",
+      "metric": "GateA momentum relL2 (eps=1e-3)",
+      "value": 1.65311363075e-04,
+      "threshold": "== BFINAL-003 1.65311e-4",
+      "pass": true,
+      "raw_evidence": "artifacts/s3/Log.stageB8.r1.txt"
+    },
+    {
+      "name": "P6_GateB",
+      "metric": "candA/candB relL2 (eps=1e-3)",
+      "value": [2.98506496345e-05, 1.05921688465e-11],
+      "threshold": "== BFINAL-003",
+      "pass": true,
+      "raw_evidence": "artifacts/s3/Log.stageB8.r1.txt"
+    },
+    {
+      "name": "P7_R_Px_boundary_L2",
+      "metric": "L2 d(phi_b)/d(alpha) on outlet cells",
+      "value": 5.35817662614e-13,
+      "threshold": "~5.36e-13 (BFINAL-007); ratio to |J_P w| 8.6e-4",
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P7_design_support_outlet",
+      "metric": "deltaAlpha outlet nnz / designMask outlet max",
+      "value": [0, 0.0],
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P7_BFINAL005_contraction",
+      "metric": "D1/D2/D3 D_mom/D_pre/D_tot vs locked relErr (max per dir)",
+      "value": [8.92e-13, 1.32e-12, 7.21e-13],
+      "threshold": "<= 1e-9",
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P7_production_contractions",
+      "metric": "prod momentum field dot relErr / volume anchors relErr",
+      "value": [2.03e-09, 5.40e-10, 7.65e-10],
+      "pass": true,
+      "raw_evidence": "s4_p1_p3_p4_p5_p7.json"
+    },
+    {
+      "name": "P8_tangent_smoke_D1",
+      "metric": "true relative residual J wPrime = -R_x d (D1, strongest)",
+      "value": 5.33057597578e-14,
+      "threshold": 1e-9,
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.json"
+    },
+    {
+      "name": "P8_tangent_smoke_D2_D3",
+      "metric": "true relative residual (D2/D3)",
+      "value": [4.29132125301e-14, 9.16666853203e-14],
+      "threshold": 1e-9,
+      "pass": true,
+      "raw_evidence": "s4_p2_p8.json"
+    }
+  ],
+  "final_decision": "PASS_JPP_PRESSURE_BC_PATCH"
+}

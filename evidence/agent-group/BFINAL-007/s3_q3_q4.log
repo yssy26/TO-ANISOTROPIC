@@ -1,0 +1,41 @@
+=== BFINAL-007 S3: Q3/Q4 (candidate J = -L_prod, diagnostic-only) ===
+exported J = transpose(explicitJT.mtx) re-pinned row 100800 (nnz=6209552, t=1.5s)
+
+----- Q3: exported J P-P block vs production laplacian (diag/upper/source) -----
+exported J P-P diag vs interior-only L diag (excl pRef row): relL2 = 1.700e-16
+production diag (L_int + addBoundaryDiag) - exported J P-P diag:
+  off-outlet max|d| = 2.482e-24 (expect ~0)
+  84 outlet cells    = [-1.7063e-09, -5.4800e-10]  (expect == internalCoeffs_b [-1.7063e-09, -5.4800e-10])
+exported J P-P upper (own,nei) vs probe L upper(+kf), 96857 faces excl. cell-0: relL2 = 1.382e-16  max|d| = 1.034e-24
+probe laplacian source max|.| = 8.935e-20  (boundaryCoeffs_b = 0, p_b = 0)
+CONCLUSION Q3: exported J P-P == interior-only laplacian; the ONLY difference to the PRODUCTION pressure matrix is the outlet internalCoeffs_b diagonal (=-cand) on the 84 outlet cells; boundaryCoeffs source = 0 (p_b=0).
+
+----- Q4a: candidate J (diagnostic-only): P-P := -(L_int+bnd) = -L_prod -----
+candidate J built: P-P = -L_prod (nnz=6209549, t=7.5s)
+candidate P-P diag vs -(production L diag): relL2 (excl pRef) = 2.424e-10
+null vector ||w||=2.084470e+18  n[PREF]=0.000e+00
+||J_exp . n||/||n|| = 2.717e-19   ||J_cand . n||/||n|| = 3.020e-09   (null mode gone? YES)
+sigma_min(J_exp) = 7.382e-27 (BFINAL-006 Post-Reviewer) -> candidate sigma_min: run s3_q4_sigma.py (splu, ~30 min)
+
+----- Q4b: candidate J_PP . n_P vs S2 actual-residual central FD -----
+candidate J_PP . n_P vs FD_lin: ||candPPn||=1.7683e-09 ||FD||=1.7683e-09 relL2=2.946e-09 (target ~1e-9)
+  exported J_PP . n_P vs FD: |Jexp-FD|/|FD|=1.708e+00 |Jexp+FD|/|FD|=3.072e-01 -> exported P-P = NEGATIVE of residual derivative (+cand)
+  self-check FD_lin vs -(L_prod.n_P) [independent]: relL2 = 2.414e-09
+  candidate P-P . n_P vs -(L_prod.n_P): relL2 = 1.689e-09 (candidate == residual deriv)
+
+----- Q4c: BFINAL-003 G1/G2 anchors with candidate J (dp=0 directions) -----
+J_cand . v == J_exp . v (Gate-A dir, dp=0): relL2 = 0.000e+00
+J_exp . v vs oracle stageB5_gateA_Jv.mtx: relL2 = 2.932e-08 (G4 ref 3.98e-16)
+G2 eps=1e-03: mom 1.635e+00/0.000051 | Pint 1.000e+00/0.000116 | Pbnd 1.000e+00/-0.000680 | Ptot 1.000e+00/-0.000183
+G2 eps=3e-04: mom 1.635e+00/0.000051 | Pint 1.000e+00/0.000116 | Pbnd 1.000e+00/-0.000680 | Ptot 1.000e+00/-0.000183
+G2 eps=1e-04: mom 1.635e+00/0.000051 | Pint 1.000e+00/0.000116 | Pbnd 1.000e+00/-0.000680 | Ptot 1.000e+00/-0.000183
+G2 eps=3e-05: mom 1.635e+00/0.000051 | Pint 1.000e+00/0.000116 | Pbnd 1.000e+00/-0.000680 | Ptot 1.000e+00/-0.000183
+G2 eps=1e-05: mom 1.635e+00/0.000051 | Pint 1.000e+00/0.000116 | Pbnd 1.000e+00/-0.000680 | Ptot 1.000e+00/-0.000183
+G1 eps=1e-03: A int 2.989e-05/1.000000 bnd 2.185e-05/1.000000 all 2.985e-05/1.000000 | B int 1.058e-11/1.000000 bnd 1.331e-11/1.000000 all 1.059e-11/1.000000
+G1 eps=3e-04: A int 2.989e-05/1.000000 bnd 2.185e-05/1.000000 all 2.985e-05/1.000000 | B int 3.466e-11/1.000000 bnd 4.316e-11/1.000000 all 3.470e-11/1.000000
+G1 eps=1e-04: A int 2.989e-05/1.000000 bnd 2.185e-05/1.000000 all 2.985e-05/1.000000 | B int 1.068e-10/1.000000 bnd 1.491e-10/1.000000 all 1.071e-10/1.000000
+G1 eps=3e-05: A int 2.989e-05/1.000000 bnd 2.185e-05/1.000000 all 2.985e-05/1.000000 | B int 3.528e-10/1.000000 bnd 5.222e-10/1.000000 all 3.539e-10/1.000000
+G1 eps=1e-05: A int 2.989e-05/1.000000 bnd 2.185e-05/1.000000 all 2.985e-05/1.000000 | B int 1.055e-09/1.000000 bnd 1.098e-09/1.000000 all 1.055e-09/1.000000
+Q4c: anchors reproduced from raw artifacts; candidate (P-P-only change) leaves every dp=0 direction EXACTLY unchanged (relL2=0.000e+00).
+
+S3_Q3_Q4_DONE

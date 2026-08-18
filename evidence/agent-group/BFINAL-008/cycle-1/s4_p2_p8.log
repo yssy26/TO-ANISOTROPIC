@@ -1,0 +1,25 @@
+=== BFINAL-008 S4 P2+P8 (corrected production J) ===
+HEAD ca8a772b branch agent/dsH-stage-b-validation (recorded in JSON)
+export loaded nnz=6209576 (t=0.4s)
+re-pinned corrected J built nnz=6209552 (t=1.1s)
+identity rows in P block [100800,134400): [0]
+row 106400: nnz=34 (physical, not identity) 
+null vector: ||wPrime_TAN_D1||=2.084470e+18 ||n_P||=0.999978 n[PREF]=0.000e+00
+||J_corrected n||/||n|| = 3.019933e-09   (OLD exported J: 2.717e-19; candidate: 3.020e-09)
+[LU] splu(corrected J, COLAMD) ...
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-008/cycle-1/s4_p2_p8_nullspace_tangent.py:82: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+splu done (t=693.7s)
+  trial 0: sigma_min~1.187e-11 (||x||=3.087e+13)
+  trial 1: sigma_min~8.620e-12 (||x||=4.255e+13)
+  trial 2: sigma_min~1.216e-11 (||x||=3.007e+13)
+sigma_min(corrected J): min=8.620e-12 mean=1.088e-11
+old null mode n_P: top-1% mass=0.895 outlet-cell mass=0.352 (BFINAL-006: top-1% 0.895)
+corrected J v_min(P-block): top-1% mass=0.031 outlet-cell mass=0.000
+  max |v_P| at cell 32480 (outlet-cell? False)
+  corrected J ||J n_old||/||n_old||=3.020e-09  (old exported J: 2.717e-19)
+[solves] J wPrime = -R_x d, D1/D2/D3, iterative refinement (30 iters)
+  D1: ||rhs||=5.663185e-01 trueRelRes=5.330576e-14 Urel=4.630730e-14 Prel=7.745005e-11 ||wPrime||=2.890926e+07 w[PREF]=0.000e+00
+  D2: ||rhs||=8.615839e-01 trueRelRes=4.291321e-14 Urel=3.681260e-14 Prel=4.241575e-11 ||wPrime||=3.707008e+07 w[PREF]=0.000e+00
+  D3: ||rhs||=8.516528e-01 trueRelRes=9.166669e-14 Urel=7.964312e-14 Prel=1.489229e-10 ||wPrime||=9.003501e+07 w[PREF]=0.000e+00
+S4_P2_P8_DONE t=703.1s -> s4_p2_p8.json

@@ -1,0 +1,12 @@
+=== production (switch OFF) activation: projection onto D1/D2/D3 ===
+D1: raw-design proj=-5.6235633242968527e-02 (oracle total -5.6235633378700002e-02) relErr=2.414e-09
+       xh-level   proj=-3.8781662294211489e-01 (oracle total -5.6235633378700002e-02) relErr=5.896e+00
+       [momentum-only would be -4.8686755427699999e-02]
+D2: raw-design proj=+2.9767243191247394e-01 (oracle total +2.9767243175300001e-01) relErr=5.357e-10
+       xh-level   proj=+3.0581527176333427e+00 (oracle total +2.9767243175300001e-01) relErr=9.274e+00
+       [momentum-only would be +2.2907966236200000e-01]
+D3: raw-design proj=-3.6341429801970512e-02 (oracle total -3.6341429839499999e-02) relErr=1.033e-09
+       xh-level   proj=-1.1541095219224915e+00 (oracle total -3.6341429839499999e-02) relErr=3.076e+01
+       [momentum-only would be -3.0131401620800000e-02]
+
+PRODUCTION CONTAINS BOTH ROWS (switch OFF): False

@@ -1,0 +1,12 @@
+NOTE — ABORTED_PREAUTHORIZATION
+===============================
+The pre-state files 00-06 in this directory were captured by an
+accidental/pre-authorization BFINAL-005-style cycle that predates the
+formally approved BFINAL-005 plan. They are preserved verbatim (not
+deleted, not edited) per task §12 and are NOT formal BFINAL-005 acceptance
+evidence.
+
+Formal BFINAL-005 pre-state is captured under:
+  evidence/agent-group/BFINAL-005/cycle-2/pre-state/
+
+See also: ../ABORTED_PREAUTHORIZATION.txt (one level up).

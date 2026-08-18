@@ -1,0 +1,114 @@
+{
+  "task_id": "BFINAL-008",
+  "cycle": 1,
+  "step": "S3",
+  "mode": "PATCH",
+  "hypothesis_id": "BFINAL-008-JPP-ACTUAL-PRIMAL-CLOSURE",
+  "provenance": {
+    "workspace": "/home/ys/dsH/TO-ANISOTROPIC",
+    "git_root": "/home/ys/dsH/TO-ANISOTROPIC",
+    "branch": "agent/dsH-stage-b-validation",
+    "HEAD": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+    "binary": "/home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF (mtime 2026-08-18 11:27, newer than all src: solveDiscreteFlowAdjoint.H 09:05, solveDiscreteFlowAdjointProduction.H 08:43, stageB8JPPActualResidualFD.H 10:56)",
+    "env": "source /opt/openfoam7/etc/bashrc THEN unset FOAM_SIGFPE; FOAM_USER_APPBIN=/home/ys/dsH/TO-ANISOTROPIC/build/bin"
+  },
+  "acceptance": {
+    "MTO_RC_run1": 0,
+    "MTO_RC_run2": 0,
+    "crash_markers_run1": 0,
+    "crash_markers_run2": 0,
+    "real_case_optProperties_unchanged": true,
+    "real_case_mtime": "2026-08-17 00:22:38",
+    "real_case_new_switch_count": 0,
+    "real_case_optProperties_sha256": "6d7e4de1ee10c9f4968acc2eecf546dc207d45bc56a526a23b7670a43d680ed7",
+    "artifacts_sha256_archived": "evidence/agent-group/BFINAL-008/cycle-1/artifacts/sha256_artifacts.txt (57 entries)"
+  },
+  "runs": [
+    {
+      "run": "run-1 probe path",
+      "scratch": "/home/ys/dsH/b8_scratch_r1",
+      "switches": "stageB4JacobianProbe=true stageB5BoundaryRelaxOracle=true stageB6RxDesignOracle=true stageB8JPPActualResidualFD=true",
+      "MTO_RC": 0,
+      "wall_s": 497,
+      "log": "/home/ys/dsH/b8_scratch_r1/Log.stageB8.r1.txt (archived artifacts/s3/)"
+    },
+    {
+      "run": "run-2 production path",
+      "scratch": "/home/ys/dsH/b8_scratch_prod",
+      "switches": "stageB4JacobianProbe=false stageB5BoundaryRelaxOracle=false stageB6RxDesignOracle=false stageB8JPPActualResidualFD=false",
+      "MTO_RC": 0,
+      "wall_s": 3136,
+      "log": "/home/ys/dsH/b8_scratch_prod/Log.stageB8.prod.txt (archived artifacts/s3/)"
+    }
+  ],
+  "P1_evidence": {
+    "full_P_relL2_eps1e-2": 1.443e-08,
+    "outlet_adjacent_relL2": 5.455e-09,
+    "off_outlet_relL2": 5.296e-08,
+    "cos_full_P": 1.0,
+    "FD_mass_outlet_fraction": 0.686248479375,
+    "Jv_mass_outlet_fraction": 0.686248477495,
+    "JvP_vs_BFINAL007_FD_lin_relL2": 2.945942e-09,
+    "eps_plateau_full_P_relL2": {"1e-2": 1.443e-08, "1e-3": 1.167e-07, "1e-4": 1.038e-06, "1e-5": 8.233e-06}
+  },
+  "P3_evidence_eps1e-2": {
+    "dir1_P_total": 1.443e-08,
+    "dir2_U_rows": 1.654e-04,
+    "dir2_P_total": 1.516e-04,
+    "dir2_P_outlet_adjacent": 1.357e-04,
+    "dir3_U_rows": 1.653e-04,
+    "dir3_P_total": 1.528e-04
+  },
+  "P4_evidence": {
+    "BlockDot_thermalCoupling": {"PU": "2.07803300324e-13", "PP": "2.29255815574e-14", "UU": "7.3095183677e-14", "UP": "1.79609743792e-12", "boundaryU": "1.80391921425e-13"},
+    "BlockDot_pressureDrop": {"PU": "2.07803300324e-13", "PP": "2.29255815574e-14", "UU": "7.3095183677e-14", "UP": "1.79609743792e-12", "boundaryU": "1.80391921425e-13"},
+    "reduced_coldflow_dot_test": "6.86412558997e-14 (both labels)"
+  },
+  "P5_evidence": {
+    "ExplicitJToracle": {"maxRelL2": "3.75731177462e-16", "maxRelL_U": "3.53382916868e-16", "maxRelL_P": "3.75831856052e-16"},
+    "explicit_PP_diff_vs_old": {
+      "offdiag_flip_rel_dev": 0.0,
+      "offoutlet_diag_flip_rel_dev": 2.4e-18,
+      "outlet_diag_boundary_term_range": ["5.479951e-10", "1.706289e-09"],
+      "outlet_diag_boundary_term_mean": 1.157420e-09,
+      "pRef_row_identical": true
+    }
+  },
+  "P6_evidence": {
+    "GateB_candA_eps1e-3": 2.98506496345e-05,
+    "GateB_candB_eps1e-3": 1.05921688465e-11,
+    "GateA_momentum_eps1e-3": 1.65311363075e-04,
+    "BFINAL003_references": {"candA": "2.98506496e-05", "candB": "1.05921670e-11", "momentum": "1.65311e-04"}
+  },
+  "P7_evidence": {
+    "stageB6_D1_Dmom_prod_rel": 2.03023945995e-09,
+    "stageB6_D2_Dmom_prod_rel": 5.39814148733e-10,
+    "stageB6_D3_Dmom_prod_rel": 7.65196471109e-10,
+    "rxPressureRow_dot_relErr": 2.57680498181e-15,
+    "BFINAL005_references": {"D1": "2.4e-09", "D2": "5.4e-10", "D3": "1.0e-09", "rx_dot": "2.5768e-15"}
+  },
+  "run2_production_site": {
+    "thermal_matrix_dot_test": "1.09689091013e-13",
+    "g_w_unit_test": {"thermal": "2.7025486001e-11", "pressure": "7.07793481308e-12", "abort_threshold": "1e-9"},
+    "prod_fgmres_thermalCoupling": "iterations=4000 trueRelRes=4.55432043137e-05 (DIAGNOSTIC MODE warning, discreteProdConvergeFatal=false)",
+    "prod_fgmres_pressureDrop": "iterations=4000 trueRelRes=0.0110569777489 (DIAGNOSTIC MODE warning)",
+    "prod_solv_JT1P": {"sum": 12454.1904658, "|J^T*1_P|L2": 1429.48391438},
+    "note": "production FGMRES non-convergence is a preconditioner-strength limitation, NOT operator invalidity (handoff §5.4: exact offline SuperLU solves reach 3.48e-9; solver tuning explicitly out of scope); P8 exact direct tangent solve is the structural-solvability gate"
+  },
+  "gate_evaluation": "P1-P8 gate evaluation is S4+; this step (S3) delivers the raw run evidence. All run-1 metrics identical to the S2 smoke run (deterministic; internal repeatability).",
+  "evidence_paths": [
+    "evidence/agent-group/BFINAL-008/cycle-1/S3_run_evidence.md",
+    "evidence/agent-group/BFINAL-008/cycle-1/s3_gate_metrics.json",
+    "evidence/agent-group/BFINAL-008/cycle-1/s3_gate_metrics.py",
+    "evidence/agent-group/BFINAL-008/cycle-1/s3_explicit_PP_diff.py",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/s3/Log.stageB8.r1.txt",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/s3/Log.stageB8.prod.txt",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/s3/explicitJT.mtx",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/s3/stageB5_*.mtx",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/s3/stageB6_*.mtx",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/stageB8_*.mtx",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/sha256_artifacts.txt"
+  ],
+  "status": "S3_RUNS_COMPLETE",
+  "decision": "CONTINUE_TO_S4_GATE_EVALUATION"
+}

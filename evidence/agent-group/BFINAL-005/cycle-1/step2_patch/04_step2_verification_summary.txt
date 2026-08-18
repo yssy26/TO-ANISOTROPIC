@@ -1,0 +1,104 @@
+BFINAL-005 step2-patch-sensitivity — executor verification summary
+==================================================================
+Date/agent: executor (flash) step2 of APPROVED BFINAL-005 plan (PATCH_RX_PRESSURE_ROW)
+Workspace:  /home/ys/dsH/TO-ANISOTROPIC (pwd == git root, verified)
+HEAD:       ca8a772b8339a36e7906ea32a7125061c47aa280 (unchanged this step)
+Branch:     agent/dsH-stage-b-validation
+
+File modified (the ONLY modifiable file touched this step):
+  src/sensitivity.H   pre-hash 1a3031d90a11d780ef163cd70c29e7b356a9c351045b9affb8ca2a82580568c5
+                      post-hash (see 03_sha256_after_patch.txt)
+
+What was added
+--------------
+One scoped block, inserted in the DISCRETE branch of sensitivity.H
+immediately after the momentum piece
+  gsenshPressureDrop = -dAlphaDxh*(U & Uc); gsenshPressureDrop.primitiveFieldRef() *= mesh.V();
+(L67-68) and BEFORE the `if (freezeColdFlowForValidation)` zeroing (L70/now L267).
+The block adds the missing pressure/continuity-row design derivative
+  gsenshPressureDrop[cell] += -pc[cell]*R_P,xh[cell]     (NO extra mesh.V())
+with R_P,xh = div(dphiHbyA_w - dflux_w), w = dAlphaDxh, ported EXACTLY from the
+FD-secured analytic chain in src/stageB6RxDesignOracle.H (assembleWeightedRPa):
+  (a) rebuilt relaxed reduced-residual momentum layer, read-only:
+        UEqn = fvm::div(phi,U) - fvm::laplacian(nuEffFrozen,U) + fvm::Sp(alpha,U)
+             == -fvc::grad(p) + fvOptions(U)
+        minus fvc::div(nuEffFrozen*dev2(T(grad(U)))) when ransFlowModel
+        UEqn.relax(); fvOptions.constrain(UEqn)
+        bf5AlphaRel = mesh.relaxEquation("U") ? mesh.equationRelaxationFactor("U") : 1.0
+        bf5rAU = 1/UEqn.A();  bf5HbyA = constrainHbyA(bf5rAU*UEqn.H(), U, p)
+  (b) per-cell unweighted derivatives:
+        drAU  = -rAU^2/alphaRel                    (rAU = V/D_rel already carries V)
+        dHbyA = (rAU/alphaRel)*((1-alphaRel)*U - HbyA)
+  (c) weight w = dAlphaDxh multiplied in BEFORE the face-flux assembly/divergence:
+        dphiHbyA_w[face] = Sf&(wf*(dHbyA*w)[own] + (1-wf)*(dHbyA*w)[nei])
+                           boundary: Sf&(dHbyA*w) on assignable U patches, else 0
+        dflux_w = flux(fvm::laplacian(drAU*w as a scalarField, p))  (drAtU=drAU,
+                  consistent=false; matrix flux read-only, NO pEqn solve)
+        R_P,xh[cell] = sum_faces(dphiHbyA_w - dflux_w)   (raw face sum, NO 1/V)
+  (d) gsenshPressureDrop += -pc*R_P,xh per cell (NO extra mesh.V() on pressure term)
+All locals use the bf5* prefix; the single IOobject-created field is
+"bf005_drAUw" (NO_READ/NO_WRITE, transient, same pattern as the oracle's
+"stageB6_drAUw"). No #include added, no Info output, no writes, no diagnostic
+code: the block is pure production math, read-only w.r.t. every state variable
+(U/p/phi/alpha/x/xp/xh/k/omega/nutFrozen/nuEffFrozen are never re-solved or
+modified).
+
+Acceptance-checklist verification (step2)
+------------------------------------------
+[x] git diff shows ONLY src/sensitivity.H changed by this step: tracked diff =
+    src/sensitivity.H (this step, +197 lines, 0 removed) plus the two PRE-EXISTING
+    LOCKED BFINAL-003 production heads, whose sha256 are byte-identical to the
+    recorded locked hashes (solveDiscreteFlowAdjoint.H=f0c81497...,
+    solveDiscreteFlowAdjointProduction.H=8c4901bf...). git status --short shows
+    no other tracked modification.
+[x] discrete branch only: single hunk @@ -67,6 +67,203 @@ inside
+    `if (adjointMode == "discrete")`; the continuous branch (else, L292+) is
+    byte-identical (diff has 0 removed lines; only `--- a/src/sensitivity.H`
+    diff header matched "^-").
+[x] -pc*R_P,xh added per cell BEFORE the freezeColdFlowForValidation zeroing
+    (block closes at L265; `if (freezeColdFlowForValidation)` follows at L267).
+[x] momentum term and continuous branch byte-identical (L67-68 and L300-303
+    unchanged; git diff --check clean, 0 whitespace errors).
+[x] no new header, no diagnostic code added (no #include, no Info<<, no
+    OFstream/IOobject writes in the block).
+[x] braces balanced in the added block (18 open / 18 close), block is a single
+    scoped { } so the 3 inclusion sites of sensitivity.H (MTO_HF.C L95,
+    validateStageB2GradientAmplitude.H L302, validateStageBRepeatability.H
+    L455) each get an independent scope — no redeclaration/shadowing; all
+    variables used (phi, U, p, alpha, mesh, runTime, nuEffFrozen, ransFlowModel,
+    fvOptions, pc, dAlphaDxh, gsenshPressureDrop, constrainHbyA, dev2) are in
+    scope at every inclusion site (verified against MTO_HF.C include chain:
+    createFields.H/readTransportProperties.H/createFrozenTurbulenceFields.H/
+    createFvOptions.H; same API calls as the compiling oracle
+    stageB6RxDesignOracle.H in the same TU).
+
+Semantic mapping (mirror of the source-verified oracle)
+--------------------------------------------------------
+- oracle rAUrelBase  <-> bf5rAU     (relaxed 1/UEqn.A(), pre-adjustPhi)
+- oracle HbyABase    <-> bf5HbyA    (constrainHbyA(rAU*H,U,p), pre-adjustPhi)
+- oracle drAU        <-> bf5DrAU    (-rAU^2/alphaRel)
+- oracle dHbyA       <-> bf5DHbyA   ((rAU/alphaRel)*((1-alphaRel)*U - HbyA))
+- oracle w           <-> dAlphaDxh  (production mask/alphamin-clipped, BC-corrected)
+- oracle dphiHbyAw   <-> bf5DphiHbyAw (weighted face flux, internal+boundary)
+- oracle dfluxW      <-> bf5DfluxW  (flux(fvm::laplacian(drAUwField, p)))
+- oracle anRPwOut    <-> bf5RPxh    (div(dphiHbyA_w - dflux_w), raw face sum)
+- oracle §9/§10 D_pressure = -pc^T R_P,x d  <->  gsenshPressureDrop += -pc*R_Pxh
+
+Expected downstream effect (step3/step4 will verify numerically)
+-----------------------------------------------------------------
+With the same linear filter/projection chain (designMask -> drho + eta
+correction -> adjoint filter -> designMask, filter_chainrule.H), the projected
+production gradient becomes D_total = D_momentum + D_pressure for D1/D2/D3:
+  D1: -0.0562356333787 ; D2: +0.297672431753 ; D3: -0.0363414298395
+(momentum piece unchanged == D_momentum; added piece == D_pressure,
+  -0.00754887795106 / +0.0685927693909 / -0.00621002821874).
+Smoke case /home/ys/dsH/b2_case_smoke has freezeColdFlowForValidation=false,
+adjointMode=discrete, mmaUpdateEnabled=false, stageB2Enabled=false,
+stageB6RxDesignOracle=true — consistent with the plan's build/run step.
+
+Artifacts in this directory
+----------------------------
+01_sensitivity_diff.txt   git diff src/sensitivity.H (the full patch)
+02_tracked_diff_stat.txt  git diff --stat (tracked files)
+03_sha256_after_patch.txt sha256 of sensitivity.H + the two locked heads
+04_step2_verification_summary.txt (this file)

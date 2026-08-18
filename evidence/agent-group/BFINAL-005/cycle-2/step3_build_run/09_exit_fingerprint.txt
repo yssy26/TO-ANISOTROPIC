@@ -1,0 +1,53 @@
+=== EXIT state fingerprint (BFINAL-005 cycle-2 step3_build_run) ===
+UTC 2026-08-17 02:52:41
+ca8a772b8339a36e7906ea32a7125061c47aa280
+agent/dsH-stage-b-validation
+--- git status --porcelain=v1 ---
+ M src/sensitivity.H
+ M src/solveDiscreteFlowAdjoint.H
+ M src/solveDiscreteFlowAdjointProduction.H
+?? build/
+?? evidence/agent-group/BFINAL-002/
+?? evidence/agent-group/BFINAL-003/
+?? evidence/agent-group/BFINAL-004-FIX/
+?? evidence/agent-group/BFINAL-004/
+?? evidence/agent-group/BFINAL-005/
+?? src/rxPressureRowTranspose.H
+?? src/stageB5BoundaryRelaxOracle.H
+?? src/stageB6RxDesignOracle.H
+?? src/validation_stage_a_diagnostic_cleanup_build.log
+?? src/validation_stage_a_processor_unit.log
+?? src/validation_stage_a_rebuild.log
+?? src/validation_stage_a_unit.log
+?? src/validation_stage_b01_build.log
+?? src/validation_stage_b02_build.log
+?? src/validation_stage_b1_build.log
+?? src/validation_stage_b2_build.log
+?? src/validation_stage_b2diag_build.log
+?? src/validation_stage_b2diag_build2.log
+?? src/validation_stage_b2diag_build3.log
+?? src/validation_stage_b4_build.log
+?? src/validation_stage_b4b_build.log
+?? src/validation_stage_b4c_build.log
+?? src/validation_stage_b4d_build.log
+?? src/validation_stage_b4e_build.log
+?? src/validation_stage_b4f_build.log
+?? src/validation_stage_b4g_build.log
+?? src/validation_stage_b4h_build.log
+?? src/validation_stage_b4i_build.log
+?? src/validation_stage_b4j_build.log
+?? src/validation_stage_b4k_build.log
+?? src/validation_stage_b4l_build.log
+?? src/validation_stage_b4m_build.log
+?? src/validation_stage_b4n_build.log
+--- sha256 (tracked+new sources) ---
+d777191b472360e4710c6dc78cf3e3c87e3737daf02ef2c040b3e81a7e457efd  src/sensitivity.H
+f8f9379660a0d155284b8a6ba15003befd37873410bb29d4dc10a3fd4aee9a6d  src/rxPressureRowTranspose.H
+f0c814975cf8bc7f98b9f69efa2f0bc01bd251579920bbedda7d266b72927507  src/solveDiscreteFlowAdjoint.H
+8c4901bf8da4edbc7cc1efe73a7583963e4688bba93c8c58539c4c39cae1ad91  src/solveDiscreteFlowAdjointProduction.H
+--- forbidden-module diff --stat vs HEAD ---
+ src/solveDiscreteFlowAdjoint.H           | 260 +++++++++++++++++++++++++------
+ src/solveDiscreteFlowAdjointProduction.H |  69 +++++++-
+ 2 files changed, 276 insertions(+), 53 deletions(-)
+--- binary mtime after build ---
+2026-08-17 10:43:48.218535905 +0800 4816856 build/bin/MTO_HF

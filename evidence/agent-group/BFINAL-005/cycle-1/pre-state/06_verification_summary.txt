@@ -1,0 +1,56 @@
+BFINAL-005 step1-pre-state verification summary
+================================================
+Date/agent: BFINAL-005 executor (step1-pre-state, read-only baseline capture)
+
+Repository identity
+-------------------
+pwd                       : /home/ys/dsH/TO-ANISOTROPIC
+git rev-parse --show-toplevel : /home/ys/dsH/TO-ANISOTROPIC   (== configured workspace, OK)
+git rev-parse HEAD        : ca8a772b8339a36e7906ea32a7125061c47aa280   (== expected HEAD, OK)
+branch                    : agent/dsH-stage-b-validation
+Workspace == git root     : CONFIRMED (pwd == toplevel == /home/ys/dsH/TO-ANISOTROPIC)
+
+Dirty worktree (tracked modifications only)
+-------------------------------------------
+ M src/solveDiscreteFlowAdjoint.H          (pre-existing BFINAL-003 production diff, LOCKED)
+ M src/solveDiscreteFlowAdjointProduction.H(pre-existing BFINAL-003 production diff, LOCKED)
+No other tracked file is modified. src/sensitivity.H is CLEAN at HEAD (0 occurrences in git status).
+
+Locked BFINAL-003 production head hashes (sha256, must match handoff)
+---------------------------------------------------------------------
+src/solveDiscreteFlowAdjoint.H           = f0c814975cf8bc7f98b9f69efa2f0bc01bd251579920bbedda7d266b72927507  MATCH
+src/solveDiscreteFlowAdjointProduction.H = 8c4901bf8da4edbc7cc1efe73a7583963e4688bba93c8c58539c4c39cae1ad91  MATCH
+
+sensitivity.H pre-edit hash (sha256) — will be the ONLY production file edited this round
+---------------------------------------------------------------------------------------
+src/sensitivity.H = 1a3031d90a11d780ef163cd70c29e7b356a9c351045b9affb8ca2a82580568c5
+
+Forbidden-module zero-diff audit vs HEAD
+----------------------------------------
+git diff --stat HEAD -- <all forbidden modules> lists ONLY the two production heads above.
+All other forbidden files are byte-identical to HEAD (zero diff):
+  AdjNS_PD.H, AdjNS_HT.H, AdjNS_FF.H, NS.H, costfunction.H, computeObjective.H,
+  filter_x.H, filter_chainrule.H, updateMaterialProperties.H, createFrozenHotRegionFields.H,
+  update.H, updateFrozenTurbulenceFields.H, HeatTransfer.H, stageB5BoundaryRelaxOracle.H,
+  stageB6RxDesignOracle.H, validateStageB2GradientAmplitude.H, validateFrozenGradient.H,
+  validateGradientChain.H, validateGate6SSTStrict.H, validateMmaUnlockGate.H,
+  MMA.h, MMA/MMA.C, MMA/MMA.h
+
+Staged changes: none (03_git_diff_cached.txt is empty).
+Unstaged diff (02_git_diff_unstaged.txt, 497 lines) contains ONLY the two locked production diffs.
+
+Artifacts in this directory
+---------------------------
+00_repo_identity.txt                  repo identity (pwd/toplevel/HEAD/branch)
+01_git_status_porcelain.txt           git status --porcelain=v1
+02_git_diff_unstaged.txt              git diff (unstaged) — only the 2 locked production diffs
+03_git_diff_cached.txt                git diff --cached — empty
+04_sha256_sensitivity_and_forbidden.txt  sha256 of sensitivity.H + every forbidden module
+05_forbidden_diff_vs_HEAD_stat.txt    diff --stat of forbidden modules vs HEAD
+06_verification_summary.txt           this file
+
+ACCEPTANCE (step1): ALL MET
+  [x] pre-state dir exists
+  [x] HEAD == ca8a772b8339a36e7906ea32a7125061c47aa280
+  [x] sensitivity.H pre-hash recorded (1a3031d9...)
+  [x] forbidden modules zero diff vs HEAD (only the two locked BFINAL-003 production heads differ)

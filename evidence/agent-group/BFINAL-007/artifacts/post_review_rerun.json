@@ -1,0 +1,53 @@
+{
+ "Q1_FDlin_maxabs": 3.898379406317599e-10,
+ "Q1_FDlin_L2": 1.7683122530531548e-09,
+ "Q1_outlet_mass_fraction": 0.6862484752772424,
+ "Q1_top1pct_mass_fraction": 0.9461672242283429,
+ "Q1_FDlin_vs_minusLprod_nP_relL2": 2.413969243839516e-09,
+ "Q1_FDcd_vs_FDlin_relL2": 6.13720538371165e-07,
+ "Q2_icB_range": [
+  -1.706288787933969e-09,
+  -5.479950656786523e-10
+ ],
+ "Q2_bcB_maxabs": 0.0,
+ "Q2_deltaB_range": [
+  3999.999999999774,
+  4000.000000000218
+ ],
+ "Q2_magSfB": 2.5e-07,
+ "Q2_icB_reconstruction_relL2": 2.8872611181023765e-16,
+ "Q3_diag_JPP_vs_Lint_relL2": 1.6998953257692768e-16,
+ "Q3_prod_minus_export_offoutlet_maxabs": 2.481541837659083e-24,
+ "Q3_prod_minus_export_outlet_range": [
+  -1.7062887879339685e-09,
+  -5.479950656786527e-10
+ ],
+ "Q3_outlet_diff_vs_icB_relL2": 4.976790463817705e-16,
+ "Q4a_w_norm": 2.0844704629247094e+18,
+ "Q4a_n_PREF": 0.0,
+ "Q4a_nullvec_Jexp": 2.716845999801765e-19,
+ "Q4a_nullvec_Jcand": 3.0199329144323884e-09,
+ "Q4a_ratio": 11115583712.336798,
+ "Q4b_candPPn_vs_FDlin_relL2": 2.4139692438395267e-09,
+ "Q4b_candPPn_vs_FDcd_relL2": 6.137359188613913e-07,
+ "Q4b_expPPn_vs_FDlin_relL2": 1.707805230223504,
+ "Q4b_expPPn_plus_cand_vs_FDlin_relL2": 1.4219682463342802,
+ "Q4c_Jv_cand_vs_exp_relL2": 0.0,
+ "Q4c_Jexp_vs_oracle_exclPREF_relL2": 3.965814239437105e-16,
+ "Q5_drAU_outlet_range": [
+  -7.278553569573332e-12,
+  -7.507464800203773e-13
+ ],
+ "Q5_pc_outlet_range": [
+  -65.0620425279,
+  36.7822175684
+ ],
+ "Q5_term_range": [
+  -1.4388295963821038e-13,
+  5.386249825678602e-14
+ ],
+ "Q5_term_L2": 5.358176626141303e-13,
+ "Q5_deltaAlpha_outlet_nnz": 0,
+ "Q5_designMask_outlet_max": 0.0,
+ "_runtime_s": 8.385237455368042
+}

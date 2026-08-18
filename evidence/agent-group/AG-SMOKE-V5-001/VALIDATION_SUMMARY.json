@@ -1,0 +1,111 @@
+{
+  "run_id": "AG-SMOKE-V5-001",
+  "stage": "B-final",
+  "mode": "VALIDATION_ONLY",
+  "risk_level": "L0",
+  "hypothesis_id": "SMOKE-V5-001-WS",
+  "hypothesis": "The TO-ANISOTROPIC workspace resolves correctly and read-only: git repo root == /home/ys/dsH/TO-ANISOTROPIC, HEAD is a known commit, and the worktree state (dirty files, untracked evidence/build/logs) can be captured without modifying any project artifact.",
+  "head": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+  "head_matches_plan": true,
+  "head_is_40_hex": true,
+  "executor": "deepseek-v4-flash (Flash Executor)",
+  "step": "S2",
+  "checks": [
+    {
+      "name": "pwd",
+      "command": "pwd",
+      "expected": "/home/ys/dsH/TO-ANISOTROPIC",
+      "actual": "/home/ys/dsH/TO-ANISOTROPIC",
+      "exit_code": 0,
+      "pass": true
+    },
+    {
+      "name": "git_repo_root",
+      "command": "git rev-parse --show-toplevel",
+      "expected": "/home/ys/dsH/TO-ANISOTROPIC",
+      "actual": "/home/ys/dsH/TO-ANISOTROPIC",
+      "exit_code": 0,
+      "repo_root_match": "PASS",
+      "pass": true
+    },
+    {
+      "name": "git_head",
+      "command": "git rev-parse HEAD",
+      "expected": "ca8a772b8339a36e7906ea32a7125061c47aa280 (40-hex SHA)",
+      "actual": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+      "exit_code": 0,
+      "is_40_hex": true,
+      "pass": true
+    },
+    {
+      "name": "git_status_short",
+      "command": "git status --short",
+      "exit_code": 0,
+      "pre_run_entry_count": 41,
+      "post_run_entry_count": 42,
+      "delta_entries": [
+        "?? evidence/agent-group/AG-SMOKE-V5-001/ (planned evidence write; evidence not gitignored)"
+      ],
+      "pass": true
+    }
+  ],
+  "status_snapshot": {
+    "modified_tracked": [
+      "src/MTO_HF.C",
+      "src/sensitivity.H",
+      "src/solveDiscreteFlowAdjoint.H",
+      "src/solveDiscreteFlowAdjointProduction.H"
+    ],
+    "untracked_dirs": [
+      "build/",
+      "evidence/agent-group/BFINAL-002/",
+      "evidence/agent-group/BFINAL-003/",
+      "evidence/agent-group/BFINAL-004-FIX/",
+      "evidence/agent-group/BFINAL-004/",
+      "evidence/agent-group/BFINAL-005/",
+      "evidence/agent-group/BFINAL-006/",
+      "evidence/agent-group/BFINAL-007/"
+    ],
+    "untracked_src_files": [
+      "src/rxPressureRowTranspose.H",
+      "src/stageB5BoundaryRelaxOracle.H",
+      "src/stageB6RxDesignOracle.H",
+      "src/stageB7PressureBCDiagnostic.H"
+    ],
+    "untracked_src_build_logs": [
+      "src/validation_stage_a_diagnostic_cleanup_build.log",
+      "src/validation_stage_a_processor_unit.log",
+      "src/validation_stage_a_rebuild.log",
+      "src/validation_stage_a_unit.log",
+      "src/validation_stage_b01_build.log",
+      "src/validation_stage_b02_build.log",
+      "src/validation_stage_b1_build.log",
+      "src/validation_stage_b2_build.log",
+      "src/validation_stage_b2diag_build.log",
+      "src/validation_stage_b2diag_build2.log",
+      "src/validation_stage_b2diag_build3.log",
+      "src/validation_stage_b4_build.log",
+      "src/validation_stage_b4b_build.log",
+      "src/validation_stage_b4c_build.log",
+      "src/validation_stage_b4d_build.log",
+      "src/validation_stage_b4e_build.log",
+      "src/validation_stage_b4f_build.log",
+      "src/validation_stage_b4g_build.log",
+      "src/validation_stage_b4h_build.log",
+      "src/validation_stage_b4i_build.log",
+      "src/validation_stage_b4j_build.log",
+      "src/validation_stage_b4k_build.log",
+      "src/validation_stage_b4l_build.log",
+      "src/validation_stage_b4m_build.log",
+      "src/validation_stage_b4n_build.log"
+    ],
+    "note": "All 41 pre-existing entries (4 modified tracked src files; untracked build/, evidence/agent-group/BFINAL-002..007, 4 src .H oracle/diagnostic files, 25 src validation_stage_*.log) predate this run. The only post-run delta is the planned evidence file itself (evidence not gitignored). No src/, case, test, or script file modified by this run."
+  },
+  "stop_if_triggered": "none",
+  "block_reason": "",
+  "overall": "PASS",
+  "evidence_paths": [
+    "evidence/agent-group/AG-SMOKE-V5-001/VALIDATION_SUMMARY.json",
+    "evidence/agent-group/AG-SMOKE-001/smoke-output.md"
+  ]
+}

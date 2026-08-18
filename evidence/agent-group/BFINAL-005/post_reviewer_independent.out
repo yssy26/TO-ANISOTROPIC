@@ -1,0 +1,54 @@
+====================================================================================================
+BFINAL-005 Post-Reviewer independent recomputation (G1/G2/G3 from raw .mtx)
+====================================================================================================
+--- D1 ---
+  D_momentum oracle = -4.8686755427656596e-02
+  D_pressure oracle = -7.5488779510571756e-03
+  D_total   oracle = -5.6235633378713769e-02
+  G1 pressure-row prod = -7.5488779510571504e-03   relErr=3.332e-15  signOK=True
+  G2 total prod       = -5.6235633378713790e-02   relErr=3.702e-16  signOK=True
+  G3 raw-design prod  = -5.6235633242873936e-02   relErr=2.416e-09  signOK=True
+  |D_pressure/D_total|= 0.134237
+  G5 volume proj     = 1.5551865111446814e-01
+
+--- D2 ---
+  D_momentum oracle = 2.2907966236169819e-01
+  D_pressure oracle = 6.8592769390886349e-02
+  D_total   oracle = 2.9767243175258451e-01
+  G1 pressure-row prod = 6.8592769390886404e-02   relErr=8.093e-16  signOK=True
+  G2 total prod       = 2.9767243175258457e-01   relErr=1.865e-16  signOK=True
+  G3 raw-design prod  = 2.9767243191274856e-01   relErr=5.381e-10  signOK=True
+  |D_pressure/D_total|= 0.230430
+  G5 volume proj     = -8.4496677416589033e-02
+
+--- D3 ---
+  D_momentum oracle = -3.0131401620778143e-02
+  D_pressure oracle = -6.2100282187406977e-03
+  D_total   oracle = -3.6341429839518838e-02
+  G1 pressure-row prod = -6.2100282187406109e-03   relErr=1.397e-14  signOK=True
+  G2 total prod       = -3.6341429839518692e-02   relErr=4.010e-15  signOK=True
+  G3 raw-design prod  = -3.6341429801673028e-02   relErr=1.041e-09  signOK=True
+  |D_pressure/D_total|= 0.170880
+  G5 volume proj     = 6.3962376844327026e-02
+
+====================================================================================================
+Decomposition self-check: max|gT-(gM+gP)| = 5.204170427930421e-18
+====================================================================================================
+
+Anchor reproduction check (D_total / D_pressure vs BFINAL-004 locked):
+  D1: total=-5.6235633378714e-02 (anchor -0.0562356333787)  pressure=-7.5488779510572e-03 (anchor -0.00754887795106)
+  D2: total=2.9767243175258e-01 (anchor 0.297672431753)  pressure=6.8592769390886e-02 (anchor 0.0685927693909)
+  D3: total=-3.6341429839519e-02 (anchor -0.0363414298395)  pressure=-6.2100282187407e-03 (anchor -0.00621002821874)
+
+GATE VERDICTS (Post-Reviewer independent):
+  G1 D1: relErr=3.332e-15 signOK=True -> PASS
+  G2 D1: relErr=3.702e-16 signOK=True -> PASS
+  G3 D1: relErr=2.416e-09 signOK=True -> PASS
+  G1 D2: relErr=8.093e-16 signOK=True -> PASS
+  G2 D2: relErr=1.865e-16 signOK=True -> PASS
+  G3 D2: relErr=5.381e-10 signOK=True -> PASS
+  G1 D3: relErr=1.397e-14 signOK=True -> PASS
+  G2 D3: relErr=4.010e-15 signOK=True -> PASS
+  G3 D3: relErr=1.041e-09 signOK=True -> PASS
+
+ALL G1/G2/G3 PASS (independent): True

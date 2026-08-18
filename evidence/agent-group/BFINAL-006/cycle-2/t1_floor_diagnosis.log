@@ -1,0 +1,23 @@
+=== T1 numerical-floor diagnosis (physical vs scaled tangent system) ===
+physical re-pinned J built (nnz=6209552, t=1.5s)
+[A] estimating sigma_min of physical re-pinned J ...
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/t1_floor_diagnosis.py:47: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+  splu done (t=1944.9s)
+  trial 0: ||z||=3.6685e+02 ||x||=2.3851e+28  sigma_min~1.538e-26
+  trial 1: ||z||=3.6626e+02 ||x||=5.1361e+28  sigma_min~7.131e-27
+  trial 2: ||z||=3.6616e+02 ||x||=4.9231e+28  sigma_min~7.438e-27
+  sigma_min estimate: min=7.131e-27 mean=9.983e-27
+  ||J||_2 estimate ~ max row norm = 1.000e+00 -> cond ~ 1.402e+26
+[B] physical solve D1: ||wPrime||=2.0863e+18 ||Jw-rhs||=1.0161e-03 relres=1.794e-03
+[C] building scaled tangent system Mtilde = Dout^-1 J Din ...
+  Mtilde built (nnz=6159657, t=2826.2s)
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-006/cycle-2/t1_floor_diagnosis.py:93: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu2 = spla.splu(Mtilde, permc_spec="COLAMD")
+  splu(scaled) done (t=4645.4s)
+[C] scaled solve D1: ||z||=1.3720e+16 ||wPrime||=2.0841e+18  PHYSICAL relres=1.472e-01  w'[PREF]=0.000e+00
+  scaled-system relres (iter0)=2.503e-02
+  scaled-system relres after refinement=3.864e-03 (iter 29)
+  physical-space residual with refined scaled solution: relres=4.262e-04  ||wPrime||=2.0845e+18
+[D] scaled-system sigma_min estimate: min=3.835e-20 -> cond~2.0e+22
+done in 4684.1s

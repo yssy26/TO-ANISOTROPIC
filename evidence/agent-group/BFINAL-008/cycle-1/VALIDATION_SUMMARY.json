@@ -1,0 +1,203 @@
+{
+  "task_id": "BFINAL-008",
+  "cycle": 1,
+  "step": "validate (independent re-run of all approved validation entries)",
+  "mode": "PATCH",
+  "hypothesis_id": "BFINAL-008-JPP-ACTUAL-PRIMAL-CLOSURE",
+  "provenance": {
+    "workspace": "/home/ys/dsH/TO-ANISOTROPIC",
+    "git_root": "/home/ys/dsH/TO-ANISOTROPIC",
+    "branch": "agent/dsH-stage-b-validation",
+    "HEAD": "ca8a772b8339a36e7906ea32a7125061c47aa280",
+    "binary": "/home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF (mtime 2026-08-18 11:27; wmake re-run this validate step: WMAKE_EXIT=0, no recompilation needed, all objects up-to-date)",
+    "real_case": "/home/ys/dsH/b2_case_smoke untouched (constant/optProperties sha256 6d7e4de1... mtime 2026-08-17 00:22, no stageB8 switch)",
+    "fresh_scratch_cases": {
+      "run-1_probe": "/home/ys/dsH/b8_scratch_v1 (stageB4/5/6 true + stageB8JPPActualResidualFD true; MTO_RC=0, Log.stageB8.v1.txt)",
+      "run-2_production": "/home/ys/dsH/b8_scratch_v2 (stageB4/5/6 false, no stageB8; MTO_RC=0, Log.stageB8.v2.txt)"
+    },
+    "source_hashes_unchanged_since_S1/S2": {
+      "solveDiscreteFlowAdjoint.H": "8390cfa44c0cfe63c0d881c615ceadb51ab33429e16e97fc9df0e646aad42478 (S2-final record)",
+      "solveDiscreteFlowAdjointProduction.H": "fdd5ea2fa5dd2d3790b494227c268b0f13a56512a0f518bc3f885f76cd198d1f (S1-post record)",
+      "stageB7PressureBCDiagnostic.H": "d7f7ecf0ff6ddbb71b879df315d2866d238261cbb63eb78aeeb152880dcf7b88 (locked)",
+      "MTO_HF.C": "1f190c0c2b948269f63217c6a3c94857d988ce851709f4d4d9f9a482fc4df172 (locked)",
+      "sensitivity.H": "f0ed0726a89950b2c0ff777f9708feabb13d57f4814754edadaf82a30873af09 (BFINAL-005 locked)",
+      "rxPressureRowTranspose.H": "fd648ae0263ba6861d6822201ccf10181960efba64921d94be8be4abdcb9b1a5 (BFINAL-005 locked)"
+    }
+  },
+  "independent_rerun_evidence": {
+    "note": "All approved validation entries re-executed in this validate step on fresh scratch cases and fresh offline computations; every load-bearing number is bit-identical to the archived S2/S3/S4 evidence.",
+    "determinism": {
+      "run-1_log_diff_excluding_time_pid": "byte-identical (only Time/PID lines differ)",
+      "run-2_log_diff_excluding_time_pid": "byte-identical (only Time/PID lines differ)",
+      "stageB8_artifacts_22_files": "all 22 byte-identical (sha256 verified vs pristine archive)",
+      "fresh_explicitJT_mtx_sha256": "5ca1f5927d472863368ba725adfc86be2cc5223f31b61846b818965f7bd91bd9 == archived corrected export"
+    },
+    "fresh_scripts": [
+      "cycle-1/s4_validate_fresh_p1_p3_p4_p5_p7.py -> s4_validate_fresh_p1_p3_p4_p5_p7.json",
+      "cycle-1/s4_validate_fresh_p2_p8.py -> s4_validate_fresh_p2_p8.json"
+    ]
+  },
+  "validation_entries": [
+    {
+      "entry": "wmake build",
+      "command": "clean PATH + source /opt/openfoam7/etc/bashrc + unset FOAM_SIGFPE + FOAM_USER_APPBIN=/home/ys/dsH/TO-ANISOTROPIC/build/bin + cd src && wmake",
+      "pass_criterion": "WMAKE_EXIT=0, no compile errors",
+      "result": "WMAKE_EXIT=0 (no recompilation: binary 11:27 newer than all sources; log cycle-1/wmake_validate.log empty)",
+      "PASS": true
+    },
+    {
+      "entry": "run-1 MTO_HF probe (stageB8 P1 table)",
+      "command": "MTO_HF on /home/ys/dsH/b8_scratch_v1 (stageB8JPPActualResidualFD true), Log.stageB8.v1.txt",
+      "pass_criterion": "P1 relL2 <= 1e-6 (pref <= 1e-8; BFINAL-007 candidate ~2.4e-9) for full-P / outlet-adjacent / off-outlet; same sign/structure; O(1)=FAIL",
+      "result": {
+        "full_P_relL2_eps1e-2": 1.44285092847e-08,
+        "outlet_adjacent_relL2": 5.45485423831e-09,
+        "off_outlet_relL2": 5.29563863122e-08,
+        "cos_full_P": 1.0,
+        "sameSignFraction": 0.784523809524,
+        "FD_mass_outlet_fraction": 0.686248479375,
+        "Jv_mass_outlet_fraction": 0.686248477495,
+        "eps_plateau_full_P_relL2": {"1e-2": 1.44e-08, "1e-3": 1.17e-07, "1e-4": 1.04e-06, "1e-5": 8.23e-06},
+        "note": "actual-residual FD semantics (production R_P = div(phiHbyA) - div(pEqn.flux()), pEqn = fvm::laplacian(rAtU,p) incl. fixedValue outlet internalCoeffs); Jv vs BFINAL-007 verified FD_lin relL2 2.95e-9; eps=1e-2 exact-linearity optimum"
+      },
+      "PASS": true
+    },
+    {
+      "entry": "run-1 stageB8 P3 table (general actual-residual B-F2)",
+      "command": "same run-1, dir1/dir2/dir3 at eps=1e-2",
+      "pass_criterion": "P-total relL2 <= 1e-3 (pref <= 1e-4 or consistent with O(1e-4) floor); U-block at ~1.65e-4 momentum floor",
+      "result": {
+        "dir1": {"U_rows": 0.123138961821, "P_internal": 6.34320261355e-08, "P_outlet_adjacent": 5.45485423831e-09, "P_other_boundary": 3.2762447783e-08, "P_total": 1.44285092847e-08},
+        "dir2": {"U_rows": 1.65366318223e-04, "P_internal": 1.28155437391e-04, "P_outlet_adjacent": 1.35744659162e-04, "P_other_boundary": 1.66702191107e-04, "P_total": 1.51584205321e-04},
+        "dir3": {"U_rows": 1.65323466546e-04, "P_internal": 1.28147627066e-04, "P_outlet_adjacent": 1.03099356533e-03, "P_other_boundary": 1.66711726036e-04, "P_total": 1.52803849179e-04},
+        "note": "dir1 U-rows: P-only direction has tiny U FD signal (|FD| 3.28e-7, roundoff-level UEqn response) - not a P-row statement; dir3 P-outlet-adjacent 1.03e-3 is tiny-FD-noise block (|FD| 7.3e-8) at the same intrinsic floor"
+      },
+      "PASS": true
+    },
+    {
+      "entry": "run-1 BlockDot + run-2 production-site dot test (P4)",
+      "command": "run-1 Log.stageB8.v1.txt BlockDot + reduced cold-flow dot; run-2 Log.stageB8.v2.txt thermal matrix dot",
+      "pass_criterion": "full relative dot error <= 1e-10 (pref machine); blocks UU/UP/PU/PP <= 1e-10; PP reflects corrected sign + boundary term",
+      "result": {
+        "BlockDot_thermalCoupling": {"PU": "2.07803300324e-13", "PP": "2.29255815574e-14", "UU": "7.3095183677e-14", "UP": "1.79609743792e-12", "boundaryU": "1.80391921425e-13"},
+        "BlockDot_pressureDrop": {"PU": "2.07803300324e-13", "PP": "2.29255815574e-14", "UU": "7.3095183677e-14", "UP": "1.79609743792e-12", "boundaryU": "1.80391921425e-13"},
+        "reduced_coldflow_dot": "6.86412558997e-14 (both labels)",
+        "production_thermal_matrix_dot": "1.09689091013e-13",
+        "note": "PP block exercises corrected P-P sign + fixedValue boundary diagonal in both J and J^T; explicit P-P block exactly symmetric (max|PP-PP^T| excl cell0 = 0.0)"
+      },
+      "PASS": true
+    },
+    {
+      "entry": "run-1 ExplicitJToracle (P5)",
+      "command": "run-1 Log.stageB8.v1.txt ExplicitJToracle (explicit CSR J^T vs matrix-free J^T)",
+      "pass_criterion": "maxRelL2 <= 1e-12 (reference ~3.98e-16); corrected P-P sign, boundary internalCoeffs, reference row present",
+      "result": {
+        "maxRelL2": "3.75731177462e-16",
+        "maxRelL_U": "3.53382916868e-16",
+        "maxRelL_P": "3.75831856052e-16",
+        "explicitJ_vs_matrixfree_Jv": {"dir1": "4.00058516842e-16 (v[PREF]=0)", "dir2": "3.93112527741e-16 (v[PREF]=0)"},
+        "PP_diag_vs_minusLprod": 2.42370093494e-10,
+        "PP_sym_max_abs_excl_cell0": 0.0,
+        "outlet_bnd_vs_minusbt": 5.93330710245e-09,
+        "pRef_row": "identity pin row 100800, 14 stored entries, single 1.0 at col 100800 (byte-identical to pre-patch)"
+      },
+      "PASS": true
+    },
+    {
+      "entry": "run-1 G1/G2 anchors (P6)",
+      "command": "run-1 Log.stageB8.v1.txt StageB5 GateA/GateB",
+      "pass_criterion": "momentum relL2 ~= 1.653e-4 (Delta <= 1e-3); candA ~= 2.985e-5; candB ~= 1.06e-11; P<-U tangent anchor unchanged; J_PU Candidate-B preserved",
+      "result": {
+        "GateA_momentum_eps1e-3": "1.65311363075e-04 (cos 0.999999986345)",
+        "GateB_candA_eps1e-3": "2.98506496345e-05",
+        "GateB_candB_eps1e-3": "1.05921688465e-11",
+        "T1_momentum_UU_dp0": "relL2=0.00852323456072 cos=0.999963676577 (unchanged BFINAL-003 anchor)",
+        "note": "identical to BFINAL-003 byte-for-byte; P-P fix does not alter P<-U relaxed-SIMPLE correction (only P-P lambdaPdiff coefficient flipped; convTerm/phiAdjointRel/hA/directRel byte-identical)"
+      },
+      "PASS": true
+    },
+    {
+      "entry": "offline P2 (nullspace removal / invertibility)",
+      "command": "s4_validate_fresh_p2_p8.py: splu sigma_min on corrected re-pinned J (row 100800->identity) + null-vector matvec + geometry + identity-row scan",
+      "pass_criterion": "sigma_min >= 1e-13 and consistent with candidate ~7.9e-12 (not ~7.4e-27); ||J n||/||n|| ~3e-9 (not 2.7e-19); no outlet-concentrated near-null; unique identity row = pRefRow only",
+      "result": {
+        "sigma_min_trials": [1.18734961773e-11, 8.62017046628e-12, 1.21604412674e-11],
+        "sigma_min_min": 8.62017046628e-12,
+        "sigma_min_mean": 1.08847026370e-11,
+        "||J_corrected n||/||n||": 3.01993291393e-09,
+        "old_mode_top1pct_mass": 0.89476758254,
+        "old_mode_outlet_mass": 0.35169363958,
+        "corrected_vmin_top1pct_mass": 0.03070746467,
+        "corrected_vmin_outlet_mass": 6.53451773772e-07,
+        "corrected_vmin_max_cell": 32480,
+        "corrected_vmin_max_is_outlet": false,
+        "identity_rows_P_block": [0],
+        "row_106400_nnz": 34
+      },
+      "PASS": true
+    },
+    {
+      "entry": "offline P8 (direct tangent solvability smoke)",
+      "command": "s4_validate_fresh_p2_p8.py: J wPrime = -R_x d, splu + iterative refinement (30 iters), D1/D2/D3",
+      "pass_criterion": "true relative residual <= 1e-9 for >= 1 strong direction; new structural nullspace stall => FAIL_VALIDATION",
+      "result": {
+        "D1": {"||rhs||": 0.566318478, "trueRelRes": 5.33057597578e-14, "Urel": 4.63072998579e-14, "Prel": 7.74500511128e-11, "||wPrime||": 2.89092577804e+07, "wPREF": 0.0},
+        "D2": {"trueRelRes": 4.29132125301e-14, "||wPrime||": 3.70700814160e+07, "wPREF": 0.0},
+        "D3": {"trueRelRes": 9.16666853203e-14, "||wPrime||": 9.00350099837e+07, "wPREF": 0.0},
+        "note": "T1-style structural smoke only; T2/T3 NOT executed (out of scope). Pre-patch floor: D1 3.647e-4, D2 4.044e-5, D3 3.093e-3"
+      },
+      "PASS": true
+    },
+    {
+      "entry": "P7 R_x re-audit",
+      "command": "direct case-field check (designMask, deltaAlpha on the 84 outlet cells) + fresh fast script P7 + BFINAL-005 D1/D2/D3 contraction",
+      "pass_criterion": "designMask outlet max=0 and deltaAlpha outlet nnz=0; R_P,x boundary L2 ~= 5.36e-13 (<=1e-9 or <=1% of main signal); D1/D2/D3 contraction relErr <= 1e-6; non-negligible R_P,x => R_X_REOPEN_REQUIRED (no sensitivity patch)",
+      "result": {
+        "designMask_outlet_max": 0.0,
+        "designMask_outlet_sum": 0.0,
+        "deltaAlpha_outlet_nnz": 0,
+        "dphi_b_da_L2": 5.35817662614e-13,
+        "dphi_b_da_range": [-1.43882959638e-13, 5.38624982568e-14],
+        "ratio_to_|J_P w|": 0.000860965673165501,
+        "BFINAL005_contraction": [
+          {"dir": "D1", "relErr_Dtot_vs_locked": 2.44188074550e-13, "relErr_Dmom_vs_locked": 8.92182595798e-13, "relErr_G2_momentum": 2.03024373146e-09, "relErr_G5_volume": 3.21247874452e-15},
+          {"dir": "D2", "relErr_Dtot_vs_locked": 1.39545990946e-12, "relErr_Dmom_vs_locked": 1.31702266291e-12, "relErr_G2_momentum": 5.39814270186e-10, "relErr_G5_volume": 1.47816569940e-15},
+          {"dir": "D3", "relErr_Dtot_vs_locked": 5.22019524743e-13, "relErr_Dmom_vs_locked": 7.21376503740e-13, "relErr_G2_momentum": 7.65374367842e-10, "relErr_G5_volume": 2.82058376193e-15}
+        ],
+        "rxPressureRow_dot_relErr": "2.57680498181e-15",
+        "StageB6_RX_A_R_P_alpha_total_w_L2": "6.22344977639e-10 (== |J_P w| reference)",
+        "volume_anchors": {"D1": "0.1555186511144686", "D2": "-0.08449667741658891", "D3": "0.06396237684432686"},
+        "verdict": "no R_X_REOPEN required; R_P,x boundary contribution negligible at this design point (design-weighted: identically 0)"
+      },
+      "PASS": true
+    }
+  ],
+  "gate_verdicts": {
+    "P1": "PASS",
+    "P2": "PASS",
+    "P3": "PASS",
+    "P4": "PASS",
+    "P5": "PASS",
+    "P6": "PASS",
+    "P7": "PASS",
+    "P8": "PASS"
+  },
+  "final_decision": "PASS_JPP_PRESSURE_BC_PATCH",
+  "declared_statements": [
+    "The flow Jacobian now represents the actual frozen-primal pressure residual including the fixedValue outlet boundary contribution and the correct P-P residual sign convention.",
+    "J_PU remains closed from BFINAL-003.",
+    "R_x remains complete from BFINAL-005 for the current design region."
+  ],
+  "evidence_paths": [
+    "evidence/agent-group/BFINAL-008/cycle-1/VALIDATION_SUMMARY.json (this file)",
+    "evidence/agent-group/BFINAL-008/cycle-1/s4_validate_fresh_p1_p3_p4_p5_p7.json",
+    "evidence/agent-group/BFINAL-008/cycle-1/s4_validate_fresh_p2_p8.json",
+    "evidence/agent-group/BFINAL-008/cycle-1/s4_validate_fresh_p1_p3_p4_p5_p7.py",
+    "evidence/agent-group/BFINAL-008/cycle-1/s4_validate_fresh_p2_p8.py",
+    "/home/ys/dsH/b8_scratch_v1/Log.stageB8.v1.txt (fresh run-1, probe)",
+    "/home/ys/dsH/b8_scratch_v2/Log.stageB8.v2.txt (fresh run-2, production)",
+    "evidence/agent-group/BFINAL-008/cycle-1/artifacts/ (stageB8_* fresh, byte-identical to archived)",
+    "evidence/agent-group/BFINAL-008/FINAL_REPORT.md"
+  ],
+  "post_review_required": "independent reproduction per task section 18 (Post-Reviewer); no PASS based only on Executor summaries"
+}

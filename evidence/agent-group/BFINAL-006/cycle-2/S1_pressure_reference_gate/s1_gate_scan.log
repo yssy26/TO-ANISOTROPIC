@@ -1,0 +1,32 @@
+=== BFINAL-006 cycle-2 S1 Pressure-Reference Gate ===
+workspace=/home/ys/dsH/TO-ANISOTROPIC case=/home/ys/dsH/b2_case_smoke
+explicitJT.mtx exists=True size=467508907
+
+[CHECK 1] p.needReference() semantics from ACTUAL case/source
+  patches found: outlet(fixedValue), zeroGradient x7()
+  fixedValue patches: [('outlet', '0')]
+  -> p.needReference() == False  (false because outlet fixedValue uniform 0 fixes a value)
+  readTransportProperties.H init : label pRefCell = 0;
+  readTransportProperties.H call : setRefCell(p, simple.dict(), pRefCell, pRefValue);
+  fvSolution pRefCell=5600 pRefValue=0 (INEFFECTIVE: setRefCell is a no-op when !needReference)
+  CHECK 1 => PASS
+
+[CHECK 2] identity-row scan of explicitJT.mtx (corrected criterion)
+  reading header ...
+  matrix 134400 x 134400, header nnz=13558441
+  N = nrow/4 = 33600 ; pressure rows = [100800, 134400) ; discretePIndex(0)=100800 ; discretePIndex(5600)=106400
+  streamed 1363837 pressure-block coordinate lines in 6.3 s; unique (r,c) pairs = 715560
+  pressure rows with any entry: 33600
+  identity rows (single |v|>1e-12 AND diagonal==1): [100800]
+    row 100800: stored entries=14 (13 explicit zeros + 1 diagonal 1) -> nrow==1 criterion would FAIL, corrected criterion PASSES
+  CHECK 2 => PASS (unique identity row == 100800 == discretePIndex(0))
+
+[CHECK 3] detected identity row 100800 == discretePIndex(0) = 3*33600+0 = 100800 == 100800 => PASS
+
+[CHECK 4] row 106400 (= discretePIndex(5600)): stored entries=18, |v|>1e-12 entries=18, diag=-1.899160629508871e-09, is_identity=False
+  row 106400 nonzero columns: [13440, 13441, 13442, 16800, 16801, 16802, 16803, 16804, 16805, 17040, 17041, 17042, 20162, 105280, 106400, 106401, 106480, 107520]
+  CHECK 4 => PASS (106400 is a physical continuity row, NOT the reference/identity row)
+
+[CHECK 5] pRefRow = 100800 recorded for T1 re-pinning (J row pRefRow -> identity, rhs[pRefRow]=0). => PASS
+
+=== S1 GATE RESULT: ALL 5 CHECKS PASS (6.4 s) ===

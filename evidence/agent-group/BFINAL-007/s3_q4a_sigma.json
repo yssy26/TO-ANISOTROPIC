@@ -1,0 +1,10 @@
+{
+ "Q4a_sigma_min_Jcand_min": 8.01654476527667e-12,
+ "Q4a_sigma_min_Jcand_mean": 9.304105482082182e-12,
+ "Q4a_sigma_min_Jcand_trials": [
+  8.01654476527667e-12,
+  1.0572482208405142e-11,
+  9.323289472564736e-12
+ ],
+ "note": "diagnostic-only candidate, no production change"
+}

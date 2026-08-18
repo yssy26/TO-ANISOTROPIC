@@ -1,0 +1,36 @@
+{
+ "Q5_alphaRel": 0.4,
+ "Q5_outlet_ncells": 84,
+ "Q5_drAU_outlet_range": [
+  -7.278553569573332e-12,
+  -7.507464800203773e-13
+ ],
+ "Q5_pc_outlet_range": [
+  -65.0620425279,
+  36.7822175684
+ ],
+ "Q5_delta_b_range": [
+  3999.999999999774,
+  4000.000000000218
+ ],
+ "Q5_magSf_b": 2.5e-07,
+ "Q5_dphi_b_da_min": -1.4388295963821038e-13,
+ "Q5_dphi_b_da_max": 5.386249825678602e-14,
+ "Q5_dphi_b_da_L2": 5.358176626141303e-13,
+ "Q5_dphi_b_da_meanabs": 4.623859870014693e-14,
+ "Q5_current_dflux_b": 0.0,
+ "Q5_current_dflux_b_reason": "drAU*w field created with dimensionedScalar 0 + calculated BC; correctBoundaryConditions() leaves value 0 (calculatedFvPatchField::updateCoeffs empty); interpolated boundary gamma_b=0 -> dflux_b==0 exactly; runtime dot test relErr=2.57680498181e-15 (Log.stageB7.on.txt L1900)",
+ "Q5_ref_Jp_w_L2": 6.22344977639e-10,
+ "Q5_ref_RxT_L2": 0.000256656999292,
+ "Q5_ref_g0_bnd_max": 0.0650620425279,
+ "Q5_ratio_boundaryterm_vs_Jp_w": 0.0008609656731655011,
+ "Q5_deltaAlpha_outlet_nnz": 0,
+ "Q5_designMask_outlet_max": 0.0,
+ "Q5_note_design_support": "deltaAlpha (RX-A weighted direction) and designMask are ZERO on all 84 outlet cells -> the design-weighted boundary term is IDENTICALLY 0 in the validated directions; the dflux_b=0 assumption is exact for this case."
+}
+
+Q5: d(phi_b)/d(alpha) = +drAtU_b*delta_b*|Sf|_b*p_c per outlet cell:
+  range [-1.4388e-13, 5.3862e-14], L2=5.3582e-13
+  |term|L2 / |J_P*w|L2 = 8.610e-04  (current operator: dflux_b = 0 exactly)
+  deltaAlpha support on outlet = 0 cells; designMask max on outlet = 0.0
+S3_Q5_DONE

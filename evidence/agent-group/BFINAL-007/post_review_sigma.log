@@ -1,0 +1,9 @@
+loading exported J^T ...
+candidate J built nnz=6209552 t=11.0s
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-007/post_review_sigma.py:63: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(Jc.tocsr(), permc_spec="COLAMD")
+splu done t=1967.1s
+trial 0 sigma_min~6.859e-12
+trial 1 sigma_min~4.586e-12
+trial 2 sigma_min~1.237e-11
+POST_REVIEW_SIGMA_DONE {"sigma_min_trials": [6.858591078729366e-12, 4.586347047666469e-12, 1.237188621191108e-11], "sigma_min_min": 4.586347047666469e-12, "sigma_min_mean": 7.938941446102306e-12, "_runtime_s": 1970.6454882621765}
