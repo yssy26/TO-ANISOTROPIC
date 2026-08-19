@@ -400,6 +400,20 @@ if (stageB2Enabled)
         << " ||D3||inf=" << gMax(mag(D3))
         << " (same fields used for FD and projections)" << endl;
 
+    // BFINAL-013 P2: per-term contraction decomposition at exactly this
+    // baseline state (switch-gated, read-only).
+    if
+    (
+        optProperties.lookupOrDefault<Switch>
+        (
+            "stageB13GradientProbe",
+            false
+        )
+    )
+    {
+        #include "stageB13ContractionProbe.H"
+    }
+
     struct FDProbe
     {
         scalar J, PD, gDP, gV;

@@ -27,6 +27,15 @@ class StageBSafetyGateTests(unittest.TestCase):
         cls.create_fields = (
             REPO_ROOT / "src" / "createFields.H"
         ).read_text(encoding="utf-8")
+        cls.production_probe = (
+            REPO_ROOT / "src" / "stageB13GradientProbe.H"
+        ).read_text(encoding="utf-8")
+        cls.contraction_probe = (
+            REPO_ROOT / "src" / "stageB13ContractionProbe.H"
+        ).read_text(encoding="utf-8")
+        cls.b2_amplitude = (
+            REPO_ROOT / "src" / "validateStageB2GradientAmplitude.H"
+        ).read_text(encoding="utf-8")
 
     def test_pressure_reference_follows_openfoam_need_reference(self):
         self.assertIn(
@@ -213,6 +222,39 @@ class StageBSafetyGateTests(unittest.TestCase):
         self.assertNotIn(
             "const scalarField& prodPrecLower = prodPressurePrecMatrix.lower();",
             self.production,
+        )
+
+    def test_bfinal013_localization_probes_are_gated_and_readonly(self):
+        # BFINAL-013: P1 source dot tests and P2 contraction decomposition
+        # are switch-gated diagnostics (default off) and must not alter the
+        # formal acceptance machinery.
+        self.assertIn(
+            "stageB13GradientProbe.H",
+            self.main_solver,
+        )
+        self.assertIn(
+            "stageB13ContractionProbe.H",
+            self.b2_amplitude,
+        )
+        self.assertIn(
+            "B13SOURCEPROBE P1a gDP/p-source",
+            self.production_probe,
+        )
+        self.assertIn(
+            "B13SOURCEPROBE P1b J/T-source",
+            self.production_probe,
+        )
+        self.assertIn(
+            "B13SOURCEPROBE P1c J/phiOut-source",
+            self.production_probe,
+        )
+        self.assertIn(
+            '"stageB13GradientProbe"',
+            self.b2_amplitude,
+        )
+        self.assertIn(
+            "B13CONTRACT P2 decomposition",
+            self.contraction_probe,
         )
 
     def test_mma_has_no_direction_only_bypass(self):

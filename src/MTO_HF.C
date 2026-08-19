@@ -118,6 +118,9 @@ int main(int argc, char *argv[])
         #include "saveOptimizerState.H"
 
         #include "validateCommon.H"
+        // BFINAL-013 P1: objective-source dot tests (switch-gated,
+        // read-only; runs at the main-loop frozen state).
+        #include "stageB13GradientProbe.H"
         #include "validateGradientChain.H"
         #include "validateFrozenGradient.H"
         // Stage B1: frozen-turbulence repeatability & noise floor (serial,
