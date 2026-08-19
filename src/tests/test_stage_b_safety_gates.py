@@ -93,6 +93,58 @@ class StageBSafetyGateTests(unittest.TestCase):
             ),
         )
 
+    def test_pressure_gamg_equivalence_decomposition_gate(self):
+        # BFINAL-010: the pressure-GAMG preconditioner must be gated by a
+        # four-group matrix/operator equivalence decomposition (hard
+        # thresholds, not configurable) plus a laplacianSchemes guard.
+        for metric in (
+            "interiorDiagRelL2",
+            "boundaryDiagRelL2",
+            "effectiveDiagRelL2",
+            "offDiagRelL2",
+        ):
+            self.assertIn(metric, self.production)
+        self.assertIn("PRODPRECGAMGCHECK", self.production)
+        self.assertIn(
+            "pressureGAMG preconditioner matrix is NOT equivalent to ",
+            self.production,
+        )
+        self.assertIn(
+            "PRODPRECGAMGSCHEME",
+            self.production,
+        )
+        self.assertIn(
+            'subDict("laplacianSchemes")',
+            self.production,
+        )
+        self.assertIn(
+            "prodPressurePrecMatrix.internalCoeffs()[patchi]",
+            self.production,
+        )
+        self.assertIn(
+            "addBoundaryDiag",
+            self.production,
+        )
+        self.assertIn(
+            "effectiveDiagRelL2 > 1e-8",
+            self.production,
+        )
+        self.assertIn(
+            "offDiagRelL2 > 1e-8",
+            self.production,
+        )
+        # The old incompatible bare comparison (boundary-less fvMatrix
+        # diagonal vs boundary-inclusive operator diagonal) must not
+        # regress.
+        self.assertNotIn(
+            "prodPressurePrecMatrix.diag()[celli] - refDiag",
+            self.production,
+        )
+        self.assertNotIn(
+            "): diagRelL2=",
+            self.production,
+        )
+
     def test_mma_has_no_direction_only_bypass(self):
         self.assertNotIn("guardedDirectionOnly", self.mma_gate)
         self.assertNotIn("The only exception", self.mma_gate)

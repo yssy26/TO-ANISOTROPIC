@@ -157,6 +157,8 @@ discreteProdEnableRitzPilot false;
 discreteProdConvergeFatal    false;              // 不收敛时继续（DIAGNOSTIC MODE）
 ```
 
+**pressureGAMG 的 laplacianSchemes 依赖（BFINAL-010 守卫）**：`fvm::laplacian(volScalarField, …)` 的系数面插值词取自 `system/fvSchemes` 中 **`laplacianSchemes`** 条目 ITstream（`Gauss <interp> <snGrad>` 的第二个词；`Gauss` 由 `laplacianScheme::New` 消费，见 OF7 `gaussLaplacianScheme.H`/`laplacianScheme.H:120-135`），**不走 `interpolationSchemes`**。算子 Jᵀ 的 kf 假定 `linear == mesh.weights()`，因此 pressureGAMG 模式下求解器会对 `default` 及任何 `laplacian(prodPressurePrecMobility…` 具名条目强制要求插值词为 `linear`，否则 FatalError（日志标记 `PRODPRECGAMGSCHEME`）。本算例 `default Gauss linear corrected` 满足。数值上矩阵/算子等价性由 `PRODPRECGAMGCHECK` 四组 relL2 硬门最终仲裁。
+
 **oracle 导入/导出（诊断路径）**
 ```text
 discreteExportOnly            true/false   // true=只导出矩阵不迭代求解
@@ -264,7 +266,7 @@ fixedValue 出口 p=0 时该值为 `false` → **不加任何人工 identity 行
 3. **`set -e` / tee / SIGPIPE**：不用 `set -e`；日志直接重定向，不用 `tee` 管道（SIGPIPE 会把 wmake 一起带走）。
 4. **`FOAM_SIGFPE`**：必须 `unset`，否则伴随 NaN abort。
 5. **并行伴随尚未完成**（P2）：当前手写 matrix-free Jᵀ 只遍历本进程内部面，**没有 processor-patch 邻域伴随值交换**。直接删 `if (Pstream::parRun())` 会得到能跑但梯度错误的并行伴随。并行化需要：伴随速度/压力/hA/gradientAdjoint 的 processor halo exchange + processor patch 上 U-U / U-P / P-U / P-P / frozen deviatoric 全部转置项 + 保留全局 reduce 点积，然后在 1/2/4 核上验证（并行 J/Jᵀ 点积 <1e-10、并行 vs 串行伴随解 <1e-8、三方向梯度 <1e-6、最终目标/压降/体积分数梯度通过 FD）。**顺序：先串行生产伴随收敛（BFINAL-011），再做并行。**
-6. **BFINAL-009 当前停止点**：`PRODPRECGAMGSETUP diagRelL2=0.0408 > 1e-8`，已按验收标准停止。**不要**直接改插值 scheme 或调 FGMRES 掩盖；先做 BFINAL-010 的矩阵等价性分解（interior/boundary/effective/offDiag 四组 relL2）。注意：OpenFOAM 7 的 `linear` 面插值权重来自 `mesh.weights()`，可能与生产一致；`diagRelL2=0.041` 疑似因比较「裸 fvMatrix 对角」与「含边界 internalCoeffs 的求解器有效对角」不一致造成（`addBoundaryDiag` 语义）——**这是当前最强假设，待 BFINAL-010 验证，勿据此改 Jᵀ**。
+6. **BFINAL-009 停止点已由 BFINAL-010 取代**：旧 `PRODPRECGAMGSETUP diagRelL2=0.0408 > 1e-8` 是「裸 fvMatrix 对角（不含边界）」对比「含边界 internalCoeffs 的有效对角」的不相容比较造成的假阳性（`addBoundaryDiag` 语义假设已被证实）。BFINAL-010 已将其替换为四组矩阵/算子等价性分解 + 硬门：`PRODPRECGAMGCHECK (label): interiorDiagRelL2=… boundaryDiagRelL2=… effectiveDiagRelL2=… offDiagRelL2=…`，任一非有限或 effective/offDiag > 1e-8 即 FatalError（阈值不可配置）。实测四值 ≈1e-16（机器精度，两标签一致）。另注意：`fvm::laplacian(volScalarField,…)` 的系数面插值词取自 `laplacianSchemes` 条目 ITstream（不是 interpolationSchemes）——见 §4.1 的 scheme 守卫。**不要**改插值 scheme 或调 FGMRES 掩盖；pressureDrop 的 GAMG 内层 NaN 属于 BFINAL-011 求解层问题。
 7. **MMA 门**：`mmaUpdateEnabled && !frozenGradientValidated` 时 MMA 绝对禁止；不要绕过。
 8. **`stageB4JacobianProbe` 与 `stageB2Enabled` 互斥**：同时开会 FatalError。
 9. **诊断 vs 生产伴随**：`solveDiscreteFlowAdjoint.H` 是诊断环境（大），`solveDiscreteFlowAdjointProduction.H` 是生产路径（要小、可扩展）。不要把诊断机器复制进生产路径。
@@ -285,16 +287,17 @@ tail -2 ../wmake_current.log          # 期望 WMAKE_EXIT=0
 bash /home/ys/dsH/run_verify_prod.sh /home/ys/dsH/b8_verify_prod <log>
 
 # 4) 关键日志提取
-grep -E "PRODPRECSETUP|PRODPRECGAMGSETUP|GAMG|FGMRES-PROD|PRODRESID|Production reduced" <log>
+grep -E "PRODPRECSETUP|PRODPRECGAMGSCHEME|PRODPRECGAMGSETUP|PRODPRECGAMGCHECK|GAMG|FGMRES-PROD|PRODRESID|Production reduced" <log>
 ```
 
 ---
 
-## 10. 当前状态速查（HEAD 6a0004b，2026-08-19）
+## 10. 当前状态速查（BFINAL-010 已实现，2026-08-19）
 
 - **阶段**：B-final —— 冻结湍流梯度 / 生产伴随闭合。
 - **已闭合**：J_PU（BFINAL-003）、R_x 压力行（BFINAL-005）、J_PP 实际原始闭包（BFINAL-008，含 fixedValue 出口 internalCoeffs、无人工 identity 行）。诊断路径 P1–P8 全部 PASS（fresh unpinned 验证，见 `evidence/agent-group/BFINAL-008/cycle-1/VERIFY_FRESH_6320943.md`）。
-- **当前阻塞**：生产迭代求解（cond~1e19）——diagonal 预条件器停滞后改用 pressureGAMG，但 `PRODPRECGAMGSETUP diagRelL2=0.041 > 1e-8`，**BFINAL-009 在第一个检查点停止**。
-- **下一步任务**：BFINAL-010（预条件矩阵等价性诊断，四组 relL2 分解 + 静态回归测试）→ BFINAL-011（生产外求解收敛，thermalCoupling & pressureDrop 真残差 ≤1e-9）→ BFINAL-012（当前源 FD 幅值门）→ Stage C（MMA 串行 smoke → 并行化 → 完整优化）。
+- **BFINAL-010（已完成）**：pressure-GAMG 预条件矩阵与缩放 Jᵀ P–P 块的**四组等价性分解 + 硬门**（`PRODPRECGAMGCHECK`，effective/offDiag > 1e-8 即 FatalError）+ `laplacianSchemes` 插值词守卫（`PRODPRECGAMGSCHEME`）。实测四值 ≈1e-16（机器精度，两标签一致）——BFINAL-009 的 `diagRelL2=0.041` 确认为裸对角 vs 有效对角的不相容比较假阳性。**运行结果**：thermalCoupling **首次在生产路径收敛**（FGMRES 751 迭代，trueRelRes=9.49e-10 ≤ 1e-9，GRADPROXY≈2217.48 稳定；diagonal 基线 4000 迭代停滞于 5.08e-5）；pressureDrop 首次 GAMG 内层求解即 NaN（50 迭代内发散，FGMRES iter=2 退出，DIAGNOSTIC Warning 后被 sensitivity.H:263 MMA 非有限值门 abort，MTO_RC=134）——这是 **BFINAL-011 的求解层问题**（GAMG 内层对 pressureDrop rhs 的稳健性），不是矩阵等价性问题。见 `evidence/agent-group/BFINAL-010/`。
+- **当前阻塞**：pressureDrop 标签的 GAMG 内层 NaN（BFINAL-011）。
+- **下一步任务**：BFINAL-011（生产外求解收敛，pressureDrop GAMG NaN 定位与修复，两标签真残差 ≤1e-9）→ BFINAL-012（当前源 FD 幅值门）→ Stage C（MMA 串行 smoke → 并行化 → 完整优化）。
 - **并行伴随（P2）**：未解锁，需独立完成 processor-patch 转置交换（见 §8.5）。
 - **MMA**：锁定。

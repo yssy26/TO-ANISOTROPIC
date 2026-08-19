@@ -816,6 +816,63 @@ forAll(mesh.boundary(), patchi)
     prodPressurePrecPsi.boundaryFieldRef()[patchi] == scalar(0.0);
 }
 
+// BFINAL-010 (a) laplacianSchemes guard.  The coefficient face
+// interpolation of fvm::laplacian(volScalarField, ...) does NOT read
+// interpolationSchemes: the interpolation word comes from the
+// laplacianSchemes entry ITstream itself ("Gauss <interp> <snGrad>":
+// "Gauss" is consumed by laplacianScheme::New, the next word selects the
+// mobility face interpolation - gaussLaplacianScheme.H/laplacianScheme.H).
+// The J^T operator kf assumes linear interpolation == mesh.weights(); any
+// other word would silently break the matrix/operator equivalence that the
+// PRODPRECGAMGCHECK decomposition below enforces.
+if (prodPreconditionerSetup == "pressureGAMG")
+{
+    const dictionary& prodLapSchemes =
+        mesh.schemesDict().subDict("laplacianSchemes");
+    const wordList prodLapKeys = prodLapSchemes.toc();
+    forAll(prodLapKeys, keyi)
+    {
+        const word& prodLapKey = prodLapKeys[keyi];
+        const bool prodLapIsDefault = (prodLapKey == "default");
+        const bool prodLapIsPrecEntry =
+            (prodLapKey.find("laplacian(prodPressurePrecMobility") == 0);
+        if (!prodLapIsDefault && !prodLapIsPrecEntry)
+        {
+            continue;
+        }
+        const entry* prodLapEntryPtr =
+            prodLapSchemes.lookupEntryPtr(prodLapKey, false, false);
+        if (!prodLapEntryPtr)
+        {
+            continue;
+        }
+        ITstream& prodLapIs = prodLapEntryPtr->stream();
+        const word prodLapFirstWord(prodLapIs);
+        word prodLapInterpWord(prodLapFirstWord);
+        if (prodLapFirstWord == "Gauss")
+        {
+            prodLapIs >> prodLapInterpWord;
+        }
+        if (prodLapInterpWord != "linear")
+        {
+            FatalErrorInFunction
+                << "pressureGAMG preconditioner requires 'linear' as the "
+                << "coefficient interpolation word of laplacianSchemes "
+                << "entry '" << prodLapKey << "', but found '"
+                << prodLapInterpWord << "'. The preconditioner coefficient "
+                << "interpolation is taken from the laplacianSchemes entry "
+                << "ITstream, while the operator J^T kf assumes linear "
+                << "interpolation == mesh.weights(). Change the entry to "
+                << "'Gauss linear <snGrad>' or validate the non-linear "
+                << "equivalence before enabling pressureGAMG."
+                << abort(FatalError);
+        }
+    }
+    Info<< "PRODPRECGAMGSCHEME (" << discreteAdjointLabel
+        << "): laplacianSchemes coefficient interpolation 'linear' "
+        << "== mesh.weights()" << endl;
+}
+
 tmp<fvScalarMatrix> tProdPressurePrecMatrix
 (
    -fvm::laplacian(prodPressurePrecMobility, prodPressurePrecPsi)
@@ -873,33 +930,196 @@ prodPressurePrecSolverDict.add("mergeLevels", 1);
 prodPressurePrecSolverDict.add("nPreSweeps", 0);
 prodPressurePrecSolverDict.add("nPostSweeps", 2);
 
-// Verify that the assembled Poisson diagonal is the same scaled P-P diagonal
-// already used by the matrix-free operator.  A mismatch is reported before
-// the first Krylov iteration instead of being hidden as poor convergence.
+// BFINAL-010 (b): four-group matrix/operator equivalence decomposition.
+// The preconditioner fvScalarMatrix from -fvm::laplacian(mobility, psi)
+// must reproduce the scaled J^T P-P block term by term:
+//   interior diag  +kf per face   (negSumDiag diag(), boundary excluded)
+//   boundary diag  +mob_c*deltaCoeffs_b*|Sf|_b on fixedValue-p patches
+//                   (internalCoeffs accumulation, addBoundaryDiag semantics)
+//   off-diagonal  -kf             (upper()/lower())
+//   effective diag interior+boundary == prodJacobiDiag[P]
+// The old bare prodJacobiDiag-vs-diag() comparison mixed the boundary-less
+// fvMatrix diagonal with the boundary-inclusive operator diagonal and is
+// replaced by this four-group split.  The four relL2 values are reported
+// before the first Krylov iteration; non-finite values or an
+// effective/off-diag relL2 above 1e-8 abort the run (hard gate; thresholds
+// are safety invariants and deliberately not configurable).
 if (prodPreconditionerSetup == "pressureGAMG")
 {
-    scalar prodPressurePrecDiagDiff2 = 0.0;
-    scalar prodPressurePrecDiagRef2 = 0.0;
+    scalarField prodPrecOpInteriorDiag(prodNCells, 0.0);
+    scalarField prodPrecOpBoundaryDiag(prodNCells, 0.0);
+    scalarField prodPrecOpOffDiagRef(mesh.nInternalFaces(), 0.0);
+    for (label facei = 0; facei < mesh.nInternalFaces(); ++facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const scalar weight = prodWeights[facei];
+        const scalar mobilityFace =
+            weight*primalPressureMobility[own]
+          + (1.0 - weight)*primalPressureMobility[nei];
+        const scalar kf =
+            mobilityFace
+           *prodPressurePrecScale
+           *mesh.deltaCoeffs().primitiveField()[facei]
+           *mesh.magSf().primitiveField()[facei];
+        prodPrecOpInteriorDiag[own] += kf;
+        prodPrecOpInteriorDiag[nei] += kf;
+        prodPrecOpOffDiagRef[facei] = -kf;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (!p.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const scalarField& patchDelta =
+            mesh.deltaCoeffs().boundaryField()[patchi];
+        const scalarField& patchArea =
+            mesh.magSf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            prodPrecOpBoundaryDiag[celli] +=
+                primalPressureMobility[celli]
+               *prodPressurePrecScale
+               *patchDelta[facei]*patchArea[facei];
+        }
+    }
+
+    const scalarField& prodPrecRawDiag = prodPressurePrecMatrix.diag();
+    scalarField prodPrecBoundaryDiag(prodNCells, 0.0);
+    forAll(mesh.boundary(), patchi)
+    {
+        const scalarField& patchInternalCoeffs =
+            prodPressurePrecMatrix.internalCoeffs()[patchi];
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        forAll(patchCells, facei)
+        {
+            prodPrecBoundaryDiag[patchCells[facei]] +=
+                patchInternalCoeffs[facei];
+        }
+    }
+    const scalarField& prodPrecUpper = prodPressurePrecMatrix.upper();
+    const scalarField& prodPrecLower = prodPressurePrecMatrix.lower();
+
+    scalar prodPrecInteriorDiff2 = 0.0;
+    scalar prodPrecInteriorRef2 = 0.0;
+    scalar prodPrecBoundaryDiff2 = 0.0;
+    scalar prodPrecBoundaryRef2 = 0.0;
+    scalar prodPrecEffectiveDiff2 = 0.0;
+    scalar prodPrecEffectiveRef2 = 0.0;
+    scalar prodPrecUpperDiff2 = 0.0;
+    scalar prodPrecLowerDiff2 = 0.0;
+    scalar prodPrecOffDiagRef2 = 0.0;
     for (label celli = 0; celli < prodNCells; ++celli)
     {
-        const scalar refDiag =
-            prodJacobiDiag[prodPIndex(celli)];
-        const scalar diff =
-            prodPressurePrecMatrix.diag()[celli] - refDiag;
-        prodPressurePrecDiagDiff2 += sqr(diff);
-        prodPressurePrecDiagRef2 += sqr(refDiag);
+        if (prodPressureNeedsReference && celli == pRefCell)
+        {
+            // Legacy gauge row replaced by setReference; excluded from the
+            // operator/preconditioner coefficient comparison.
+            continue;
+        }
+        const scalar opInterior = prodPrecOpInteriorDiag[celli];
+        const scalar opBoundary = prodPrecOpBoundaryDiag[celli];
+        const scalar precBoundary = prodPrecBoundaryDiag[celli];
+        const scalar effectiveRef = prodJacobiDiag[prodPIndex(celli)];
+        prodPrecInteriorDiff2 += sqr(prodPrecRawDiag[celli] - opInterior);
+        prodPrecInteriorRef2 += sqr(opInterior);
+        prodPrecBoundaryDiff2 += sqr(precBoundary - opBoundary);
+        prodPrecBoundaryRef2 += sqr(opBoundary);
+        prodPrecEffectiveDiff2 +=
+            sqr(prodPrecRawDiag[celli] + precBoundary - effectiveRef);
+        prodPrecEffectiveRef2 += sqr(effectiveRef);
     }
-    reduce(prodPressurePrecDiagDiff2, sumOp<scalar>());
-    reduce(prodPressurePrecDiagRef2, sumOp<scalar>());
+    for (label facei = 0; facei < mesh.nInternalFaces(); ++facei)
+    {
+        prodPrecUpperDiff2 +=
+            sqr(prodPrecUpper[facei] - prodPrecOpOffDiagRef[facei]);
+        prodPrecLowerDiff2 +=
+            sqr(prodPrecLower[facei] - prodPrecOpOffDiagRef[facei]);
+        prodPrecOffDiagRef2 += sqr(prodPrecOpOffDiagRef[facei]);
+    }
+    reduce(prodPrecInteriorDiff2, sumOp<scalar>());
+    reduce(prodPrecInteriorRef2, sumOp<scalar>());
+    reduce(prodPrecBoundaryDiff2, sumOp<scalar>());
+    reduce(prodPrecBoundaryRef2, sumOp<scalar>());
+    reduce(prodPrecEffectiveDiff2, sumOp<scalar>());
+    reduce(prodPrecEffectiveRef2, sumOp<scalar>());
+    reduce(prodPrecUpperDiff2, sumOp<scalar>());
+    reduce(prodPrecLowerDiff2, sumOp<scalar>());
+    reduce(prodPrecOffDiagRef2, sumOp<scalar>());
+
+    const scalar interiorDiagRelL2 =
+        Foam::sqrt
+        (
+            prodPrecInteriorDiff2
+           /Foam::max(prodPrecInteriorRef2, scalar(1e-300))
+        );
+    const bool prodPrecHasFixedPBoundary =
+        (prodPrecBoundaryRef2 > 0.0);
+    const scalar boundaryDiagRelL2 =
+        prodPrecHasFixedPBoundary
+      ? Foam::sqrt
+        (
+            prodPrecBoundaryDiff2
+           /Foam::max(prodPrecBoundaryRef2, scalar(1e-300))
+        )
+      : scalar(0.0);
+    const scalar effectiveDiagRelL2 =
+        Foam::sqrt
+        (
+            prodPrecEffectiveDiff2
+           /Foam::max(prodPrecEffectiveRef2, scalar(1e-300))
+        );
+    const scalar offDiagRelL2 =
+        Foam::sqrt
+        (
+            Foam::max(prodPrecUpperDiff2, prodPrecLowerDiff2)
+           /Foam::max(prodPrecOffDiagRef2, scalar(1e-300))
+        );
+
     Info<< "PRODPRECGAMGSETUP (" << discreteAdjointLabel
-        << "): diagRelL2="
-        << Foam::sqrt
-           (
-               prodPressurePrecDiagDiff2
-              /Foam::max(prodPressurePrecDiagRef2, scalar(1e-300))
-           )
+        << "): mode=pressureGAMG"
         << " innerTol=" << prodPressurePrecTolerance
         << " innerMaxIter=" << prodPressurePrecMaxIter << endl;
+    Info<< "PRODPRECGAMGCHECK (" << discreteAdjointLabel
+        << "): interiorDiagRelL2=" << interiorDiagRelL2
+        << " boundaryDiagRelL2=" << boundaryDiagRelL2
+        << (prodPrecHasFixedPBoundary ? "" : " (no fixedValue-p boundary)")
+        << " effectiveDiagRelL2=" << effectiveDiagRelL2
+        << " offDiagRelL2=" << offDiagRelL2 << endl;
+
+    auto prodPrecIsFinite = [](const scalar v)
+    {
+        return (v == v) && (Foam::mag(v) < VGREAT);
+    };
+    if
+    (
+        !prodPrecIsFinite(interiorDiagRelL2)
+     || !prodPrecIsFinite(boundaryDiagRelL2)
+     || !prodPrecIsFinite(effectiveDiagRelL2)
+     || !prodPrecIsFinite(offDiagRelL2)
+     || effectiveDiagRelL2 > 1e-8
+     || offDiagRelL2 > 1e-8
+    )
+    {
+        FatalErrorInFunction
+            << "pressureGAMG preconditioner matrix is NOT equivalent to "
+            << "the scaled J^T P-P block for label '"
+            << discreteAdjointLabel << "': interiorDiagRelL2="
+            << interiorDiagRelL2 << " boundaryDiagRelL2="
+            << boundaryDiagRelL2 << " effectiveDiagRelL2="
+            << effectiveDiagRelL2 << " offDiagRelL2=" << offDiagRelL2
+            << ". Locate the failing group: interior diag -> "
+            << "-fvm::laplacian internal-face kf assembly; boundary diag "
+            << "-> fixedValue-p internalCoeffs (addBoundaryDiag) vs "
+            << "+mob_c*deltaCoeffs_b*|Sf|_b; effective diag -> "
+            << "prodJacobiDiag[P] coverage; off-diag -> upper()/lower() "
+            << "vs -kf. Also check that the laplacianSchemes coefficient "
+            << "interpolation word is 'linear'."
+            << abort(FatalError);
+    }
 }
 
 // Block lower-triangular right preconditioner (simplified Schur complement):

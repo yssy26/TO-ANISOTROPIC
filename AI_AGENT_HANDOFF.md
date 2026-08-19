@@ -9,6 +9,8 @@
 > **Current macro-stage:** **B-final — frozen-turbulence gradient / production-adjoint closure**  
 > **MMA status:** **LOCKED** (`mmaUpdateEnabled=false`, `frozenGradientValidated=false`)
 
+> **Status note (2026-08-19, post-handoff):** **BFINAL-010 implemented and run.** The pressure-GAMG preconditioner matrix is now hard-gated to the scaled J^T P–P block by a four-group equivalence decomposition (`PRODPRECGAMGCHECK`: interior/boundary/effective/offDiag relL2 ≈ 1e-16 on both labels — the BFINAL-009 `diagRelL2=0.041` stop is retired as a bare-vs-effective-diagonal comparison artifact), plus a `laplacianSchemes` coefficient-interpolation guard (`PRODPRECGAMGSCHEME`; the interpolation word comes from the laplacianSchemes entry ITstream, not interpolationSchemes). Production-path result: **thermalCoupling converges for the first time** (FGMRES 751 iters, trueRelRes 9.49e-10 ≤ 1e-9; diagonal baseline stalled at 5.08e-5/4000 iters); **pressureDrop NaNs inside its first GAMG inner solve** (iter=2 exit, MMA safety gate aborts, MTO_RC=134) — this is the BFINAL-011 entry problem. See `evidence/agent-group/BFINAL-010/FINAL_REPORT.md`.
+
 ---
 
 ## 0. Read this first
