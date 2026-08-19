@@ -180,6 +180,27 @@ Switch solveFlowAdjoints
 (
     optProperties.lookupOrDefault<Switch>("solveFlowAdjoints", true)
 );
+// BFINAL-011 cycle-1: per-label flow-adjoint isolation switches for
+// differential diagnostics (e.g. pressureDrop-only runs).  Defaults keep
+// the unconditional both-labels baseline; skipping a label writes none of
+// its fields (downstream gradient consumers are gated by mmaUpdateEnabled
+// in diagnostic runs).
+Switch solveThermalCouplingFlowAdjoint
+(
+    optProperties.lookupOrDefault<Switch>
+    (
+        "solveThermalCouplingFlowAdjoint",
+        true
+    )
+);
+Switch solvePressureDropFlowAdjoint
+(
+    optProperties.lookupOrDefault<Switch>
+    (
+        "solvePressureDropFlowAdjoint",
+        true
+    )
+);
 Switch directionOnlyOptimizationApproved
 (
     optProperties.lookupOrDefault<Switch>

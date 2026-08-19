@@ -21,6 +21,12 @@ class StageBSafetyGateTests(unittest.TestCase):
         cls.mma_gate = (
             REPO_ROOT / "src" / "validateMmaUnlockGate.H"
         ).read_text(encoding="utf-8")
+        cls.main_solver = (
+            REPO_ROOT / "src" / "MTO_HF.C"
+        ).read_text(encoding="utf-8")
+        cls.create_fields = (
+            REPO_ROOT / "src" / "createFields.H"
+        ).read_text(encoding="utf-8")
 
     def test_pressure_reference_follows_openfoam_need_reference(self):
         self.assertIn(
@@ -142,6 +148,70 @@ class StageBSafetyGateTests(unittest.TestCase):
         )
         self.assertNotIn(
             "): diagRelL2=",
+            self.production,
+        )
+
+    def test_bfinal011_label_isolation_switches_and_inner_solver_controls(self):
+        # BFINAL-011 cycle-1: per-label adjoint isolation switches (default
+        # true, baseline unchanged) and inner-solver options for the
+        # pressure-Poisson preconditioner (GAMG default; PCG+DIC fallback;
+        # GAMG robustness coefficients overridable; fast-fail on non-finite
+        # inner psi).
+        for switch in (
+            "solveThermalCouplingFlowAdjoint",
+            "solvePressureDropFlowAdjoint",
+        ):
+            self.assertIn(switch, self.main_solver)
+            self.assertRegex(
+                self.create_fields,
+                re.compile(rf'"{switch}",\s*true'),
+            )
+        self.assertIn(
+            '"discreteProdPressurePrecSolver",',
+            self.production,
+        )
+        self.assertRegex(
+            self.production,
+            re.compile(r'"discreteProdPressurePrecSolver",\s*"GAMG"'),
+        )
+        self.assertIn(
+            'prodPressurePrecSolverDict.add("solver", "PCG");',
+            self.production,
+        )
+        self.assertIn(
+            'prodPressurePrecSolverDict.add("preconditioner", "DIC");',
+            self.production,
+        )
+        self.assertIn(
+            '"discreteProdPressurePrecScaleCorrection",',
+            self.production,
+        )
+        self.assertIn(
+            '"discreteProdPressurePrecNPreSweeps",',
+            self.production,
+        )
+        self.assertIn(
+            '"discreteProdPressurePrecDirectSolveCoarsest",',
+            self.production,
+        )
+        self.assertIn(
+            "prodPressurePrecApplyCount",
+            self.production,
+        )
+        self.assertIn(
+            "non-finite psi",
+            self.production,
+        )
+        # The equivalence gate must read the matrix through a const
+        # lduMatrix& alias: the non-const lower() materialises the
+        # symmetric-storage lower array (side effect that rejects PCG and
+        # flips the GAMG scaleCorrection default).
+        self.assertIn(
+            "const lduMatrix& prodPrecLduMatrix = prodPressurePrecMatrix;",
+            self.production,
+        )
+        self.assertNotIn(
+            "const scalarField& prodPrecLower = prodPressurePrecMatrix.lower();",
             self.production,
         )
 

@@ -1,0 +1,971 @@
+=== verify b011 run: Wed Aug 19 20:16:39 CST 2026 ===
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+Build  : 7-3bcbaf946ae9
+Exec   : /home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF
+Date   : Aug 19 2026
+Time   : 20:16:39
+Host   : "DESKTOP-DSG34PK"
+PID    : 35221
+I/O    : uncollated
+Case   : /home/ys/dsH/b11_diag
+nProcs : 1
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+
+SIMPLE: No convergence criteria found
+
+No finite volume options present
+Reading optimization parameters
+
+Transaction mechanism configuration:
+  enableSSTAcceptanceCheck=false
+  initialMoveLimit=0.02
+  minimumMoveLimit=0.01
+  maximumMoveLimit=0.5
+  moveLimitReduction=0.5
+  moveLimitGrowth=1.2
+  maxCandidateRetries=3
+  relativeObjectiveTolerance=0.01
+  absoluteConstraintTolerance=0.01
+  enableCSVLog=true
+  enableOptimizerRestart=false
+Reading pseudo-density fields
+
+Creating heat source field Q
+
+Reading transportProperties
+
+Reading field p
+
+Reading field U
+
+Reading/calculating face flux field phi
+
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmegaSST
+Selecting patchDistMethod meshWave
+RAS
+{
+    RASModel        kOmegaSST;
+    turbulence      on;
+    printCoeffs     on;
+    alphaK1         0.85;
+    alphaK2         1;
+    alphaOmega1     0.5;
+    alphaOmega2     0.856;
+    gamma1          0.555555555556;
+    gamma2          0.44;
+    beta1           0.075;
+    beta2           0.0828;
+    betaStar        0.09;
+    a1              0.31;
+    b1              1;
+    c1              10;
+    F3              false;
+}
+
+Reading field pa
+
+Reading field Ua
+
+Reading field pb
+
+Reading field Ub
+
+Reading field pc
+
+Reading field Uc
+
+Reading thermal properties
+
+Anisotropic conductivity: solidK=(21.6 0 0 21.6 0 16.6)
+Principal mesh-axis conductivities: Kxx=21.6, Kyy=21.6, Kzz=16.6, relativeOffDiagonal=0
+--> FOAM Warning : 
+    From function int main(int, char**)
+    in file readThermalProperties.H at line 121
+    anisotropicConductivityValidated=false. Forward validation is permitted, but topology updates are blocked until the Stage A suite passes.
+Reading field T
+
+Reading field Tb
+
+Reading optional frozen-hot-region configuration
+
+Frozen-hot mode enabled:
+  hotZone=hotFluidZone, volume=1.96e-06
+  wallZone=separatorWallZone, volume=6.72e-07
+  hotVelocityField=UHotFrozen
+  hotRhoCpRatio=0.425273056469
+  max|UHotFrozen| outside hot zone=0
+  hot inlet flux=0.01764
+  hot outlet flux=0.01764
+  hot mass-balance error=1.96680666211e-16
+  max|div(phiHotFrozen)|=2.16840434497e-10
+  thermalObjectiveType=maximizeColdOutletTemperature
+  thermalReferenceTemperature=600
+  mmaUpdateEnabled=false
+Validating discrete objective derivatives
+Discrete objective derivative errors: thermal=2.7025486001e-11, pressure=7.07793481308e-12
+Cold-side flowModel=incompressibleRANSFrozen, frozenTurbulenceAdjoint=true, ransDirectionValidated=true, freezeTurbulenceForValidation=true
+Initialization
+
+Active MMA design cells: local=5040, global=5040, designVolume=6.3e-07
+Validation mode: recomputing xp/xh from raw x with fixed projection beta=8
+DICPCG:  Solving for xp, Initial residual = 0.0299209651934, Final residual = 2.71774758184e-10, No Iterations 9
+Frozen-gradient MMA gate: frozenGradientValidated=false, fullSSTGradientValidated=true, SSTcandidateAcceptance=false, mmaUpdateEnabled=false, stageB4JacobianProbe=false
+MTO_HF: Finished update.H
+MTO_HF: Starting NS.H
+NS.H solving, corrector 1
+smoothSolver:  Solving for Ux, Initial residual = 2.06168931905e-11, Final residual = 2.06168931905e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 4.35355851235e-08, Final residual = 4.19864820326e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.92113238729e-10, Final residual = 6.92113238729e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631087711e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131959983
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.876616 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631087711e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769549e-07 min=3.99992509834e-09 max=2.05286590948e-06
+DICPCG:  Solving for p, Initial residual = 1.09866531e-07, Final residual = 9.82513712119e-10, No Iterations 9
+DICPCG:  Solving for p, Initial residual = 9.82513749329e-10, Final residual = 9.82513749329e-10, No Iterations 0
+time step continuity errors : sum local = 2.02886470978e-06, global = -3.43911878606e-07, cumulative = -3.43911878606e-07
+NS.H solving, corrector 2
+smoothSolver:  Solving for Ux, Initial residual = 1.9692260375e-11, Final residual = 1.9692260375e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 4.09745759024e-08, Final residual = 3.89776317972e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.60877053079e-10, Final residual = 6.60877053079e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631080924e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131963485
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.877976 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631080924e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769584e-07 min=3.99992509834e-09 max=2.05286590375e-06
+DICPCG:  Solving for p, Initial residual = 1.01300462252e-07, Final residual = 9.72652962669e-10, No Iterations 10
+DICPCG:  Solving for p, Initial residual = 9.7265299035e-10, Final residual = 9.7265299035e-10, No Iterations 0
+time step continuity errors : sum local = 2.00850203806e-06, global = -3.24289728025e-07, cumulative = -6.68201606631e-07
+NS.H solving, corrector 3
+smoothSolver:  Solving for Ux, Initial residual = 1.87602576629e-11, Final residual = 1.87602576629e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.86070791937e-08, Final residual = 3.60984598036e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.31242427805e-10, Final residual = 6.31242427805e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631074947e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713196641
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.879077 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631074947e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769618e-07 min=3.99992509834e-09 max=2.05286589911e-06
+DICPCG:  Solving for p, Initial residual = 9.3701306591e-08, Final residual = 9.22219051394e-10, No Iterations 11
+DICPCG:  Solving for p, Initial residual = 9.22219600161e-10, Final residual = 9.22219600161e-10, No Iterations 0
+time step continuity errors : sum local = 1.90435813608e-06, global = -3.33166218011e-07, cumulative = -1.00136782464e-06
+NS.H solving, corrector 4
+smoothSolver:  Solving for Ux, Initial residual = 1.78443135001e-11, Final residual = 1.78443135001e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.64960136341e-08, Final residual = 3.41055219984e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.06736024016e-10, Final residual = 6.06736024016e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631069269e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968844
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.880043 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631069269e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769649e-07 min=3.99992509834e-09 max=2.05286589504e-06
+DICPCG:  Solving for p, Initial residual = 8.69474012455e-08, Final residual = 9.9199606275e-10, No Iterations 12
+DICPCG:  Solving for p, Initial residual = 9.91995814025e-10, Final residual = 9.91995814025e-10, No Iterations 0
+time step continuity errors : sum local = 2.04844476306e-06, global = -3.37933292883e-07, cumulative = -1.33930111753e-06
+NS.H solving, corrector 5
+smoothSolver:  Solving for Ux, Initial residual = 1.69965066316e-11, Final residual = 1.69965066316e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.47284040854e-08, Final residual = 3.28703707115e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.86800045679e-10, Final residual = 5.86800045679e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631063789e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970859
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.880926 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631063789e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769678e-07 min=3.99992509834e-09 max=2.05286589132e-06
+DICPCG:  Solving for p, Initial residual = 8.06475343416e-08, Final residual = 9.78283068219e-10, No Iterations 15
+DICPCG:  Solving for p, Initial residual = 9.7828281767e-10, Final residual = 9.7828281767e-10, No Iterations 0
+time step continuity errors : sum local = 2.02012821347e-06, global = -3.0360534577e-07, cumulative = -1.6429064633e-06
+NS.H solving, corrector 6
+smoothSolver:  Solving for Ux, Initial residual = 1.62623647953e-11, Final residual = 1.62623647953e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.30988273924e-08, Final residual = 3.16990516227e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.68666422728e-10, Final residual = 5.68666422728e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631058655e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972493
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88168 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631058655e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769703e-07 min=3.99992509834e-09 max=2.05286588814e-06
+DICPCG:  Solving for p, Initial residual = 7.46635850132e-08, Final residual = 9.32657777787e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.32657775857e-10, Final residual = 9.32657775857e-10, No Iterations 0
+time step continuity errors : sum local = 1.92591349536e-06, global = -7.3054080695e-07, cumulative = -2.37344727024e-06
+NS.H solving, corrector 7
+smoothSolver:  Solving for Ux, Initial residual = 1.55581029576e-11, Final residual = 1.55581029576e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.14908566654e-08, Final residual = 3.02017469906e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.3750251759e-10, Final residual = 5.3750251759e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631053206e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973763
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882703 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631053206e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769725e-07 min=3.99992509834e-09 max=2.05286588383e-06
+DICPCG:  Solving for p, Initial residual = 6.90987893995e-08, Final residual = 9.88810411155e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.88810453252e-10, Final residual = 9.88810453252e-10, No Iterations 0
+time step continuity errors : sum local = 2.04186737729e-06, global = -7.73677022979e-07, cumulative = -3.14712429322e-06
+NS.H solving, corrector 8
+smoothSolver:  Solving for Ux, Initial residual = 1.49444527019e-11, Final residual = 1.49444527019e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.99515918899e-08, Final residual = 2.84406437934e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.13110934693e-10, Final residual = 5.13110934693e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631048261e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131974783
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88333 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631048261e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769745e-07 min=3.99992509834e-09 max=2.05286588119e-06
+DICPCG:  Solving for p, Initial residual = 6.40778188916e-08, Final residual = 9.40188799688e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.4018886153e-10, Final residual = 9.4018886153e-10, No Iterations 0
+time step continuity errors : sum local = 1.94146501761e-06, global = -7.97878600563e-07, cumulative = -3.94500289379e-06
+NS.H solving, corrector 9
+smoothSolver:  Solving for Ux, Initial residual = 1.43914943409e-11, Final residual = 1.43914943409e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.86342950454e-08, Final residual = 2.66760047548e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.93097702771e-10, Final residual = 4.93097702771e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631043516e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975559
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883846 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631043516e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769764e-07 min=3.99992509834e-09 max=2.05286587902e-06
+DICPCG:  Solving for p, Initial residual = 5.95182236762e-08, Final residual = 9.4067040783e-10, No Iterations 37
+DICPCG:  Solving for p, Initial residual = 9.40670362338e-10, Final residual = 9.40670362338e-10, No Iterations 0
+time step continuity errors : sum local = 1.94245922378e-06, global = 2.88241307041e-08, cumulative = -3.91617876308e-06
+NS.H solving, corrector 10
+smoothSolver:  Solving for Ux, Initial residual = 1.43737253419e-11, Final residual = 1.43737253419e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.76500069578e-08, Final residual = 2.52280415525e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.49786316351e-10, Final residual = 5.49786316351e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631039942e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976176
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885098 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631039942e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769682e-07 min=3.99992509834e-09 max=2.05286587374e-06
+DICPCG:  Solving for p, Initial residual = 5.52767656837e-08, Final residual = 9.94522011651e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.94521801158e-10, Final residual = 9.94521801158e-10, No Iterations 0
+time step continuity errors : sum local = 2.05366114764e-06, global = -5.35163162453e-07, cumulative = -4.45134192554e-06
+Frozen-RANS relative changes: U=5.69123095714e-09, p=3.61561715027e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 11
+smoothSolver:  Solving for Ux, Initial residual = 1.35854143986e-11, Final residual = 1.35854143986e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.64340138146e-08, Final residual = 2.39550962575e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.8759844054e-10, Final residual = 4.8759844054e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631035173e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976504
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88524 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631035173e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769737e-07 min=3.99992509834e-09 max=2.05286587314e-06
+DICPCG:  Solving for p, Initial residual = 5.12821074394e-08, Final residual = 9.88337233547e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.88337432865e-10, Final residual = 9.88337432865e-10, No Iterations 0
+time step continuity errors : sum local = 2.04089040876e-06, global = -3.19818900306e-07, cumulative = -4.77116082584e-06
+NS.H solving, corrector 12
+smoothSolver:  Solving for Ux, Initial residual = 1.29485297052e-11, Final residual = 1.29485297052e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.54743645188e-08, Final residual = 2.30942067898e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.45882235138e-10, Final residual = 4.45882235138e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631031439e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976744
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885854 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631031439e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769716e-07 min=3.99992509834e-09 max=2.05286587055e-06
+DICPCG:  Solving for p, Initial residual = 4.75469013532e-08, Final residual = 9.10732382953e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.10732572349e-10, Final residual = 9.10732572349e-10, No Iterations 0
+time step continuity errors : sum local = 1.88063860526e-06, global = -6.78241646184e-08, cumulative = -4.83898499046e-06
+NS.H solving, corrector 13
+smoothSolver:  Solving for Ux, Initial residual = 1.24316902918e-11, Final residual = 1.24316902918e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.44058971975e-08, Final residual = 2.24340287282e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.21074900205e-10, Final residual = 4.21074900205e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631027963e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976866
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886329 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631027963e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769696e-07 min=3.99992509834e-09 max=2.05286586855e-06
+DICPCG:  Solving for p, Initial residual = 4.40641010592e-08, Final residual = 9.51101154079e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.51101228546e-10, Final residual = 9.51101228546e-10, No Iterations 0
+time step continuity errors : sum local = 1.96399879927e-06, global = 1.36793259701e-07, cumulative = -4.70219173076e-06
+NS.H solving, corrector 14
+smoothSolver:  Solving for Ux, Initial residual = 1.19689365128e-11, Final residual = 1.19689365128e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.33758347886e-08, Final residual = 2.17483586586e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.06011426776e-10, Final residual = 4.06011426776e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631024629e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976881
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886699 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631024629e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769676e-07 min=3.99992509834e-09 max=2.05286586699e-06
+DICPCG:  Solving for p, Initial residual = 4.08672519494e-08, Final residual = 9.92833832984e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.9283350802e-10, Final residual = 9.9283350802e-10, No Iterations 0
+time step continuity errors : sum local = 2.05017511918e-06, global = 3.36226685872e-07, cumulative = -4.36596504489e-06
+NS.H solving, corrector 15
+smoothSolver:  Solving for Ux, Initial residual = 1.15560546653e-11, Final residual = 1.15560546653e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.23672141612e-08, Final residual = 2.08806356521e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.93077685667e-10, Final residual = 3.93077685667e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631021458e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976817
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886954 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631021458e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769657e-07 min=3.99992509834e-09 max=2.05286586592e-06
+DICPCG:  Solving for p, Initial residual = 3.79173597646e-08, Final residual = 8.41256504442e-10, No Iterations 12
+DICPCG:  Solving for p, Initial residual = 8.41256632568e-10, Final residual = 8.41256632568e-10, No Iterations 0
+time step continuity errors : sum local = 1.73717253936e-06, global = 2.85546709477e-07, cumulative = -4.08041833541e-06
+NS.H solving, corrector 16
+smoothSolver:  Solving for Ux, Initial residual = 1.12996035263e-11, Final residual = 1.12996035263e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.15141148051e-08, Final residual = 2.00152649912e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.92789163725e-10, Final residual = 3.92789163725e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631018284e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197667
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887272 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631018284e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769638e-07 min=3.99992509834e-09 max=2.05286586457e-06
+DICPCG:  Solving for p, Initial residual = 3.51649378079e-08, Final residual = 9.83931532437e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.8393148499e-10, Final residual = 9.8393148499e-10, No Iterations 0
+time step continuity errors : sum local = 2.03179200504e-06, global = 5.89557999284e-07, cumulative = -3.49086033613e-06
+NS.H solving, corrector 17
+smoothSolver:  Solving for Ux, Initial residual = 1.07872019511e-11, Final residual = 1.07872019511e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.06193307099e-08, Final residual = 1.90484983755e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.6958624896e-10, Final residual = 3.6958624896e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631015551e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976497
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887206 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631015551e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769624e-07 min=3.99992509834e-09 max=2.05286586485e-06
+DICPCG:  Solving for p, Initial residual = 3.26778945161e-08, Final residual = 9.35070729564e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.35070759658e-10, Final residual = 9.35070759658e-10, No Iterations 0
+time step continuity errors : sum local = 1.93089602886e-06, global = 7.6524391846e-07, cumulative = -2.72561641766e-06
+NS.H solving, corrector 18
+smoothSolver:  Solving for Ux, Initial residual = 1.03914309217e-11, Final residual = 1.03914309217e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.9776832783e-08, Final residual = 1.8063873666e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.51266335433e-10, Final residual = 3.51266335433e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263101298e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976275
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887235 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263101298e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769608e-07 min=3.99992509834e-09 max=2.05286586473e-06
+DICPCG:  Solving for p, Initial residual = 3.04307751461e-08, Final residual = 9.46915253498e-10, No Iterations 20
+DICPCG:  Solving for p, Initial residual = 9.4691518014e-10, Final residual = 9.4691518014e-10, No Iterations 0
+time step continuity errors : sum local = 1.95535476842e-06, global = 3.19949064788e-07, cumulative = -2.40566735288e-06
+NS.H solving, corrector 19
+smoothSolver:  Solving for Ux, Initial residual = 1.03295525416e-11, Final residual = 1.03295525416e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.9016595132e-08, Final residual = 1.71625728759e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.54240003248e-10, Final residual = 3.54240003248e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631009989e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975976
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88737 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631009989e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769598e-07 min=3.99992509834e-09 max=2.05286586416e-06
+DICPCG:  Solving for p, Initial residual = 2.84156830809e-08, Final residual = 8.64319100768e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.64318996178e-10, Final residual = 8.64318996178e-10, No Iterations 0
+time step continuity errors : sum local = 1.78479543612e-06, global = 7.87416517445e-07, cumulative = -1.61825083543e-06
+NS.H solving, corrector 20
+smoothSolver:  Solving for Ux, Initial residual = 9.85091680857e-12, Final residual = 9.85091680857e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.82283872301e-08, Final residual = 1.65292783539e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.33834071461e-10, Final residual = 3.33834071461e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263100823e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975705
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887041 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263100823e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769586e-07 min=3.99992509834e-09 max=2.05286586555e-06
+DICPCG:  Solving for p, Initial residual = 2.65812787892e-08, Final residual = 8.64170191318e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.6417006297e-10, Final residual = 8.6417006297e-10, No Iterations 0
+time step continuity errors : sum local = 1.78448800784e-06, global = 7.8512406897e-07, cumulative = -8.33126766462e-07
+Frozen-RANS relative changes: U=3.99041639037e-09, p=2.33209873449e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 21
+smoothSolver:  Solving for Ux, Initial residual = 9.44066404176e-12, Final residual = 9.44066404176e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.75943327716e-08, Final residual = 1.59783237088e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.1878694971e-10, Final residual = 3.1878694971e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631006194e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975374
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88685 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631006194e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769578e-07 min=3.99992509834e-09 max=2.05286586635e-06
+DICPCG:  Solving for p, Initial residual = 2.48749041122e-08, Final residual = 9.2702393719e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.27023990867e-10, Final residual = 9.27023990867e-10, No Iterations 0
+time step continuity errors : sum local = 1.91427956166e-06, global = 8.12266938164e-07, cumulative = -2.08598282978e-08
+NS.H solving, corrector 22
+smoothSolver:  Solving for Ux, Initial residual = 9.07832734098e-12, Final residual = 9.07832734098e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.70160299579e-08, Final residual = 1.54439510988e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.07014952967e-10, Final residual = 3.07014952967e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631004385e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197502
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886604 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631004385e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769572e-07 min=3.99992509834e-09 max=2.05286586739e-06
+DICPCG:  Solving for p, Initial residual = 2.32911069046e-08, Final residual = 9.04668178933e-10, No Iterations 29
+DICPCG:  Solving for p, Initial residual = 9.04668180151e-10, Final residual = 9.04668180151e-10, No Iterations 0
+time step continuity errors : sum local = 1.86811516654e-06, global = -1.34026711104e-07, cumulative = -1.54886539402e-07
+NS.H solving, corrector 23
+smoothSolver:  Solving for Ux, Initial residual = 9.21286375061e-12, Final residual = 9.21286375061e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.65163572569e-08, Final residual = 1.4817697949e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.42667194021e-10, Final residual = 3.42667194021e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631001738e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131974572
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885713 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631001738e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769673e-07 min=3.99992509834e-09 max=2.05286587114e-06
+DICPCG:  Solving for p, Initial residual = 2.18468067887e-08, Final residual = 9.04365359611e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.04365660602e-10, Final residual = 9.04365660602e-10, No Iterations 0
+time step continuity errors : sum local = 1.86749075752e-06, global = 4.72178474169e-07, cumulative = 3.17291934767e-07
+NS.H solving, corrector 24
+smoothSolver:  Solving for Ux, Initial residual = 8.67583615037e-12, Final residual = 8.67583615037e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.58173975338e-08, Final residual = 1.42093953956e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.07476232758e-10, Final residual = 3.07476232758e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631000766e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197422
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885683 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631000766e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769629e-07 min=3.99992509834e-09 max=2.05286587127e-06
+DICPCG:  Solving for p, Initial residual = 2.05477328207e-08, Final residual = 9.31464807696e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.31464561283e-10, Final residual = 9.31464561283e-10, No Iterations 0
+time step continuity errors : sum local = 1.92345011531e-06, global = 3.12622023206e-07, cumulative = 6.29913957973e-07
+NS.H solving, corrector 25
+smoothSolver:  Solving for Ux, Initial residual = 8.28505841112e-12, Final residual = 8.28505841112e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.52953837975e-08, Final residual = 1.36123496501e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.83009321134e-10, Final residual = 2.83009321134e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630999093e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973792
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88516 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630999093e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769667e-07 min=3.99992509834e-09 max=2.05286587348e-06
+DICPCG:  Solving for p, Initial residual = 1.93821108323e-08, Final residual = 7.96496055607e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 7.96496224904e-10, Final residual = 7.96496224904e-10, No Iterations 0
+time step continuity errors : sum local = 1.64474317195e-06, global = 1.77790134358e-07, cumulative = 8.07704092331e-07
+NS.H solving, corrector 26
+smoothSolver:  Solving for Ux, Initial residual = 7.99336772892e-12, Final residual = 7.99336772892e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.47859311369e-08, Final residual = 1.30084689141e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.66799721834e-10, Final residual = 2.66799721834e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630997477e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973352
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.884665 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630997477e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769705e-07 min=3.99992509834e-09 max=2.05286587556e-06
+DICPCG:  Solving for p, Initial residual = 1.83082201991e-08, Final residual = 8.83274014068e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.83274085056e-10, Final residual = 8.83274085056e-10, No Iterations 0
+time step continuity errors : sum local = 1.82393715325e-06, global = 7.98848779685e-08, cumulative = 8.87588970299e-07
+NS.H solving, corrector 27
+smoothSolver:  Solving for Ux, Initial residual = 7.73968994093e-12, Final residual = 7.73968994093e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.43485650357e-08, Final residual = 1.2496037282e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.59748071656e-10, Final residual = 2.59748071656e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630995903e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972894
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.884218 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630995903e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769744e-07 min=3.99992509834e-09 max=2.05286587745e-06
+DICPCG:  Solving for p, Initial residual = 1.73474599527e-08, Final residual = 9.73198122847e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.73197934235e-10, Final residual = 9.73197934235e-10, No Iterations 0
+time step continuity errors : sum local = 2.00962821559e-06, global = -1.15692816372e-08, cumulative = 8.76019688662e-07
+NS.H solving, corrector 28
+smoothSolver:  Solving for Ux, Initial residual = 7.5013430065e-12, Final residual = 7.5013430065e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.39686289615e-08, Final residual = 1.20709054972e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.5450928632e-10, Final residual = 2.5450928632e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630994302e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972423
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883835 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630994302e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769785e-07 min=3.99992509834e-09 max=2.05286587906e-06
+DICPCG:  Solving for p, Initial residual = 1.64946806311e-08, Final residual = 9.1285574315e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.12855734559e-10, Final residual = 9.12855734559e-10, No Iterations 0
+time step continuity errors : sum local = 1.8850228924e-06, global = -1.55565334513e-07, cumulative = 7.20454354149e-07
+NS.H solving, corrector 29
+smoothSolver:  Solving for Ux, Initial residual = 7.2865477353e-12, Final residual = 7.2865477353e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.35509653322e-08, Final residual = 1.16502983115e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.51050820981e-10, Final residual = 2.51050820981e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630992591e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131971936
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883569 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630992591e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769828e-07 min=3.99992509834e-09 max=2.05286588018e-06
+DICPCG:  Solving for p, Initial residual = 1.56965437148e-08, Final residual = 9.89870973311e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.89870976555e-10, Final residual = 9.89870976555e-10, No Iterations 0
+time step continuity errors : sum local = 2.04405702263e-06, global = 9.95646356035e-08, cumulative = 8.20018989753e-07
+NS.H solving, corrector 30
+smoothSolver:  Solving for Ux, Initial residual = 6.98237428441e-12, Final residual = 6.98237428441e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.31406558896e-08, Final residual = 1.12993777409e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.37806015003e-10, Final residual = 2.37806015003e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630991113e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131971477
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883383 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630991113e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769871e-07 min=3.99992509834e-09 max=2.05286588096e-06
+DICPCG:  Solving for p, Initial residual = 1.49318404656e-08, Final residual = 9.75907882155e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.75908001867e-10, Final residual = 9.75908001867e-10, No Iterations 0
+time step continuity errors : sum local = 2.01522362486e-06, global = -2.02085886753e-07, cumulative = 6.17933103e-07
+Frozen-RANS relative changes: U=2.99723173259e-09, p=2.68965537812e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 31
+smoothSolver:  Solving for Ux, Initial residual = 6.82814696108e-12, Final residual = 6.82814696108e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.27709525807e-08, Final residual = 1.08912019639e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.33043080331e-10, Final residual = 2.33043080331e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630989012e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970981
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88315 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630989012e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769917e-07 min=3.99992509834e-09 max=2.05286588195e-06
+DICPCG:  Solving for p, Initial residual = 1.42746752364e-08, Final residual = 9.76272914995e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.76272992272e-10, Final residual = 9.76272992272e-10, No Iterations 0
+time step continuity errors : sum local = 2.01597737452e-06, global = -1.54776206572e-07, cumulative = 4.63156896428e-07
+NS.H solving, corrector 32
+smoothSolver:  Solving for Ux, Initial residual = 6.6421489491e-12, Final residual = 6.6421489491e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.25502642088e-08, Final residual = 1.05772119408e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.2451904886e-10, Final residual = 2.2451904886e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630986936e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197053
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883014 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630986936e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769965e-07 min=3.99992509834e-09 max=2.05286588252e-06
+DICPCG:  Solving for p, Initial residual = 1.36435195891e-08, Final residual = 8.93934211159e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.9393420384e-10, Final residual = 8.9393420384e-10, No Iterations 0
+time step continuity errors : sum local = 1.84595029356e-06, global = -1.87038886871e-07, cumulative = 2.76118009557e-07
+NS.H solving, corrector 33
+smoothSolver:  Solving for Ux, Initial residual = 6.4582395339e-12, Final residual = 6.4582395339e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.22760760222e-08, Final residual = 1.02894199405e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.17091491551e-10, Final residual = 2.17091491551e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630984653e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970087
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882951 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630984653e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770015e-07 min=3.99992509834e-09 max=2.05286588279e-06
+DICPCG:  Solving for p, Initial residual = 1.30784043521e-08, Final residual = 9.78146317877e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.78146349054e-10, Final residual = 9.78146349054e-10, No Iterations 0
+time step continuity errors : sum local = 2.01984612667e-06, global = -1.2125309965e-08, cumulative = 2.63992699592e-07
+NS.H solving, corrector 34
+smoothSolver:  Solving for Ux, Initial residual = 6.19163161506e-12, Final residual = 6.19163161506e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.18347007209e-08, Final residual = 9.96696258293e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.07516637006e-10, Final residual = 2.07516637006e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630982371e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131969683
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882936 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630982371e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770066e-07 min=3.99992509834e-09 max=2.05286588285e-06
+DICPCG:  Solving for p, Initial residual = 1.2468199406e-08, Final residual = 8.754836825e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 8.75483768643e-10, Final residual = 8.75483768643e-10, No Iterations 0
+time step continuity errors : sum local = 1.80785036541e-06, global = -1.90213445371e-07, cumulative = 7.37792542217e-08
+NS.H solving, corrector 35
+smoothSolver:  Solving for Ux, Initial residual = 6.02675609993e-12, Final residual = 6.02675609993e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.15171829286e-08, Final residual = 9.63755202822e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.01804777677e-10, Final residual = 2.01804777677e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630979534e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131969295
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882961 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630979534e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777012e-07 min=3.99992509834e-09 max=2.05286588274e-06
+DICPCG:  Solving for p, Initial residual = 1.19502946632e-08, Final residual = 7.99688145587e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 7.99688469704e-10, Final residual = 7.99688469704e-10, No Iterations 0
+time step continuity errors : sum local = 1.65133492594e-06, global = -2.35050338985e-07, cumulative = -1.61271084763e-07
+NS.H solving, corrector 36
+smoothSolver:  Solving for Ux, Initial residual = 5.86634808691e-12, Final residual = 5.86634808691e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.11561118803e-08, Final residual = 9.28682778444e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.97023384349e-10, Final residual = 1.97023384349e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630976623e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968962
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883023 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630976623e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770174e-07 min=3.99992509834e-09 max=2.05286588248e-06
+DICPCG:  Solving for p, Initial residual = 1.14716961569e-08, Final residual = 7.44910542974e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 7.44910473765e-10, Final residual = 7.44910473765e-10, No Iterations 0
+time step continuity errors : sum local = 1.53822003635e-06, global = -2.93054323935e-07, cumulative = -4.54325408698e-07
+NS.H solving, corrector 37
+smoothSolver:  Solving for Ux, Initial residual = 5.7010173832e-12, Final residual = 5.7010173832e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.08003342798e-08, Final residual = 8.94600645232e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.9189442901e-10, Final residual = 1.9189442901e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630973537e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968684
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883116 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630973537e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777023e-07 min=3.99992509834e-09 max=2.05286588209e-06
+DICPCG:  Solving for p, Initial residual = 1.10100868891e-08, Final residual = 9.48447739867e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.48447689845e-10, Final residual = 9.48447689845e-10, No Iterations 0
+time step continuity errors : sum local = 1.95851969666e-06, global = -3.17610686912e-07, cumulative = -7.7193609561e-07
+NS.H solving, corrector 38
+smoothSolver:  Solving for Ux, Initial residual = 5.50710035839e-12, Final residual = 5.50710035839e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.04566049541e-08, Final residual = 8.65903731035e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.86083471181e-10, Final residual = 1.86083471181e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630970386e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968478
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883219 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630970386e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770284e-07 min=3.99992509834e-09 max=2.05286588166e-06
+DICPCG:  Solving for p, Initial residual = 1.05925246697e-08, Final residual = 9.05485505256e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.05485641236e-10, Final residual = 9.05485641236e-10, No Iterations 0
+time step continuity errors : sum local = 1.86980356551e-06, global = -4.1995743713e-07, cumulative = -1.19189353274e-06
+NS.H solving, corrector 39
+smoothSolver:  Solving for Ux, Initial residual = 5.32939141387e-12, Final residual = 5.32939141387e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.01414792321e-08, Final residual = 8.38699665295e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.80665796364e-10, Final residual = 1.80665796364e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630967051e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968333
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883362 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630967051e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777034e-07 min=3.99992509834e-09 max=2.05286588105e-06
+DICPCG:  Solving for p, Initial residual = 1.02138548494e-08, Final residual = 9.03514900637e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.03515209206e-10, Final residual = 9.03515209206e-10, No Iterations 0
+time step continuity errors : sum local = 1.86573452791e-06, global = -5.48739917296e-07, cumulative = -1.74063345004e-06
+NS.H solving, corrector 40
+smoothSolver:  Solving for Ux, Initial residual = 5.16600567099e-12, Final residual = 5.16600567099e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.82930046365e-09, Final residual = 8.1363331129e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.75504584174e-10, Final residual = 1.75504584174e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263096365e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968264
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883531 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263096365e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770396e-07 min=3.99992509834e-09 max=2.05286588034e-06
+DICPCG:  Solving for p, Initial residual = 9.85396712744e-09, Final residual = 9.55480488488e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.55480502344e-10, Final residual = 9.55480502344e-10, No Iterations 0
+time step continuity errors : sum local = 1.97304139494e-06, global = -7.0547882478e-07, cumulative = -2.44611227482e-06
+Frozen-RANS relative changes: U=2.31673185009e-09, p=1.21039952351e-10, k=0, omega=0, nut=0, consecutive=1
+NS.H solving, corrector 41
+smoothSolver:  Solving for Ux, Initial residual = 5.01672338907e-12, Final residual = 5.01672338907e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.52434743694e-09, Final residual = 7.86623609323e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.71370839065e-10, Final residual = 1.71370839065e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630960232e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968278
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883719 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630960232e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777045e-07 min=3.99992509834e-09 max=2.05286587955e-06
+DICPCG:  Solving for p, Initial residual = 9.49660938277e-09, Final residual = 8.94434920625e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 8.94434824457e-10, Final residual = 8.94434824457e-10, No Iterations 0
+time step continuity errors : sum local = 1.84698387489e-06, global = -8.91368073023e-07, cumulative = -3.33748034784e-06
+Frozen-RANS relative changes: U=2.25816757591e-09, p=1.55315335904e-10, k=0, omega=0, nut=0, consecutive=2
+NS.H solving, corrector 42
+smoothSolver:  Solving for Ux, Initial residual = 4.90006704999e-12, Final residual = 4.90006704999e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.18987205866e-09, Final residual = 7.53989443784e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.68509252918e-10, Final residual = 1.68509252918e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630956848e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968375
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88398 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630956848e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770503e-07 min=3.99992509834e-09 max=2.05286587845e-06
+DICPCG:  Solving for p, Initial residual = 9.10068014119e-09, Final residual = 9.40857112044e-10, No Iterations 33
+DICPCG:  Solving for p, Initial residual = 9.40857148234e-10, Final residual = 9.40857148234e-10, No Iterations 0
+time step continuity errors : sum local = 1.94284472489e-06, global = 7.8132449363e-08, cumulative = -3.25934789848e-06
+Frozen-RANS relative changes: U=2.19808443325e-09, p=8.16165587642e-09, k=0, omega=0, nut=0, consecutive=3
+NS.H solving, corrector 43
+smoothSolver:  Solving for Ux, Initial residual = 5.50517634065e-12, Final residual = 5.50517634065e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.02826287635e-09, Final residual = 7.24447044877e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.05401891354e-10, Final residual = 2.05401891354e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630954686e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968651
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.884845 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630954686e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770437e-07 min=3.99992509834e-09 max=2.0528658748e-06
+DICPCG:  Solving for p, Initial residual = 8.74403148207e-09, Final residual = 9.89091859223e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.89092108429e-10, Final residual = 9.89092108429e-10, No Iterations 0
+time step continuity errors : sum local = 2.04244878934e-06, global = -6.38802478105e-07, cumulative = -3.89815037658e-06
+Frozen-RANS relative changes: U=2.14233371396e-09, p=8.81322031623e-11, k=0, omega=0, nut=0, consecutive=4
+NS.H solving, corrector 44
+smoothSolver:  Solving for Ux, Initial residual = 5.01745730406e-12, Final residual = 5.01745730406e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 8.60255904105e-09, Final residual = 7.05106254331e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.80900339654e-10, Final residual = 1.80900339654e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630951174e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968901
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88464 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630951174e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06
+DICPCG:  Solving for p, Initial residual = 8.39311506566e-09, Final residual = 9.21047038248e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.21047088092e-10, Final residual = 9.21047088092e-10, No Iterations 0
+time step continuity errors : sum local = 1.901937373e-06, global = -4.60456487917e-07, cumulative = -4.3586068645e-06
+Frozen-RANS relative changes: U=2.09003485165e-09, p=1.54283226319e-10, k=0, omega=0, nut=0, consecutive=5
+Frozen-RANS flow converged after 44 correctors.
+MTO_HF: Finished NS.H
+MTO_HF: Starting HeatTransfer.H
+DILUPBiCGStab:  Solving for T, Initial residual = 0.0645973275797, Final residual = 8.85930451595e-13, No Iterations 46
+TEqn: initialResidual=0.0645973275797, finalResidual=8.85930451595e-13, nIterations=46
+MTO_HF: Finished HeatTransfer.H
+MTO_HF: Starting AdjHeatTransfer.H
+Thermal matrix transpose dot-test max relative error=1.09689091013e-13
+DILUPBiCGStab:  Solving for Tb, Initial residual = 1, Final residual = 6.57525213585e-13, No Iterations 66
+MTO_HF: Finished AdjHeatTransfer.H
+MTO_HF: Starting AdjNS_HT.H
+B0.2 flux-adjoint diagnostics: maxInternalThermalResidualFluxAdjoint=107.471904936 maxBoundaryThermalResidualFluxAdjoint=0 maxObjectiveFluxDerivative=114.359739701 maxCombinedFluxAdjoint=114.359739701
+PRODRHS (thermalCoupling): sumRhsU=4.33058139795 sumRhsP=-11.6001162325 |RhsU|L2=0.0735287104541 |RhsP|L2=6.90647303809
+PRODPRECSETUP (thermalCoupling): mode=pressureGAMG avg=27.7275430014 min=1.00309714066 max=725.954987504
+PRODPRECGAMGSCHEME (thermalCoupling): laplacianSchemes coefficient interpolation 'linear' == mesh.weights()
+PRODPRECGAMGSETUP (thermalCoupling): mode=pressureGAMG solver=PCG innerTol=0.001 innerMaxIter=50
+PRODPRECGAMGCHECK (thermalCoupling): interiorDiagRelL2=1.13142348768e-16 boundaryDiagRelL2=8.25782114104e-17 effectiveDiagRelL2=1.42213008543e-16 offDiagRelL2=1.34302013134e-16
+PRODDIAG (thermalCoupling): jacobiUavg=1 jacobiPavg=103.910172005 jacobiMin=0.00309714065694 jacobiMax=724.954987504 jacobiNearZero=0
+
+
+--> FOAM FATAL IO ERROR: 
+Unknown asymmetric matrix solver PCG
+
+Valid asymmetric matrix solvers are :
+
+4
+(
+GAMG
+PBiCG
+PBiCGStab
+smoothSolver
+)
+
+
+file:  from line 0 to line 0.
+
+    From function static Foam::autoPtr<Foam::lduMatrix::solver> Foam::lduMatrix::solver::New(const Foam::word&, const Foam::lduMatrix&, const Foam::FieldField<Foam::Field, double>&, const Foam::FieldField<Foam::Field, double>&, const lduInterfaceFieldPtrsList&, const Foam::dictionary&)
+    in file matrices/lduMatrix/lduMatrix/lduMatrixSolver.C at line 101.
+
+FOAM exiting
+
+MTO_RC=1

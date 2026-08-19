@@ -58,7 +58,12 @@ int main(int argc, char *argv[])
         #include "AdjHeatTransfer.H"
         Info << "MTO_HF: Finished AdjHeatTransfer.H" << endl << flush;
 
-        if (!freezeColdFlowForValidation && solveFlowAdjoints)
+        if
+        (
+            !freezeColdFlowForValidation
+         && solveFlowAdjoints
+         && solveThermalCouplingFlowAdjoint
+        )
         {
             Info << "MTO_HF: Starting AdjNS_HT.H" << endl << flush;
             #include "AdjNS_HT.H"
@@ -77,7 +82,12 @@ int main(int argc, char *argv[])
             Info << "MTO_HF: Finished AdjNS_FF.H" << endl << flush;
         }
 
-        if (!freezeColdFlowForValidation && solveFlowAdjoints)
+        if
+        (
+            !freezeColdFlowForValidation
+         && solveFlowAdjoints
+         && solvePressureDropFlowAdjoint
+        )
         {
             Info << "MTO_HF: Starting AdjNS_PD.H" << endl << flush;
             #include "AdjNS_PD.H"

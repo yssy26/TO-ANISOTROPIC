@@ -909,26 +909,96 @@ if
         << abort(FatalError);
 }
 
+// BFINAL-011 cycle-1: inner-solver selection for the pressure-Poisson
+// preconditioner.  GAMG (unchanged default) reproduces the b010 baseline
+// exactly; PCG+DIC is a robustness fallback for rhs classes where the GAMG
+// V-cycle diverges (pressureDrop first-apply NaN in the b010 run).  The
+// GAMG robustness coefficients are overridable from optProperties so the
+// fix round can sweep them without rebuild cycles; defaults reproduce the
+// previous behaviour (scaleCorrection unset == OF7 symmetric default true,
+// nPreSweeps 0).
+const word prodPressurePrecSolver =
+    optProperties.lookupOrDefault<word>
+    (
+        "discreteProdPressurePrecSolver",
+        "GAMG"
+    );
+if
+(
+    prodPressurePrecSolver != "GAMG"
+ && prodPressurePrecSolver != "PCG"
+)
+{
+    FatalErrorInFunction
+        << "Invalid discreteProdPressurePrecSolver '"
+        << prodPressurePrecSolver << "'. Valid choices are GAMG or PCG."
+        << abort(FatalError);
+}
 dictionary prodPressurePrecSolverDict;
-prodPressurePrecSolverDict.add("solver", "GAMG");
-prodPressurePrecSolverDict.add
-(
-    "tolerance",
-    prodPressurePrecTolerance
-);
-prodPressurePrecSolverDict.add("relTol", 0.0);
-prodPressurePrecSolverDict.add
-(
-    "maxIter",
-    prodPressurePrecMaxIter
-);
-prodPressurePrecSolverDict.add("smoother", "GaussSeidel");
-prodPressurePrecSolverDict.add("cacheAgglomeration", true);
-prodPressurePrecSolverDict.add("agglomerator", "faceAreaPair");
-prodPressurePrecSolverDict.add("nCellsInCoarsestLevel", 10);
-prodPressurePrecSolverDict.add("mergeLevels", 1);
-prodPressurePrecSolverDict.add("nPreSweeps", 0);
-prodPressurePrecSolverDict.add("nPostSweeps", 2);
+if (prodPressurePrecSolver == "PCG")
+{
+    prodPressurePrecSolverDict.add("solver", "PCG");
+    prodPressurePrecSolverDict.add("preconditioner", "DIC");
+    prodPressurePrecSolverDict.add
+    (
+        "tolerance",
+        prodPressurePrecTolerance
+    );
+    prodPressurePrecSolverDict.add("relTol", 0.0);
+    prodPressurePrecSolverDict.add
+    (
+        "maxIter",
+        prodPressurePrecMaxIter
+    );
+}
+else
+{
+    prodPressurePrecSolverDict.add("solver", "GAMG");
+    prodPressurePrecSolverDict.add
+    (
+        "tolerance",
+        prodPressurePrecTolerance
+    );
+    prodPressurePrecSolverDict.add("relTol", 0.0);
+    prodPressurePrecSolverDict.add
+    (
+        "maxIter",
+        prodPressurePrecMaxIter
+    );
+    prodPressurePrecSolverDict.add("smoother", "GaussSeidel");
+    prodPressurePrecSolverDict.add("cacheAgglomeration", true);
+    prodPressurePrecSolverDict.add("agglomerator", "faceAreaPair");
+    prodPressurePrecSolverDict.add("nCellsInCoarsestLevel", 10);
+    prodPressurePrecSolverDict.add("mergeLevels", 1);
+    prodPressurePrecSolverDict.add
+    (
+        "nPreSweeps",
+        optProperties.lookupOrDefault<label>
+        (
+            "discreteProdPressurePrecNPreSweeps",
+            0
+        )
+    );
+    prodPressurePrecSolverDict.add("nPostSweeps", 2);
+    prodPressurePrecSolverDict.add
+    (
+        "scaleCorrection",
+        optProperties.lookupOrDefault<bool>
+        (
+            "discreteProdPressurePrecScaleCorrection",
+            true
+        )
+    );
+    prodPressurePrecSolverDict.add
+    (
+        "directSolveCoarsest",
+        optProperties.lookupOrDefault<bool>
+        (
+            "discreteProdPressurePrecDirectSolveCoarsest",
+            false
+        )
+    );
+}
 
 // BFINAL-010 (b): four-group matrix/operator equivalence decomposition.
 // The preconditioner fvScalarMatrix from -fvm::laplacian(mobility, psi)
@@ -987,7 +1057,15 @@ if (prodPreconditionerSetup == "pressureGAMG")
         }
     }
 
-    const scalarField& prodPrecRawDiag = prodPressurePrecMatrix.diag();
+    // Read the matrix through a const lduMatrix& alias: the NON-const
+    // lower() materialises the symmetric-storage lower array as a separate
+    // copy, silently converting the matrix to asymmetric storage.  That
+    // side effect (present in the b010 gate) both rejects PCG ("unknown
+    // asymmetric matrix solver") and flips the GAMG scaleCorrection default
+    // (true only for matrix.symmetric()).  The const overload returns the
+    // upper alias for a symmetric matrix and leaves storage untouched.
+    const lduMatrix& prodPrecLduMatrix = prodPressurePrecMatrix;
+    const scalarField& prodPrecRawDiag = prodPrecLduMatrix.diag();
     scalarField prodPrecBoundaryDiag(prodNCells, 0.0);
     forAll(mesh.boundary(), patchi)
     {
@@ -1000,8 +1078,8 @@ if (prodPreconditionerSetup == "pressureGAMG")
                 patchInternalCoeffs[facei];
         }
     }
-    const scalarField& prodPrecUpper = prodPressurePrecMatrix.upper();
-    const scalarField& prodPrecLower = prodPressurePrecMatrix.lower();
+    const scalarField& prodPrecUpper = prodPrecLduMatrix.upper();
+    const scalarField& prodPrecLower = prodPrecLduMatrix.lower();
 
     scalar prodPrecInteriorDiff2 = 0.0;
     scalar prodPrecInteriorRef2 = 0.0;
@@ -1080,7 +1158,7 @@ if (prodPreconditionerSetup == "pressureGAMG")
         );
 
     Info<< "PRODPRECGAMGSETUP (" << discreteAdjointLabel
-        << "): mode=pressureGAMG"
+        << "): mode=pressureGAMG solver=" << prodPressurePrecSolver
         << " innerTol=" << prodPressurePrecTolerance
         << " innerMaxIter=" << prodPressurePrecMaxIter << endl;
     Info<< "PRODPRECGAMGCHECK (" << discreteAdjointLabel
@@ -1128,6 +1206,7 @@ if (prodPreconditionerSetup == "pressureGAMG")
 //     zU = D_U^{-1} (rU - UP zP)           (D_U ~ L1 of the U block)
 // UP zP is evaluated with the matrix-free operator applied to [0; zP].
 // Solve-layer only; applyProdFlowJT is unchanged.
+label prodPressurePrecApplyCount = 0;
 auto applyProdPreconditioner =
 [&](const scalarField& input, scalarField& output)
 {
@@ -1150,6 +1229,40 @@ auto applyProdPreconditioner =
             prodPressurePrecMatrix.source()[pRefCell] = 0.0;
         }
         prodPressurePrecMatrix.solve(prodPressurePrecSolverDict);
+        // BFINAL-011 cycle-1: fail fast on a non-finite inner solve instead
+        // of letting nan propagate silently through FGMRES into the
+        // gradient layer (b010 reached the MMA gate three stages later).
+        // Pure fast-fail instrumentation; no numerical change.
+        ++prodPressurePrecApplyCount;
+        label prodPrecPsiNonFinite = 0;
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            const scalar v = prodPressurePrecPsi[celli];
+            if ((v != v) || (Foam::mag(v) > VGREAT))
+            {
+                ++prodPrecPsiNonFinite;
+            }
+        }
+        reduce(prodPrecPsiNonFinite, sumOp<label>());
+        if (prodPrecPsiNonFinite > 0)
+        {
+            FatalErrorInFunction
+                << "Inner pressure-Poisson preconditioner solve produced a "
+                << "non-finite psi for label '" << discreteAdjointLabel
+                << "' at preconditioner apply "
+                << prodPressurePrecApplyCount
+                << " (inner solver '" << prodPressurePrecSolver
+                << "', innerTol=" << prodPressurePrecTolerance
+                << ", innerMaxIter=" << prodPressurePrecMaxIter
+                << "; non-finite cells: " << prodPrecPsiNonFinite
+                << "). The preconditioner matrix passed the "
+                << "PRODPRECGAMGCHECK equivalence gate, so this is an inner "
+                << "solver robustness failure on this rhs class (compare "
+                << "discreteProdPressurePrecSolver PCG, or GAMG "
+                << "scaleCorrection/nPreSweeps overrides), not a matrix "
+                << "assembly defect."
+                << abort(FatalError);
+        }
         for (label celli = 0; celli < prodNCells; ++celli)
         {
             output[prodPIndex(celli)] =
