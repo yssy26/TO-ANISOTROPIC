@@ -1,3 +1,11 @@
+# TO-ANISOTROPIC
+
+> **New AI Agent / developer: read [`AI_AGENT_HANDOFF.md`](./AI_AGENT_HANDOFF.md) first.**  
+> It is the current authoritative project handoff for goals, scope lock, algorithm path, code architecture, Stage A/B status, BFINAL-009 failure, BFINAL-010 next task, safety gates, and the roadmap to MMA/full-SST validation.  
+> The notes below are older implementation notes and may describe historical solver behavior or obsolete commits.
+
+---
+
 源码目录 src/
 主入口与主流程编排：
 
