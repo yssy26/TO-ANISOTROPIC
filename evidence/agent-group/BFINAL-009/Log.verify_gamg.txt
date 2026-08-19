@@ -1,0 +1,1451 @@
+/*---------------------------------------------------------------------------*\
+  =========                 |
+  \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox
+   \\    /   O peration     | Website:  https://openfoam.org
+    \\  /    A nd           | Version:  7
+     \\/     M anipulation  |
+\*---------------------------------------------------------------------------*/
+Build  : 7-3bcbaf946ae9
+Exec   : /home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF
+Date   : Aug 19 2026
+Time   : 00:35:03
+Host   : "DESKTOP-DSG34PK"
+PID    : 388624
+I/O    : uncollated
+Case   : /home/ys/dsH/b8_verify_gamg
+nProcs : 1
+fileModificationChecking : Monitoring run-time modified files using timeStampMaster (fileModificationSkew 10)
+allowSystemOperations : Allowing user-supplied system call operations
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+Create time
+
+Create mesh for time = 0
+
+
+SIMPLE: No convergence criteria found
+
+No finite volume options present
+Reading optimization parameters
+
+Transaction mechanism configuration:
+  enableSSTAcceptanceCheck=false
+  initialMoveLimit=0.02
+  minimumMoveLimit=0.01
+  maximumMoveLimit=0.5
+  moveLimitReduction=0.5
+  moveLimitGrowth=1.2
+  maxCandidateRetries=3
+  relativeObjectiveTolerance=0.01
+  absoluteConstraintTolerance=0.01
+  enableCSVLog=true
+  enableOptimizerRestart=false
+Reading pseudo-density fields
+
+Creating heat source field Q
+
+Reading transportProperties
+
+Reading field p
+
+Reading field U
+
+Reading/calculating face flux field phi
+
+Selecting incompressible transport model Newtonian
+Selecting turbulence model type RAS
+Selecting RAS turbulence model kOmegaSST
+Selecting patchDistMethod meshWave
+RAS
+{
+    RASModel        kOmegaSST;
+    turbulence      on;
+    printCoeffs     on;
+    alphaK1         0.85;
+    alphaK2         1;
+    alphaOmega1     0.5;
+    alphaOmega2     0.856;
+    gamma1          0.555555555556;
+    gamma2          0.44;
+    beta1           0.075;
+    beta2           0.0828;
+    betaStar        0.09;
+    a1              0.31;
+    b1              1;
+    c1              10;
+    F3              false;
+}
+
+Reading field pa
+
+Reading field Ua
+
+Reading field pb
+
+Reading field Ub
+
+Reading field pc
+
+Reading field Uc
+
+Reading thermal properties
+
+Anisotropic conductivity: solidK=(21.6 0 0 21.6 0 16.6)
+Principal mesh-axis conductivities: Kxx=21.6, Kyy=21.6, Kzz=16.6, relativeOffDiagonal=0
+--> FOAM Warning : 
+    From function int main(int, char**)
+    in file readThermalProperties.H at line 121
+    anisotropicConductivityValidated=false. Forward validation is permitted, but topology updates are blocked until the Stage A suite passes.
+Reading field T
+
+Reading field Tb
+
+Reading optional frozen-hot-region configuration
+
+Frozen-hot mode enabled:
+  hotZone=hotFluidZone, volume=1.96e-06
+  wallZone=separatorWallZone, volume=6.72e-07
+  hotVelocityField=UHotFrozen
+  hotRhoCpRatio=0.425273056469
+  max|UHotFrozen| outside hot zone=0
+  hot inlet flux=0.01764
+  hot outlet flux=0.01764
+  hot mass-balance error=1.96680666211e-16
+  max|div(phiHotFrozen)|=2.16840434497e-10
+  thermalObjectiveType=maximizeColdOutletTemperature
+  thermalReferenceTemperature=600
+  mmaUpdateEnabled=false
+Validating discrete objective derivatives
+Discrete objective derivative errors: thermal=2.7025486001e-11, pressure=7.07793481308e-12
+Cold-side flowModel=incompressibleRANSFrozen, frozenTurbulenceAdjoint=true, ransDirectionValidated=true, freezeTurbulenceForValidation=true
+Initialization
+
+Active MMA design cells: local=5040, global=5040, designVolume=6.3e-07
+Validation mode: recomputing xp/xh from raw x with fixed projection beta=8
+DICPCG:  Solving for xp, Initial residual = 0.0299209651934, Final residual = 2.71774758184e-10, No Iterations 9
+Frozen-gradient MMA gate: frozenGradientValidated=false, fullSSTGradientValidated=true, SSTcandidateAcceptance=false, mmaUpdateEnabled=false, stageB4JacobianProbe=false
+MTO_HF: Finished update.H
+MTO_HF: Starting NS.H
+NS.H solving, corrector 1
+smoothSolver:  Solving for Ux, Initial residual = 2.06168931905e-11, Final residual = 2.06168931905e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 4.35355851235e-08, Final residual = 4.19864820326e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.92113238729e-10, Final residual = 6.92113238729e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631087711e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131959983
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.876616 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631087711e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769549e-07 min=3.99992509834e-09 max=2.05286590948e-06
+DICPCG:  Solving for p, Initial residual = 1.09866531e-07, Final residual = 9.82513712119e-10, No Iterations 9
+DICPCG:  Solving for p, Initial residual = 9.82513749329e-10, Final residual = 9.82513749329e-10, No Iterations 0
+time step continuity errors : sum local = 2.02886470978e-06, global = -3.43911878606e-07, cumulative = -3.43911878606e-07
+NS.H solving, corrector 2
+smoothSolver:  Solving for Ux, Initial residual = 1.9692260375e-11, Final residual = 1.9692260375e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 4.09745759024e-08, Final residual = 3.89776317972e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.60877053079e-10, Final residual = 6.60877053079e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631080924e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131963485
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.877976 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631080924e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769584e-07 min=3.99992509834e-09 max=2.05286590375e-06
+DICPCG:  Solving for p, Initial residual = 1.01300462252e-07, Final residual = 9.72652962669e-10, No Iterations 10
+DICPCG:  Solving for p, Initial residual = 9.7265299035e-10, Final residual = 9.7265299035e-10, No Iterations 0
+time step continuity errors : sum local = 2.00850203806e-06, global = -3.24289728025e-07, cumulative = -6.68201606631e-07
+NS.H solving, corrector 3
+smoothSolver:  Solving for Ux, Initial residual = 1.87602576629e-11, Final residual = 1.87602576629e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.86070791937e-08, Final residual = 3.60984598036e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.31242427805e-10, Final residual = 6.31242427805e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631074947e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713196641
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.879077 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631074947e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769618e-07 min=3.99992509834e-09 max=2.05286589911e-06
+DICPCG:  Solving for p, Initial residual = 9.3701306591e-08, Final residual = 9.22219051394e-10, No Iterations 11
+DICPCG:  Solving for p, Initial residual = 9.22219600161e-10, Final residual = 9.22219600161e-10, No Iterations 0
+time step continuity errors : sum local = 1.90435813608e-06, global = -3.33166218011e-07, cumulative = -1.00136782464e-06
+NS.H solving, corrector 4
+smoothSolver:  Solving for Ux, Initial residual = 1.78443135001e-11, Final residual = 1.78443135001e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.64960136341e-08, Final residual = 3.41055219984e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 6.06736024016e-10, Final residual = 6.06736024016e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631069269e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968844
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.880043 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631069269e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769649e-07 min=3.99992509834e-09 max=2.05286589504e-06
+DICPCG:  Solving for p, Initial residual = 8.69474012455e-08, Final residual = 9.9199606275e-10, No Iterations 12
+DICPCG:  Solving for p, Initial residual = 9.91995814025e-10, Final residual = 9.91995814025e-10, No Iterations 0
+time step continuity errors : sum local = 2.04844476306e-06, global = -3.37933292883e-07, cumulative = -1.33930111753e-06
+NS.H solving, corrector 5
+smoothSolver:  Solving for Ux, Initial residual = 1.69965066316e-11, Final residual = 1.69965066316e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.47284040854e-08, Final residual = 3.28703707115e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.86800045679e-10, Final residual = 5.86800045679e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631063789e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970859
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.880926 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631063789e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769678e-07 min=3.99992509834e-09 max=2.05286589132e-06
+DICPCG:  Solving for p, Initial residual = 8.06475343416e-08, Final residual = 9.78283068219e-10, No Iterations 15
+DICPCG:  Solving for p, Initial residual = 9.7828281767e-10, Final residual = 9.7828281767e-10, No Iterations 0
+time step continuity errors : sum local = 2.02012821347e-06, global = -3.0360534577e-07, cumulative = -1.6429064633e-06
+NS.H solving, corrector 6
+smoothSolver:  Solving for Ux, Initial residual = 1.62623647953e-11, Final residual = 1.62623647953e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.30988273924e-08, Final residual = 3.16990516227e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.68666422728e-10, Final residual = 5.68666422728e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631058655e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972493
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88168 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631058655e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769703e-07 min=3.99992509834e-09 max=2.05286588814e-06
+DICPCG:  Solving for p, Initial residual = 7.46635850132e-08, Final residual = 9.32657777787e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.32657775857e-10, Final residual = 9.32657775857e-10, No Iterations 0
+time step continuity errors : sum local = 1.92591349536e-06, global = -7.3054080695e-07, cumulative = -2.37344727024e-06
+NS.H solving, corrector 7
+smoothSolver:  Solving for Ux, Initial residual = 1.55581029576e-11, Final residual = 1.55581029576e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 3.14908566654e-08, Final residual = 3.02017469906e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.3750251759e-10, Final residual = 5.3750251759e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631053206e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973763
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882703 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631053206e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769725e-07 min=3.99992509834e-09 max=2.05286588383e-06
+DICPCG:  Solving for p, Initial residual = 6.90987893995e-08, Final residual = 9.88810411155e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.88810453252e-10, Final residual = 9.88810453252e-10, No Iterations 0
+time step continuity errors : sum local = 2.04186737729e-06, global = -7.73677022979e-07, cumulative = -3.14712429322e-06
+NS.H solving, corrector 8
+smoothSolver:  Solving for Ux, Initial residual = 1.49444527019e-11, Final residual = 1.49444527019e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.99515918899e-08, Final residual = 2.84406437934e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.13110934693e-10, Final residual = 5.13110934693e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631048261e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131974783
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88333 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631048261e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769745e-07 min=3.99992509834e-09 max=2.05286588119e-06
+DICPCG:  Solving for p, Initial residual = 6.40778188916e-08, Final residual = 9.40188799688e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.4018886153e-10, Final residual = 9.4018886153e-10, No Iterations 0
+time step continuity errors : sum local = 1.94146501761e-06, global = -7.97878600563e-07, cumulative = -3.94500289379e-06
+NS.H solving, corrector 9
+smoothSolver:  Solving for Ux, Initial residual = 1.43914943409e-11, Final residual = 1.43914943409e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.86342950454e-08, Final residual = 2.66760047548e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.93097702771e-10, Final residual = 4.93097702771e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631043516e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975559
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883846 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631043516e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769764e-07 min=3.99992509834e-09 max=2.05286587902e-06
+DICPCG:  Solving for p, Initial residual = 5.95182236762e-08, Final residual = 9.4067040783e-10, No Iterations 37
+DICPCG:  Solving for p, Initial residual = 9.40670362338e-10, Final residual = 9.40670362338e-10, No Iterations 0
+time step continuity errors : sum local = 1.94245922378e-06, global = 2.88241307041e-08, cumulative = -3.91617876308e-06
+NS.H solving, corrector 10
+smoothSolver:  Solving for Ux, Initial residual = 1.43737253419e-11, Final residual = 1.43737253419e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.76500069578e-08, Final residual = 2.52280415525e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 5.49786316351e-10, Final residual = 5.49786316351e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631039942e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976176
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885098 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631039942e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769682e-07 min=3.99992509834e-09 max=2.05286587374e-06
+DICPCG:  Solving for p, Initial residual = 5.52767656837e-08, Final residual = 9.94522011651e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.94521801158e-10, Final residual = 9.94521801158e-10, No Iterations 0
+time step continuity errors : sum local = 2.05366114764e-06, global = -5.35163162453e-07, cumulative = -4.45134192554e-06
+Frozen-RANS relative changes: U=5.69123095714e-09, p=3.61561715027e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 11
+smoothSolver:  Solving for Ux, Initial residual = 1.35854143986e-11, Final residual = 1.35854143986e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.64340138146e-08, Final residual = 2.39550962575e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.8759844054e-10, Final residual = 4.8759844054e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631035173e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976504
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88524 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631035173e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769737e-07 min=3.99992509834e-09 max=2.05286587314e-06
+DICPCG:  Solving for p, Initial residual = 5.12821074394e-08, Final residual = 9.88337233547e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.88337432865e-10, Final residual = 9.88337432865e-10, No Iterations 0
+time step continuity errors : sum local = 2.04089040876e-06, global = -3.19818900306e-07, cumulative = -4.77116082584e-06
+NS.H solving, corrector 12
+smoothSolver:  Solving for Ux, Initial residual = 1.29485297052e-11, Final residual = 1.29485297052e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.54743645188e-08, Final residual = 2.30942067898e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.45882235138e-10, Final residual = 4.45882235138e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631031439e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976744
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885854 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631031439e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769716e-07 min=3.99992509834e-09 max=2.05286587055e-06
+DICPCG:  Solving for p, Initial residual = 4.75469013532e-08, Final residual = 9.10732382953e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.10732572349e-10, Final residual = 9.10732572349e-10, No Iterations 0
+time step continuity errors : sum local = 1.88063860526e-06, global = -6.78241646184e-08, cumulative = -4.83898499046e-06
+NS.H solving, corrector 13
+smoothSolver:  Solving for Ux, Initial residual = 1.24316902918e-11, Final residual = 1.24316902918e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.44058971975e-08, Final residual = 2.24340287282e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.21074900205e-10, Final residual = 4.21074900205e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631027963e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976866
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886329 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631027963e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769696e-07 min=3.99992509834e-09 max=2.05286586855e-06
+DICPCG:  Solving for p, Initial residual = 4.40641010592e-08, Final residual = 9.51101154079e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.51101228546e-10, Final residual = 9.51101228546e-10, No Iterations 0
+time step continuity errors : sum local = 1.96399879927e-06, global = 1.36793259701e-07, cumulative = -4.70219173076e-06
+NS.H solving, corrector 14
+smoothSolver:  Solving for Ux, Initial residual = 1.19689365128e-11, Final residual = 1.19689365128e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.33758347886e-08, Final residual = 2.17483586586e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 4.06011426776e-10, Final residual = 4.06011426776e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631024629e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976881
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886699 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631024629e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769676e-07 min=3.99992509834e-09 max=2.05286586699e-06
+DICPCG:  Solving for p, Initial residual = 4.08672519494e-08, Final residual = 9.92833832984e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.9283350802e-10, Final residual = 9.9283350802e-10, No Iterations 0
+time step continuity errors : sum local = 2.05017511918e-06, global = 3.36226685872e-07, cumulative = -4.36596504489e-06
+NS.H solving, corrector 15
+smoothSolver:  Solving for Ux, Initial residual = 1.15560546653e-11, Final residual = 1.15560546653e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.23672141612e-08, Final residual = 2.08806356521e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.93077685667e-10, Final residual = 3.93077685667e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631021458e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976817
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886954 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631021458e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769657e-07 min=3.99992509834e-09 max=2.05286586592e-06
+DICPCG:  Solving for p, Initial residual = 3.79173597646e-08, Final residual = 8.41256504442e-10, No Iterations 12
+DICPCG:  Solving for p, Initial residual = 8.41256632568e-10, Final residual = 8.41256632568e-10, No Iterations 0
+time step continuity errors : sum local = 1.73717253936e-06, global = 2.85546709477e-07, cumulative = -4.08041833541e-06
+NS.H solving, corrector 16
+smoothSolver:  Solving for Ux, Initial residual = 1.12996035263e-11, Final residual = 1.12996035263e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.15141148051e-08, Final residual = 2.00152649912e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.92789163725e-10, Final residual = 3.92789163725e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631018284e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197667
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887272 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631018284e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769638e-07 min=3.99992509834e-09 max=2.05286586457e-06
+DICPCG:  Solving for p, Initial residual = 3.51649378079e-08, Final residual = 9.83931532437e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.8393148499e-10, Final residual = 9.8393148499e-10, No Iterations 0
+time step continuity errors : sum local = 2.03179200504e-06, global = 5.89557999284e-07, cumulative = -3.49086033613e-06
+NS.H solving, corrector 17
+smoothSolver:  Solving for Ux, Initial residual = 1.07872019511e-11, Final residual = 1.07872019511e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 2.06193307099e-08, Final residual = 1.90484983755e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.6958624896e-10, Final residual = 3.6958624896e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631015551e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976497
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887206 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631015551e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769624e-07 min=3.99992509834e-09 max=2.05286586485e-06
+DICPCG:  Solving for p, Initial residual = 3.26778945161e-08, Final residual = 9.35070729564e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.35070759658e-10, Final residual = 9.35070759658e-10, No Iterations 0
+time step continuity errors : sum local = 1.93089602886e-06, global = 7.6524391846e-07, cumulative = -2.72561641766e-06
+NS.H solving, corrector 18
+smoothSolver:  Solving for Ux, Initial residual = 1.03914309217e-11, Final residual = 1.03914309217e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.9776832783e-08, Final residual = 1.8063873666e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.51266335433e-10, Final residual = 3.51266335433e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263101298e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131976275
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887235 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263101298e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769608e-07 min=3.99992509834e-09 max=2.05286586473e-06
+DICPCG:  Solving for p, Initial residual = 3.04307751461e-08, Final residual = 9.46915253498e-10, No Iterations 20
+DICPCG:  Solving for p, Initial residual = 9.4691518014e-10, Final residual = 9.4691518014e-10, No Iterations 0
+time step continuity errors : sum local = 1.95535476842e-06, global = 3.19949064788e-07, cumulative = -2.40566735288e-06
+NS.H solving, corrector 19
+smoothSolver:  Solving for Ux, Initial residual = 1.03295525416e-11, Final residual = 1.03295525416e-11, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.9016595132e-08, Final residual = 1.71625728759e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.54240003248e-10, Final residual = 3.54240003248e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631009989e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975976
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88737 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631009989e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769598e-07 min=3.99992509834e-09 max=2.05286586416e-06
+DICPCG:  Solving for p, Initial residual = 2.84156830809e-08, Final residual = 8.64319100768e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.64318996178e-10, Final residual = 8.64318996178e-10, No Iterations 0
+time step continuity errors : sum local = 1.78479543612e-06, global = 7.87416517445e-07, cumulative = -1.61825083543e-06
+NS.H solving, corrector 20
+smoothSolver:  Solving for Ux, Initial residual = 9.85091680857e-12, Final residual = 9.85091680857e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.82283872301e-08, Final residual = 1.65292783539e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.33834071461e-10, Final residual = 3.33834071461e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263100823e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975705
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.887041 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263100823e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769586e-07 min=3.99992509834e-09 max=2.05286586555e-06
+DICPCG:  Solving for p, Initial residual = 2.65812787892e-08, Final residual = 8.64170191318e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.6417006297e-10, Final residual = 8.6417006297e-10, No Iterations 0
+time step continuity errors : sum local = 1.78448800784e-06, global = 7.8512406897e-07, cumulative = -8.33126766462e-07
+Frozen-RANS relative changes: U=3.99041639037e-09, p=2.33209873449e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 21
+smoothSolver:  Solving for Ux, Initial residual = 9.44066404176e-12, Final residual = 9.44066404176e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.75943327716e-08, Final residual = 1.59783237088e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.1878694971e-10, Final residual = 3.1878694971e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631006194e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131975374
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88685 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631006194e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769578e-07 min=3.99992509834e-09 max=2.05286586635e-06
+DICPCG:  Solving for p, Initial residual = 2.48749041122e-08, Final residual = 9.2702393719e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.27023990867e-10, Final residual = 9.27023990867e-10, No Iterations 0
+time step continuity errors : sum local = 1.91427956166e-06, global = 8.12266938164e-07, cumulative = -2.08598282978e-08
+NS.H solving, corrector 22
+smoothSolver:  Solving for Ux, Initial residual = 9.07832734098e-12, Final residual = 9.07832734098e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.70160299579e-08, Final residual = 1.54439510988e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.07014952967e-10, Final residual = 3.07014952967e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631004385e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197502
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.886604 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631004385e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769572e-07 min=3.99992509834e-09 max=2.05286586739e-06
+DICPCG:  Solving for p, Initial residual = 2.32911069046e-08, Final residual = 9.04668178933e-10, No Iterations 29
+DICPCG:  Solving for p, Initial residual = 9.04668180151e-10, Final residual = 9.04668180151e-10, No Iterations 0
+time step continuity errors : sum local = 1.86811516654e-06, global = -1.34026711104e-07, cumulative = -1.54886539402e-07
+NS.H solving, corrector 23
+smoothSolver:  Solving for Ux, Initial residual = 9.21286375061e-12, Final residual = 9.21286375061e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.65163572569e-08, Final residual = 1.4817697949e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.42667194021e-10, Final residual = 3.42667194021e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631001738e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131974572
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885713 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631001738e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769673e-07 min=3.99992509834e-09 max=2.05286587114e-06
+DICPCG:  Solving for p, Initial residual = 2.18468067887e-08, Final residual = 9.04365359611e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.04365660602e-10, Final residual = 9.04365660602e-10, No Iterations 0
+time step continuity errors : sum local = 1.86749075752e-06, global = 4.72178474169e-07, cumulative = 3.17291934767e-07
+NS.H solving, corrector 24
+smoothSolver:  Solving for Ux, Initial residual = 8.67583615037e-12, Final residual = 8.67583615037e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.58173975338e-08, Final residual = 1.42093953956e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 3.07476232758e-10, Final residual = 3.07476232758e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42631000766e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197422
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.885683 max=250004681.441 ; diag() avg=0.019660092895 min=4.42631000766e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769629e-07 min=3.99992509834e-09 max=2.05286587127e-06
+DICPCG:  Solving for p, Initial residual = 2.05477328207e-08, Final residual = 9.31464807696e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.31464561283e-10, Final residual = 9.31464561283e-10, No Iterations 0
+time step continuity errors : sum local = 1.92345011531e-06, global = 3.12622023206e-07, cumulative = 6.29913957973e-07
+NS.H solving, corrector 25
+smoothSolver:  Solving for Ux, Initial residual = 8.28505841112e-12, Final residual = 8.28505841112e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.52953837975e-08, Final residual = 1.36123496501e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.83009321134e-10, Final residual = 2.83009321134e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630999093e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973792
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.88516 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630999093e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769667e-07 min=3.99992509834e-09 max=2.05286587348e-06
+DICPCG:  Solving for p, Initial residual = 1.93821108323e-08, Final residual = 7.96496055607e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 7.96496224904e-10, Final residual = 7.96496224904e-10, No Iterations 0
+time step continuity errors : sum local = 1.64474317195e-06, global = 1.77790134358e-07, cumulative = 8.07704092331e-07
+NS.H solving, corrector 26
+smoothSolver:  Solving for Ux, Initial residual = 7.99336772892e-12, Final residual = 7.99336772892e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.47859311369e-08, Final residual = 1.30084689141e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.66799721834e-10, Final residual = 2.66799721834e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630997477e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131973352
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.884665 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630997477e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769705e-07 min=3.99992509834e-09 max=2.05286587556e-06
+DICPCG:  Solving for p, Initial residual = 1.83082201991e-08, Final residual = 8.83274014068e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.83274085056e-10, Final residual = 8.83274085056e-10, No Iterations 0
+time step continuity errors : sum local = 1.82393715325e-06, global = 7.98848779685e-08, cumulative = 8.87588970299e-07
+NS.H solving, corrector 27
+smoothSolver:  Solving for Ux, Initial residual = 7.73968994093e-12, Final residual = 7.73968994093e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.43485650357e-08, Final residual = 1.2496037282e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.59748071656e-10, Final residual = 2.59748071656e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630995903e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972894
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.884218 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630995903e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769744e-07 min=3.99992509834e-09 max=2.05286587745e-06
+DICPCG:  Solving for p, Initial residual = 1.73474599527e-08, Final residual = 9.73198122847e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.73197934235e-10, Final residual = 9.73197934235e-10, No Iterations 0
+time step continuity errors : sum local = 2.00962821559e-06, global = -1.15692816372e-08, cumulative = 8.76019688662e-07
+NS.H solving, corrector 28
+smoothSolver:  Solving for Ux, Initial residual = 7.5013430065e-12, Final residual = 7.5013430065e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.39686289615e-08, Final residual = 1.20709054972e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.5450928632e-10, Final residual = 2.5450928632e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630994302e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131972423
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883835 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630994302e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769785e-07 min=3.99992509834e-09 max=2.05286587906e-06
+DICPCG:  Solving for p, Initial residual = 1.64946806311e-08, Final residual = 9.1285574315e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.12855734559e-10, Final residual = 9.12855734559e-10, No Iterations 0
+time step continuity errors : sum local = 1.8850228924e-06, global = -1.55565334513e-07, cumulative = 7.20454354149e-07
+NS.H solving, corrector 29
+smoothSolver:  Solving for Ux, Initial residual = 7.2865477353e-12, Final residual = 7.2865477353e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.35509653322e-08, Final residual = 1.16502983115e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.51050820981e-10, Final residual = 2.51050820981e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630992591e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131971936
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883569 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630992591e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769828e-07 min=3.99992509834e-09 max=2.05286588018e-06
+DICPCG:  Solving for p, Initial residual = 1.56965437148e-08, Final residual = 9.89870973311e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.89870976555e-10, Final residual = 9.89870976555e-10, No Iterations 0
+time step continuity errors : sum local = 2.04405702263e-06, global = 9.95646356035e-08, cumulative = 8.20018989753e-07
+NS.H solving, corrector 30
+smoothSolver:  Solving for Ux, Initial residual = 6.98237428441e-12, Final residual = 6.98237428441e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.31406558896e-08, Final residual = 1.12993777409e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.37806015003e-10, Final residual = 2.37806015003e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630991113e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131971477
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.116 min=487123.883383 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630991113e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769871e-07 min=3.99992509834e-09 max=2.05286588096e-06
+DICPCG:  Solving for p, Initial residual = 1.49318404656e-08, Final residual = 9.75907882155e-10, No Iterations 7
+DICPCG:  Solving for p, Initial residual = 9.75908001867e-10, Final residual = 9.75908001867e-10, No Iterations 0
+time step continuity errors : sum local = 2.01522362486e-06, global = -2.02085886753e-07, cumulative = 6.17933103e-07
+Frozen-RANS relative changes: U=2.99723173259e-09, p=2.68965537812e-10, k=0, omega=0, nut=0, consecutive=0
+NS.H solving, corrector 31
+smoothSolver:  Solving for Ux, Initial residual = 6.82814696108e-12, Final residual = 6.82814696108e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.27709525807e-08, Final residual = 1.08912019639e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.33043080331e-10, Final residual = 2.33043080331e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630989012e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970981
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88315 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630989012e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769917e-07 min=3.99992509834e-09 max=2.05286588195e-06
+DICPCG:  Solving for p, Initial residual = 1.42746752364e-08, Final residual = 9.76272914995e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 9.76272992272e-10, Final residual = 9.76272992272e-10, No Iterations 0
+time step continuity errors : sum local = 2.01597737452e-06, global = -1.54776206572e-07, cumulative = 4.63156896428e-07
+NS.H solving, corrector 32
+smoothSolver:  Solving for Ux, Initial residual = 6.6421489491e-12, Final residual = 6.6421489491e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.25502642088e-08, Final residual = 1.05772119408e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.2451904886e-10, Final residual = 2.2451904886e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630986936e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.00015713197053
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883014 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630986936e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337769965e-07 min=3.99992509834e-09 max=2.05286588252e-06
+DICPCG:  Solving for p, Initial residual = 1.36435195891e-08, Final residual = 8.93934211159e-10, No Iterations 6
+DICPCG:  Solving for p, Initial residual = 8.9393420384e-10, Final residual = 8.9393420384e-10, No Iterations 0
+time step continuity errors : sum local = 1.84595029356e-06, global = -1.87038886871e-07, cumulative = 2.76118009557e-07
+NS.H solving, corrector 33
+smoothSolver:  Solving for Ux, Initial residual = 6.4582395339e-12, Final residual = 6.4582395339e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.22760760222e-08, Final residual = 1.02894199405e-12, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.17091491551e-10, Final residual = 2.17091491551e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630984653e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131970087
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882951 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630984653e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770015e-07 min=3.99992509834e-09 max=2.05286588279e-06
+DICPCG:  Solving for p, Initial residual = 1.30784043521e-08, Final residual = 9.78146317877e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.78146349054e-10, Final residual = 9.78146349054e-10, No Iterations 0
+time step continuity errors : sum local = 2.01984612667e-06, global = -1.2125309965e-08, cumulative = 2.63992699592e-07
+NS.H solving, corrector 34
+smoothSolver:  Solving for Ux, Initial residual = 6.19163161506e-12, Final residual = 6.19163161506e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.18347007209e-08, Final residual = 9.96696258293e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.07516637006e-10, Final residual = 2.07516637006e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630982371e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131969683
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882936 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630982371e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770066e-07 min=3.99992509834e-09 max=2.05286588285e-06
+DICPCG:  Solving for p, Initial residual = 1.2468199406e-08, Final residual = 8.754836825e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 8.75483768643e-10, Final residual = 8.75483768643e-10, No Iterations 0
+time step continuity errors : sum local = 1.80785036541e-06, global = -1.90213445371e-07, cumulative = 7.37792542217e-08
+NS.H solving, corrector 35
+smoothSolver:  Solving for Ux, Initial residual = 6.02675609993e-12, Final residual = 6.02675609993e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.15171829286e-08, Final residual = 9.63755202822e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.01804777677e-10, Final residual = 2.01804777677e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630979534e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131969295
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.882961 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630979534e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777012e-07 min=3.99992509834e-09 max=2.05286588274e-06
+DICPCG:  Solving for p, Initial residual = 1.19502946632e-08, Final residual = 7.99688145587e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 7.99688469704e-10, Final residual = 7.99688469704e-10, No Iterations 0
+time step continuity errors : sum local = 1.65133492594e-06, global = -2.35050338985e-07, cumulative = -1.61271084763e-07
+NS.H solving, corrector 36
+smoothSolver:  Solving for Ux, Initial residual = 5.86634808691e-12, Final residual = 5.86634808691e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.11561118803e-08, Final residual = 9.28682778444e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.97023384349e-10, Final residual = 1.97023384349e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630976623e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968962
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883023 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630976623e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770174e-07 min=3.99992509834e-09 max=2.05286588248e-06
+DICPCG:  Solving for p, Initial residual = 1.14716961569e-08, Final residual = 7.44910542974e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 7.44910473765e-10, Final residual = 7.44910473765e-10, No Iterations 0
+time step continuity errors : sum local = 1.53822003635e-06, global = -2.93054323935e-07, cumulative = -4.54325408698e-07
+NS.H solving, corrector 37
+smoothSolver:  Solving for Ux, Initial residual = 5.7010173832e-12, Final residual = 5.7010173832e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.08003342798e-08, Final residual = 8.94600645232e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.9189442901e-10, Final residual = 1.9189442901e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630973537e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968684
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883116 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630973537e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777023e-07 min=3.99992509834e-09 max=2.05286588209e-06
+DICPCG:  Solving for p, Initial residual = 1.10100868891e-08, Final residual = 9.48447739867e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.48447689845e-10, Final residual = 9.48447689845e-10, No Iterations 0
+time step continuity errors : sum local = 1.95851969666e-06, global = -3.17610686912e-07, cumulative = -7.7193609561e-07
+NS.H solving, corrector 38
+smoothSolver:  Solving for Ux, Initial residual = 5.50710035839e-12, Final residual = 5.50710035839e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.04566049541e-08, Final residual = 8.65903731035e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.86083471181e-10, Final residual = 1.86083471181e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630970386e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968478
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883219 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630970386e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770284e-07 min=3.99992509834e-09 max=2.05286588166e-06
+DICPCG:  Solving for p, Initial residual = 1.05925246697e-08, Final residual = 9.05485505256e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.05485641236e-10, Final residual = 9.05485641236e-10, No Iterations 0
+time step continuity errors : sum local = 1.86980356551e-06, global = -4.1995743713e-07, cumulative = -1.19189353274e-06
+NS.H solving, corrector 39
+smoothSolver:  Solving for Ux, Initial residual = 5.32939141387e-12, Final residual = 5.32939141387e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 1.01414792321e-08, Final residual = 8.38699665295e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.80665796364e-10, Final residual = 1.80665796364e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630967051e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968333
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883362 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630967051e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777034e-07 min=3.99992509834e-09 max=2.05286588105e-06
+DICPCG:  Solving for p, Initial residual = 1.02138548494e-08, Final residual = 9.03514900637e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.03515209206e-10, Final residual = 9.03515209206e-10, No Iterations 0
+time step continuity errors : sum local = 1.86573452791e-06, global = -5.48739917296e-07, cumulative = -1.74063345004e-06
+NS.H solving, corrector 40
+smoothSolver:  Solving for Ux, Initial residual = 5.16600567099e-12, Final residual = 5.16600567099e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.82930046365e-09, Final residual = 8.1363331129e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.75504584174e-10, Final residual = 1.75504584174e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.4263096365e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968264
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883531 max=250004681.441 ; diag() avg=0.019660092895 min=4.4263096365e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770396e-07 min=3.99992509834e-09 max=2.05286588034e-06
+DICPCG:  Solving for p, Initial residual = 9.85396712744e-09, Final residual = 9.55480488488e-10, No Iterations 4
+DICPCG:  Solving for p, Initial residual = 9.55480502344e-10, Final residual = 9.55480502344e-10, No Iterations 0
+time step continuity errors : sum local = 1.97304139494e-06, global = -7.0547882478e-07, cumulative = -2.44611227482e-06
+Frozen-RANS relative changes: U=2.31673185009e-09, p=1.21039952351e-10, k=0, omega=0, nut=0, consecutive=1
+NS.H solving, corrector 41
+smoothSolver:  Solving for Ux, Initial residual = 5.01672338907e-12, Final residual = 5.01672338907e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.52434743694e-09, Final residual = 7.86623609323e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.71370839065e-10, Final residual = 1.71370839065e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630960232e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968278
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.883719 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630960232e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.8233777045e-07 min=3.99992509834e-09 max=2.05286587955e-06
+DICPCG:  Solving for p, Initial residual = 9.49660938277e-09, Final residual = 8.94434920625e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 8.94434824457e-10, Final residual = 8.94434824457e-10, No Iterations 0
+time step continuity errors : sum local = 1.84698387489e-06, global = -8.91368073023e-07, cumulative = -3.33748034784e-06
+Frozen-RANS relative changes: U=2.25816757591e-09, p=1.55315335904e-10, k=0, omega=0, nut=0, consecutive=2
+NS.H solving, corrector 42
+smoothSolver:  Solving for Ux, Initial residual = 4.90006704999e-12, Final residual = 4.90006704999e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.18987205866e-09, Final residual = 7.53989443784e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.68509252918e-10, Final residual = 1.68509252918e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630956848e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968375
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88398 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630956848e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770503e-07 min=3.99992509834e-09 max=2.05286587845e-06
+DICPCG:  Solving for p, Initial residual = 9.10068014119e-09, Final residual = 9.40857112044e-10, No Iterations 33
+DICPCG:  Solving for p, Initial residual = 9.40857148234e-10, Final residual = 9.40857148234e-10, No Iterations 0
+time step continuity errors : sum local = 1.94284472489e-06, global = 7.8132449363e-08, cumulative = -3.25934789848e-06
+Frozen-RANS relative changes: U=2.19808443325e-09, p=8.16165587642e-09, k=0, omega=0, nut=0, consecutive=3
+NS.H solving, corrector 43
+smoothSolver:  Solving for Ux, Initial residual = 5.50517634065e-12, Final residual = 5.50517634065e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 9.02826287635e-09, Final residual = 7.24447044877e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 2.05401891354e-10, Final residual = 2.05401891354e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630954686e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968651
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.884845 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630954686e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770437e-07 min=3.99992509834e-09 max=2.0528658748e-06
+DICPCG:  Solving for p, Initial residual = 8.74403148207e-09, Final residual = 9.89091859223e-10, No Iterations 3
+DICPCG:  Solving for p, Initial residual = 9.89092108429e-10, Final residual = 9.89092108429e-10, No Iterations 0
+time step continuity errors : sum local = 2.04244878934e-06, global = -6.38802478105e-07, cumulative = -3.89815037658e-06
+Frozen-RANS relative changes: U=2.14233371396e-09, p=8.81322031623e-11, k=0, omega=0, nut=0, consecutive=4
+NS.H solving, corrector 44
+smoothSolver:  Solving for Ux, Initial residual = 5.01745730406e-12, Final residual = 5.01745730406e-12, No Iterations 0
+smoothSolver:  Solving for Uy, Initial residual = 8.60255904105e-09, Final residual = 7.05106254331e-13, No Iterations 2
+smoothSolver:  Solving for Uz, Initial residual = 1.80900339654e-10, Final residual = 1.80900339654e-10, No Iterations 0
+NS UEqn diag: avg=0.019660092895 min=4.42630951174e-05 max=0.0312504438468
+NS UEqn IC patch 0 (inlet) max=8.98949957586e-08
+NS UEqn IC patch 1 (outlet) max=0.000157131968901
+NS UEqn IC patch 2 (hotInlet) max=8.98949957586e-08
+NS UEqn IC patch 3 (hotOutlet) max=8.98949957586e-08
+NS UEqn IC patch 4 (solidEndWalls) max=8.62991959282e-08
+NS UEqn IC patch 5 (bottomWall) max=9.36406205818e-08
+NS UEqn IC patch 6 (topWall) max=8.98949957586e-08
+NS UEqn IC patch 7 (sideWalls) max=8.98949957586e-08
+NS UEqn A(): avg=158965329.115 min=487123.88464 max=250004681.441 ; diag() avg=0.019660092895 min=4.42630951174e-05 max=0.0312504438468 (fvOptions diag contribution skipped)
+NS rAtU: avg=2.82337770533e-07 min=3.99992509834e-09 max=2.05286587567e-06
+DICPCG:  Solving for p, Initial residual = 8.39311506566e-09, Final residual = 9.21047038248e-10, No Iterations 5
+DICPCG:  Solving for p, Initial residual = 9.21047088092e-10, Final residual = 9.21047088092e-10, No Iterations 0
+time step continuity errors : sum local = 1.901937373e-06, global = -4.60456487917e-07, cumulative = -4.3586068645e-06
+Frozen-RANS relative changes: U=2.09003485165e-09, p=1.54283226319e-10, k=0, omega=0, nut=0, consecutive=5
+Frozen-RANS flow converged after 44 correctors.
+MTO_HF: Finished NS.H
+MTO_HF: Starting HeatTransfer.H
+DILUPBiCGStab:  Solving for T, Initial residual = 0.0645973275797, Final residual = 8.85930451595e-13, No Iterations 46
+TEqn: initialResidual=0.0645973275797, finalResidual=8.85930451595e-13, nIterations=46
+MTO_HF: Finished HeatTransfer.H
+MTO_HF: Starting AdjHeatTransfer.H
+Thermal matrix transpose dot-test max relative error=1.09689091013e-13
+DILUPBiCGStab:  Solving for Tb, Initial residual = 1, Final residual = 6.57525213585e-13, No Iterations 66
+MTO_HF: Finished AdjHeatTransfer.H
+MTO_HF: Starting AdjNS_HT.H
+B0.2 flux-adjoint diagnostics: maxInternalThermalResidualFluxAdjoint=107.471904936 maxBoundaryThermalResidualFluxAdjoint=0 maxObjectiveFluxDerivative=114.359739701 maxCombinedFluxAdjoint=114.359739701
+PRODRHS (thermalCoupling): sumRhsU=4.33058139795 sumRhsP=-11.6001162325 |RhsU|L2=0.0735287104541 |RhsP|L2=6.90647303809
+PRODPRECSETUP (thermalCoupling): mode=pressureGAMG avg=27.7275430014 min=1.00309714066 max=725.954987504
+PRODPRECGAMGSETUP (thermalCoupling): diagRelL2=0.0408489769827 innerTol=0.001 innerMaxIter=50
+PRODDIAG (thermalCoupling): jacobiUavg=1 jacobiPavg=103.910172005 jacobiMin=0.00309714065694 jacobiMax=724.954987504 jacobiNearZero=0
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000887030794839, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=0 projRes=0.0218892684371 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000931037824777, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=1 projRes=0.0205863187139 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000943293849644, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=2 projRes=0.013435092058 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000689712443316, No Iterations 9
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=3 projRes=0.00756939580567 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000480974580377, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=4 projRes=0.00642710728449 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000686269596215, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=5 projRes=0.00633373514053 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000951330116544, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=6 projRes=0.00470890320682 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000673496045507, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=7 projRes=0.0034396705378 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000976219612623, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=8 projRes=0.00327737804102 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000788355684197, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=9 projRes=0.00322686053188 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000539613854266, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=10 projRes=0.00289890357247 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000801281452345, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=11 projRes=0.00241127960696 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000785239935533, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=12 projRes=0.00230394778823 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000898918240381, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=13 projRes=0.00227355250501 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000914896774165, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=14 projRes=0.00214383441846 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000873284943339, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=15 projRes=0.0017592506311 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000552776234039, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=16 projRes=0.00165707492788 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000997829814968, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=17 projRes=0.00163788837561 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000845519571043, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=18 projRes=0.0015586925631 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000837617729863, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=19 projRes=0.00131338483686 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000579236871576, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=20 projRes=0.00125591105917 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000498183984641, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=21 projRes=0.00124476050081 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000443818094005, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=22 projRes=0.00120331878914 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000514469540847, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=23 projRes=0.001060829414 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000442129588033, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=24 projRes=0.00101205644935 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000938723148216, No Iterations 5
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=25 projRes=0.0010032844511 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000497761025319, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=26 projRes=0.000969782739911 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000920590239817, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=27 projRes=0.000894348592508 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000568551417294, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=28 projRes=0.000868573927039 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000519488123337, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=29 projRes=0.000863132794695 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000531983048824, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=30 projRes=0.000843666019347 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000648812644712, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=31 projRes=0.000781832796054 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000375222018865, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=32 projRes=0.000768332546472 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000922098423687, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=33 projRes=0.000764195679261 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000514337034075, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=34 projRes=0.000745796805024 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000586578395997, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=35 projRes=0.000699878745344 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000892822564402, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=36 projRes=0.00069012278221 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000423312034681, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=37 projRes=0.000686111329808 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00058523117325, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=38 projRes=0.000665259359562 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000522013687385, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=39 projRes=0.000629616181936 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00093577433885, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=40 projRes=0.000623390159234 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000701001736542, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=41 projRes=0.000620199617482 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000875518733247, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=42 projRes=0.000599958587642 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000894719998812, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=43 projRes=0.000573946039677 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000627519137232, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=44 projRes=0.000568789310815 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000919788047232, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=45 projRes=0.00056559222638 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000568031834069, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=46 projRes=0.000546938245792 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000937836848428, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=47 projRes=0.000526132766813 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000546947903121, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=48 projRes=0.000522148555915 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000564464521642, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=49 projRes=0.000518594705296 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000543008202714, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=50 projRes=0.000502233905348 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00075098099126, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=51 projRes=0.000484200566283 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000910260675094, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=52 projRes=0.000481652106032 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00095520616572, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=53 projRes=0.00047804005002 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000865651640622, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=54 projRes=0.000460884303041 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000961034821835, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=55 projRes=0.000448902884258 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000832781819821, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=56 projRes=0.000446833216546 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00084851884509, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=57 projRes=0.000443087062966 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000880135487991, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=58 projRes=0.000426609342153 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000808147085755, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=59 projRes=0.000417517813082 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000688091791578, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=60 projRes=0.000415981670263 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000456522511108, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=61 projRes=0.000412359407341 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000520467060979, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=62 projRes=0.000396930194008 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000773874893542, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=63 projRes=0.000390291886033 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000830278124138, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=64 projRes=0.000389107207946 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000525025597014, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=65 projRes=0.000385074095799 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000945746274074, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=66 projRes=0.000371193123594 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000753102712132, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=67 projRes=0.000366205928215 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000558014634137, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=68 projRes=0.000365016769966 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000390984990562, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=69 projRes=0.000359744359606 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000961551935936, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=70 projRes=0.000346888693511 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000594672692646, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=71 projRes=0.000343735007149 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000488667699481, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=72 projRes=0.000342467067571 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000927742413763, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=73 projRes=0.000336005117704 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00088403819112, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=74 projRes=0.000324824205059 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000838369809201, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=75 projRes=0.00032288672644 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000632621396783, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=76 projRes=0.000321739656146 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000462753155347, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=77 projRes=0.000314986483134 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000527881332571, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=78 projRes=0.000305999331294 h00=1.0082347314
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000472221559784, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=0 k=79 projRes=0.000304473267442 h00=1.0082347314
+  [FGMRES-PROD thermalCoupling] iter=80 trueRelRes=0.000304473267442
+  [GRADPROXY thermalCoupling] iter=80 trueRelRes=0.000304473267442 proxy=1348.76147565
+PRODDEFL (thermalCoupling) cos(Au,u)=0.219941382634 at iter=80
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000692147215804, No Iterations 5
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=0 projRes=0.000303948546884 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000756246690649, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=1 projRes=0.000301620100756 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000491925450874, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=2 projRes=0.000293337427958 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000725959331265, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=3 projRes=0.000289022792281 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000558997162273, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=4 projRes=0.000288149538339 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000751956729109, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=5 projRes=0.000285119078889 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000918347959574, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=6 projRes=0.000277830741483 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000960830672143, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=7 projRes=0.000275504454776 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000943852592273, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=8 projRes=0.000274854036648 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000912508945977, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=9 projRes=0.000271357181124 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000498344378136, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=10 projRes=0.000263340575038 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000602308892863, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=11 projRes=0.000261630936561 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000582199738225, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=12 projRes=0.000260910476944 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000705336363849, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=13 projRes=0.000257067825608 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000501064841702, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=14 projRes=0.000250510803659 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00074838017839, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=15 projRes=0.000249482351213 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000437047431211, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=16 projRes=0.000248635068161 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00047606014827, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=17 projRes=0.000243738533408 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000518471186499, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=18 projRes=0.000238764282232 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000529899837431, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=19 projRes=0.00023797575266 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000665730426662, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=20 projRes=0.000236943621363 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000492860187213, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=21 projRes=0.00023143769177 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000928002397676, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=22 projRes=0.000227611588403 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00042593718319, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=23 projRes=0.000226924277449 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000528279220835, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=24 projRes=0.000225853620203 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000571764672244, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=25 projRes=0.000220627171249 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000448110481417, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=26 projRes=0.000217527178306 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000854582140313, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=27 projRes=0.000216958211241 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000944999395875, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=28 projRes=0.000215608867391 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000595187196596, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=29 projRes=0.000210255198425 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000895510671955, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=30 projRes=0.000207454664801 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000894726041378, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=31 projRes=0.000206979360951 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000606748944934, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=32 projRes=0.000205521793371 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000522827351738, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=33 projRes=0.000200306454713 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000865614359018, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=34 projRes=0.000198383602718 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000492584120097, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=35 projRes=0.000197946911383 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000701779671552, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=36 projRes=0.000196319488793 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000703048228934, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=37 projRes=0.000190810260003 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000530476620153, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=38 projRes=0.000189177531124 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000668042211097, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=39 projRes=0.000188740426897 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000467969018253, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=40 projRes=0.00018683170926 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00049312828637, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=41 projRes=0.000182150569252 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000475020973844, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=42 projRes=0.000181022458296 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000495782238851, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=43 projRes=0.000180619793363 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000689112029625, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=44 projRes=0.000178479420457 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000741368275949, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=45 projRes=0.000174213412609 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000716810063261, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=46 projRes=0.000173421214249 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000679903921019, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=47 projRes=0.000172969896951 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000429188661008, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=48 projRes=0.000169817447709 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00065564236453, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=49 projRes=0.000166271482416 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000837992275928, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=50 projRes=0.000165593465743 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000521623566057, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=51 projRes=0.000165143555615 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000492218293836, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=52 projRes=0.000162055896485 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000610085367946, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=53 projRes=0.000159279011492 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000633840491558, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=54 projRes=0.000158731679577 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000618723953327, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=55 projRes=0.000158146715425 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000489746676564, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=56 projRes=0.000155056368681 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000506987715176, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=57 projRes=0.000152478288632 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000482224946961, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=58 projRes=0.000152076645185 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000434907682998, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=59 projRes=0.000151462898065 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000666931879828, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=60 projRes=0.000148111019294 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000557351925485, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=61 projRes=0.000145965338743 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000513524019021, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=62 projRes=0.000145655316632 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000903413208764, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=63 projRes=0.000144686014784 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000608915216078, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=64 projRes=0.000141170582215 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000549660954876, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=65 projRes=0.000139789436821 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000467990315626, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=66 projRes=0.000139493220166 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000882749095219, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=67 projRes=0.000138418373538 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000740787558971, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=68 projRes=0.000134868502136 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000474095154541, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=69 projRes=0.000133700911253 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000636229483417, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=70 projRes=0.000133425778007 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000617058107754, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=71 projRes=0.000132058705436 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000732068823648, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=72 projRes=0.000128891951495 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000757482030866, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=73 projRes=0.000128010261244 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00078183102493, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=74 projRes=0.00012772734144 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000797579375157, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=75 projRes=0.000126395053383 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000616001734799, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=76 projRes=0.000123415026709 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000652369710123, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=77 projRes=0.000122666445185 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000562538186256, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=78 projRes=0.000122387952264 h00=0.0372265153996
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00045106181635, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=80 k=79 projRes=0.000120720735655 h00=0.0372265153996
+  [FGMRES-PROD thermalCoupling] iter=160 trueRelRes=0.000120720735655
+  [GRADPROXY thermalCoupling] iter=160 trueRelRes=0.000120720735655 proxy=1935.18467151
+PRODDEFL (thermalCoupling) cos(Au,u)=0.153216935837 at iter=160
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000405506464486, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=0 projRes=0.000119692055039 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000472456087764, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=1 projRes=0.000119478246519 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000657293681975, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=2 projRes=0.000119031572027 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000452682633861, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=3 projRes=0.000116370247873 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000630394389312, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=4 projRes=0.000114371467574 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000709914956509, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=5 projRes=0.000114072523965 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000746077417558, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=6 projRes=0.000113603656649 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000729699719408, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=7 projRes=0.00011128561169 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000628236534547, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=8 projRes=0.000109519627179 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000583978867371, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=9 projRes=0.000109211353781 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00074860987808, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=10 projRes=0.000108646800895 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000935811277965, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=11 projRes=0.000106021174482 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000786869851416, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=12 projRes=0.000104713236196 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000669450330987, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=13 projRes=0.000104449881646 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000673332633355, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=14 projRes=0.000103753363528 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000798921476609, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=15 projRes=0.000101182269554 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000589080429687, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=16 projRes=0.000100090929335 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000458257213009, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=17 projRes=9.98668672581e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000571237800652, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=18 projRes=9.90111960896e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000688256643386, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=19 projRes=9.64745402047e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000726505062307, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=20 projRes=9.56299533099e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000730011032475, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=21 projRes=9.54182013207e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000754727468181, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=22 projRes=9.45015778406e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000781048506682, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=23 projRes=9.21618934704e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000773232207596, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=24 projRes=9.15641690587e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000752733227444, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=25 projRes=9.13549607896e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00053779775431, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=26 projRes=9.03057798522e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000657262765802, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=27 projRes=8.81463863395e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000688863731511, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=28 projRes=8.76800554613e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000693283899322, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=29 projRes=8.74534664792e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000585324083496, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=30 projRes=8.61349621951e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000495946441866, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=31 projRes=8.39967599696e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000983584727177, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=32 projRes=8.36597417059e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000547572884622, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=33 projRes=8.3435186825e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000760335399961, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=34 projRes=8.20199621566e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000618239270559, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=35 projRes=8.02205002895e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000889115851857, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=36 projRes=7.99307909901e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000448652678014, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=37 projRes=7.96677333795e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000493571195282, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=38 projRes=7.80188951631e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000908906434018, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=39 projRes=7.65330771539e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000935003908717, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=40 projRes=7.62903455918e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000989495303875, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=41 projRes=7.59848777053e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000765895856409, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=42 projRes=7.42930872668e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00091301637977, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=43 projRes=7.29149436276e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000973622177501, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=44 projRes=7.27063443555e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000856173916265, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=45 projRes=7.23778044831e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000491487984409, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=46 projRes=7.06649153247e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00092880859618, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=47 projRes=6.96568542035e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000915949728489, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=48 projRes=6.94871615609e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000560666271359, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=49 projRes=6.91526568554e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000575747614069, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=50 projRes=6.75038513199e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000463302158409, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=51 projRes=6.65860534823e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000537297591169, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=52 projRes=6.64284858053e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000521638247622, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=53 projRes=6.60421818071e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000559828732537, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=54 projRes=6.44481827694e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000959107772409, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=55 projRes=6.3812750655e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000573488352716, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=56 projRes=6.3676093061e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00081921681005, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=57 projRes=6.32120329873e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000960437862621, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=58 projRes=6.1690248584e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000773678998117, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=59 projRes=6.11510092196e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000571096560363, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=60 projRes=6.10066478245e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.00068782166677, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=61 projRes=6.04537208532e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000500572996369, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=62 projRes=5.89866623927e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000929851380045, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=63 projRes=5.85398046997e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000832848834815, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=64 projRes=5.84147206584e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000818989366496, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=65 projRes=5.78193204767e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000539573104697, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=66 projRes=5.63977805702e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000531800062433, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=67 projRes=5.60443067523e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000555152064747, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=68 projRes=5.59124434927e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000593398029534, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=69 projRes=5.51462609507e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000669343111289, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=70 projRes=5.38826039756e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000554467123042, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=71 projRes=5.3591848675e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000468249999664, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=72 projRes=5.34552401123e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000744954904345, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=73 projRes=5.26733257195e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000847110317316, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=74 projRes=5.15280953765e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000718385990891, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=75 projRes=5.13065398867e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000580977564139, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=76 projRes=5.1163895438e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000921312671668, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=77 projRes=5.03265644215e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000819474435119, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=78 projRes=4.92471436258e-05 h00=0.133922536891
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000431066446963, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=160 k=79 projRes=4.90659573665e-05 h00=0.133922536891
+  [FGMRES-PROD thermalCoupling] iter=240 trueRelRes=4.90659573665e-05
+  [GRADPROXY thermalCoupling] iter=240 trueRelRes=4.90659573665e-05 proxy=2144.2543455
+PRODDEFL (thermalCoupling) cos(Au,u)=0.14095505719 at iter=240
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000752463431833, No Iterations 5
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=0 projRes=4.89905699111e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000476530341115, No Iterations 8
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=1 projRes=4.84094191587e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000863799608484, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=2 projRes=4.72164299315e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000549276485478, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=3 projRes=4.70126243308e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000972753627188, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=4 projRes=4.68840170509e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000872394929059, No Iterations 6
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=5 projRes=4.60890870535e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000472606681432, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=6 projRes=4.5132978712e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000754840277181, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=7 projRes=4.49520038083e-05 h00=0.0267951786706
+GAMG:  Solving for prodPressurePrecPsi_thermalCoupling, Initial residual = 1, Final residual = 0.000806912037372, No Iterations 7
+  [FGMRES-TRACE thermalCoupling] cycleIter=240 k=8 projRes=4.48348453273e-05 h00=0.0267951786706
