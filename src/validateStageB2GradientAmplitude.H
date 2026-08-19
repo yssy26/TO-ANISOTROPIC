@@ -539,7 +539,12 @@ if (stageB2Enabled)
         }
     };
 
-    const scalarList diagSteps = {1e-4, 3e-4, 1e-3, 3e-3, 1e-2};
+    // BFINAL-012: the D1 diagnostic ladder spans 1e-5 -> 1e-2 (four
+    // decades, per the task spec) to expose both the truncation-dominated
+    // large-step end and the noise-floor-dominated small-step end.  The
+    // formal acceptance steps (accSteps, D1/D2/D3 verdicts) are unchanged
+    // so the gate semantics stay identical to the historical B2/B3 runs.
+    const scalarList diagSteps = {1e-5, 3e-5, 1e-4, 3e-4, 1e-3, 3e-3, 1e-2};
     const scalarList accSteps = {1e-4, 3e-4, 1e-3};
 
     Info<< "\n--- Stage B2: D1 multi-step diagnostic scan ---" << endl;

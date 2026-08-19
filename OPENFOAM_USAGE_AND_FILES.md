@@ -305,12 +305,12 @@ grep -E "PRODPRECSETUP|PRODPRECGAMGSCHEME|PRODPRECGAMGSETUP|PRODPRECGAMGCHECK|GA
 
 ---
 
-## 10. 当前状态速查（BFINAL-011 cycle-1 已完成，2026-08-19）
+## 10. 当前状态速查（BFINAL-012 cycle-1 已完成：FAIL，2026-08-19）
 
 - **阶段**：B-final —— 冻结湍流梯度 / 生产伴随闭合。
-- **已闭合**：J_PU（BFINAL-003）、R_x 压力行（BFINAL-005）、J_PP 实际原始闭包（BFINAL-008）；预条件矩阵/算子四组等价性硬门（BFINAL-010，1e-16）。
-- **BFINAL-011 cycle-1（已完成，PASS）**：pressureDrop GAMG 内层 NaN 根因 = BFINAL-010 门代码非 const `lower()` 物化对称存储 → GAMG 非对称路径失稳；修复 = 门改 `const lduMatrix&` 访问。**修复后两标签生产伴随首次双双收敛**（TC 750 iter 9.4957e-10 / PD 902 iter 9.9282e-10 ≤1e-9，GRADPROXY 双平台 2217.480 / -205194.141，门值逐位不变，MTO_RC=0，全程 ~120 s）。新增：标签隔离开关、`discreteProdPressurePrecSolver`（GAMG|PCG）、GAMG 系数覆盖、内层非有限快检。见 `evidence/agent-group/BFINAL-011/cycle-1/`。
-- **当前阻塞**：无（串行生产伴随已收敛）。待办：BFINAL-012（当前源 FD 幅值门）→ Stage C。
-- **下一步任务**：BFINAL-012（冻结梯度 FD 幅值验证）→ Stage C（MMA 串行 smoke → 并行化 → 完整优化）。可选：对称矩阵下 PCG 行为对比（E2'）。
+- **已闭合（求解层）**：J_PU（BFINAL-003）、R_x 压力行（BFINAL-005）、J_PP 实际原始闭包（BFINAL-008）；预条件矩阵/算子四组等价性硬门（BFINAL-010，1e-16）；两标签生产伴随迭代收敛（BFINAL-011：TC 750/9.50e-10、PD 902/9.93e-10，MTO_RC=0）。
+- **BFINAL-012 cycle-1（已完成，FAIL）**：当前源端到端 FD 幅值门（raw-x 扰动 + 全链重跑 + 生产伴随投影，D1 阶梯 1e-5→1e-2）。**J 符号翻转（D1/D3）+ 6.7–11.2× 放大；gDP 符号正确但恒定 ≈2.13× 偏大；gV 通过（1e-7 量级）**。伴随全部 ≤1e-9、FD 平台稳固（<0.15%）→ 失败是**确定性的梯度装配缺陷**：gDP 定位到 `sensitivity.H` 压降梯度装配（单一标量失配），J 定位到热目标伴随链（结构性失配）；滤波/投影链被 gV 排除。与修正前 stage-B2/B3 失败模式几乎一致——求解层修正未消除端到端失配，FD 门是最终仲裁。见 `evidence/agent-group/BFINAL-012/cycle-1/`。
+- **当前阻塞**：梯度装配幅值/结构失配（BFINAL-013 范畴：H-PD-scale ≈2.13 标量、H-J-struct 热链结构）。
+- **下一步任务**：BFINAL-013（梯度装配定位：dfdx·D / dgdx[1]·D 逐项分解 vs FD、stageB6 oracle 重跑、小网格复现）→ 通过后 C0 串行 MMA smoke。
 - **并行伴随（P2）**：未解锁，需独立完成 processor-patch 转置交换（见 §8.5）。
-- **MMA**：锁定。
+- **MMA**：锁定（FD 门 FAIL，`frozenGradientValidated` 保持 false）。
