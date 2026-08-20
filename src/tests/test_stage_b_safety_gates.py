@@ -257,6 +257,23 @@ class StageBSafetyGateTests(unittest.TestCase):
             self.contraction_probe,
         )
 
+    def test_bfinal015_state_export_is_gated_and_measurement_only(self):
+        # BFINAL-015 T2/T3: the state export is switch-gated (default off)
+        # and only writes files inside the B2 output directory (pure
+        # measurement round: no operator/gradient/objective change).
+        self.assertIn(
+            '"stageB15StateExport"',
+            self.b2_amplitude,
+        )
+        self.assertIn(
+            "wstate_baseline_U.mtx",
+            self.b2_amplitude,
+        )
+        self.assertIn(
+            "wstate_",
+            self.b2_amplitude,
+        )
+
     def test_mma_has_no_direction_only_bypass(self):
         self.assertNotIn("guardedDirectionOnly", self.mma_gate)
         self.assertNotIn("The only exception", self.mma_gate)

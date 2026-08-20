@@ -1,0 +1,48 @@
+=== BFINAL-015 T2/T3 offline ===
+explicitJT loaded nnz=6209576 (t=0.5s)
+J built (pinned P0 row for splu) nnz=6209552
+rxc_analytic loaded shape=(403200,)
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-015/cycle-1/b15_t2t3.py:68: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+splu done (t=958.3s)
+  w' D1: ||rhs||=5.663185e-01 trueRelRes=5.331e-14 ||w'||=2.890926e+07
+  w' D2: ||rhs||=8.615839e-01 trueRelRes=4.291e-14 ||w'||=3.707008e+07
+  w' D3: ||rhs||=8.516528e-01 trueRelRes=9.167e-14 ||w'||=9.003501e+07
+b loaded: |bPD|=2.571480e-06 |bTC|=5.782390e-04
+[A] linearization-point cross-check (b^T w' vs BFINAL-012 ADJ):
+  D1: bPD^T w'=-4.3260030677 (ref ADJ gDP -5.4050587339, rel 2.00e-01) | bTC^T w'=0.1525323922 (ref ADJ J -0.0159321972, rel 1.06e+01)
+  D2: bPD^T w'=0.4261509086 (ref ADJ gDP 1.1059269805, rel 6.15e-01) | bTC^T w'=-0.0359348889 (ref ADJ J -0.0241647083, rel 4.87e-01)
+  D3: bPD^T w'=14.2520714256 (ref ADJ gDP 14.0447142088, rel 1.48e-02) | bTC^T w'=-0.0652016383 (ref ADJ J 0.0031605777, rel 2.16e+01)
+D1 state-export h tags: ['0.0003', '0.001', '0.003']
+[B] D1 h=0.0003: cos=0.998142 relL2=7.2481e-01 relU=1.8019e-01 relP=7.2483e-01
+     top mismatch cells: [7599, 8719, 7598, 7679, 8718]
+[C] contractions gDP: b^T w'=-4.326003 b^T w_true=-2.537102 ratio=1.7051 (end-to-end ref 2.1301)
+            J  : b^T w'=1.525324e-01f b^T w_true=1.125111e-01f ratio=1.3557
+[B] D1 h=0.001: cos=0.998143 relL2=7.2469e-01 relU=1.8017e-01 relP=7.2471e-01
+     top mismatch cells: [7599, 8719, 7598, 7679, 8718]
+[C] contractions gDP: b^T w'=-4.326003 b^T w_true=-2.537460 ratio=1.7049 (end-to-end ref 2.1301)
+            J  : b^T w'=1.525324e-01f b^T w_true=1.125063e-01f ratio=1.3558
+[B] D1 h=0.003: cos=0.998146 relL2=7.2608e-01 relU=1.8093e-01 relP=7.2610e-01
+     top mismatch cells: [7599, 8719, 7598, 7679, 8718]
+[C] contractions gDP: b^T w'=-4.326003 b^T w_true=-2.535369 ratio=1.7063 (end-to-end ref 2.1301)
+            J  : b^T w'=1.525324e-01f b^T w_true=1.124245e-01f ratio=1.3568
+D2 state-export h tags: ['0.0003', '0.001']
+[B] D2 h=0.0003: cos=0.981486 relL2=1.0212e+00 relU=5.2547e-01 relP=1.0212e+00
+     top mismatch cells: [6031, 6271, 6032, 6272, 6270]
+[C] contractions gDP: b^T w'=0.426151 b^T w_true=0.526625 ratio=0.8092 (end-to-end ref 2.1129)
+            J  : b^T w'=-3.593489e-02f b^T w_true=-2.578263e-02f ratio=1.3938
+[B] D2 h=0.001: cos=0.981584 relL2=1.0223e+00 relU=5.2598e-01 relP=1.0223e+00
+     top mismatch cells: [6272, 6032, 6271, 6031, 6033]
+[C] contractions gDP: b^T w'=0.426151 b^T w_true=0.523409 ratio=0.8142 (end-to-end ref 2.1129)
+            J  : b^T w'=-3.593489e-02f b^T w_true=-2.559317e-02f ratio=1.4041
+D3 state-export h tags: ['0.0003', '0.001']
+[B] D3 h=0.0003: cos=0.998246 relL2=1.1283e+00 relU=1.9047e-01 relP=1.1283e+00
+     top mismatch cells: [8399, 8398, 8397, 8396, 8479]
+[C] contractions gDP: b^T w'=14.252071 b^T w_true=6.480094 ratio=2.1994 (end-to-end ref 2.1683)
+            J  : b^T w'=-6.520164e-02f b^T w_true=-4.482214e-02f ratio=1.4547
+[B] D3 h=0.001: cos=0.998245 relL2=1.1292e+00 relU=1.9058e-01 relP=1.1292e+00
+     top mismatch cells: [8399, 8398, 8397, 8396, 8479]
+[C] contractions gDP: b^T w'=14.252071 b^T w_true=6.477216 ratio=2.2003 (end-to-end ref 2.1683)
+            J  : b^T w'=-6.520164e-02f b^T w_true=-4.481394e-02f ratio=1.4549
+T2T3_DONE t=961.1s -> t2t3_results.json
+s.json

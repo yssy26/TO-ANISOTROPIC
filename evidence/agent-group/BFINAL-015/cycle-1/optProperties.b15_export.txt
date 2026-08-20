@@ -1,0 +1,90 @@
+FoamFile
+{
+    version 2.0;
+    format ascii;
+    class dictionary;
+    location "constant";
+    object optProperties;
+}
+
+raa0            1e-5;
+voluse          0.65;
+solidFractionMin 0.25;
+mma_init        0.3;
+mma_dec         0.7;
+mma_inc         1.2;
+movlim          0.02;
+filterR         3;
+vini            0.75;
+qu              0.1;
+w1              0.4;
+useAnisotropicConductivity true;
+
+PowerDiss0      1.0;
+MeanT0          600.0;
+thermalObjectiveType             maximizeColdOutletTemperature;
+thermalReferenceTemperature      600.0;
+
+rhoFluid        0.5892;
+pressureDropMaxPa 25000.0;
+
+fluid_area      yes;
+solid_area      yes;
+test_area       no;
+
+// Validation mode: solve primal and adjoint fields without changing x.
+mmaUpdateEnabled                  false;
+frozenGradientValidated false;
+gradientValidated                 true;
+ransDirectionValidated            true;
+recomputeDesignMappingWhenMmaDisabled true;
+freezeColdFlowForValidation       false;
+solveFlowAdjoints                 true;
+adjointMode                       discrete;
+flowModel                         incompressibleRANSFrozen;
+frozenTurbulenceAdjoint           true;
+turbulentPrandtl                  0.85;
+turbulenceDampingExponent         3.0;
+turbulenceMinCorrectors           40;
+turbulenceMaxCorrectors           200;
+turbulenceConvergenceTolerance    1e-6;
+freezeTurbulenceForValidation     true;
+enableSSTAcceptanceCheck          false;
+enableOptimizerRestart            false;
+enableCSVLog                      true;
+continuationEnabled               false;
+objectiveGradientScale            1.0;
+pressureGradientScale             1.0;
+validationProjectionBeta          8.0;
+projectionEtaTolerance            1e-10;
+transactionTestMode               false;
+transactionTestAmplification      5.0;
+
+thermalBalanceTolerance           1e-2;
+coldLeakageRelativeTolerance      1e-3;
+coldHotPatchVelocityTolerance     1e-12;
+
+flowInnerIter      100;
+adjointInnerIter   500;
+discreteFlowAdjointTolerance 1e-9;
+discreteProdConvergeFatal false;
+discreteCheckpointGradient true;
+
+stageBEnabled false;
+stageB2Enabled false;
+discreteFlowGmresRestart 40;
+discreteFlowAdjointMaxIter 4000;
+discreteFlowAdjointRestart 80;
+discreteProdSolverType fgmres;
+discreteProdPreconditionerSetup diagonal;
+discreteProdEnableRitzPilot false;
+stageB4JacobianProbe true;
+stageB5BoundaryRelaxOracle true;
+discreteExportOnly true;
+discreteExplicitMatrixFile "/home/ys/dsH/b8_verify_diag/explicitJT.mtx";
+discreteExplicitRhsFile "explicitRhs";
+discreteUseExplicitSolution true;
+discreteExplicitSolutionIncludesDeviatoric true;
+discreteExplicitSolutionFile "/home/ys/b2_case_smoke/explicitSol";
+stageB6RxDesignOracle true;
+stageB8JPPActualResidualFD true;

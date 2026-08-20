@@ -133,6 +133,26 @@ if (stageB2Enabled)
     Info<< "Stage B2 baseline: J=" << Jbase << " PD=" << PDbase
         << " gDP=" << gDPbase << " gV=" << gVbase << endl;
 
+    // BFINAL-015 T2/T3: baseline (U,p) state export for the linearization-
+    // point offset quantification and the offline tangent comparison.
+    if (optProperties.lookupOrDefault<Switch>("stageB15StateExport", false))
+    {
+        {
+            OFstream uOut(b2OutDir/"wstate_baseline_U.mtx");
+            uOut.precision(16);
+            forAll(U, celli)
+            {
+                uOut << U[celli].x() << ' ' << U[celli].y() << ' '
+                     << U[celli].z() << nl;
+            }
+        }
+        {
+            OFstream pOut(b2OutDir/"wstate_baseline_p.mtx");
+            pOut.precision(16);
+            forAll(p, celli) { pOut << p[celli] << nl; }
+        }
+    }
+
     // ---------------------------------------------------------------------
     // Converged frozen U-p-T solver.  A finite-difference point is invalid
     // if this routine returns -1; invalid points never enter the formal gate.
@@ -422,7 +442,7 @@ if (stageB2Enabled)
     };
 
     auto probeFD = [&](const scalarField& Dk, const scalar h,
-                       const scalar sign) -> FDProbe
+                       const scalar sign, const word& b15DirName) -> FDProbe
     {
         restoreStateInto(baselineState);
         forAll(Dk, celli)
@@ -446,6 +466,39 @@ if (stageB2Enabled)
             result.gDP =
                 result.PD/Foam::max(pressureDropMaxPa, SMALL) - 1.0;
             result.gV = evaluateVolumeConstraint();
+            // BFINAL-015 T2/T3: switch-gated state export for the
+            // tangent-vs-state-FD comparison (the only authorized code
+            // addition of that round; read-only side effect: files only).
+            if
+            (
+                optProperties.lookupOrDefault<Switch>
+                (
+                    "stageB15StateExport",
+                    false
+                )
+             && (mag(h - 1e-3) <= 1e-14 || mag(h - 3e-4) <= 1e-14
+              || mag(h - 3e-3) <= 1e-14)
+            )
+            {
+                const word b15Name =
+                    "wstate_" + b15DirName
+                  + "_h" + name(h) + (sign > 0 ? "_p" : "_m");
+                {
+                    OFstream uOut(b2OutDir/(b15Name + "_U.mtx"));
+                    uOut.precision(16);
+                    forAll(U, celli)
+                    {
+                        uOut << U[celli].x() << ' '
+                             << U[celli].y() << ' '
+                             << U[celli].z() << nl;
+                    }
+                }
+                {
+                    OFstream pOut(b2OutDir/(b15Name + "_p.mtx"));
+                    pOut.precision(16);
+                    forAll(p, celli) { pOut << p[celli] << nl; }
+                }
+            }
         }
         return result;
     };
@@ -481,8 +534,8 @@ if (stageB2Enabled)
         forAll(steps, si)
         {
             const scalar h = steps[si];
-            const FDProbe pp = probeFD(Dk, h, +1.0);
-            const FDProbe pm = probeFD(Dk, h, -1.0);
+            const FDProbe pp = probeFD(Dk, h, +1.0, dirName);
+            const FDProbe pm = probeFD(Dk, h, -1.0, dirName);
 
             FDRow row;
             row.dir = dirName;
