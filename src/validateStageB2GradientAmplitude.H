@@ -421,8 +421,60 @@ if (stageB2Enabled)
     // ---------------------------------------------------------------------
     // Baseline adjoint projections. The production discrete solver is used
     // here because validateMmaUnlockGate forbids B2+B4 in the same run.
+    //
+    // BFINAL-018 (fix 2) lambda-identity protocol: this module re-solves
+    // BOTH flow adjoints and re-runs sensitivity at the baseline state, so
+    // the on-disk sensitivity family (gsensh*/gsens*/fsensh*) afterwards
+    // belongs to THIS round's lambda.  Any offline gauge must contract
+    // same-pass quantities only: never mix these files with the Uc/pc/Ub/pb
+    // fields written earlier by the main loop (that path produced the
+    // lambda_679-vs-lambda_902 identity mixing that masqueraded as an
+    // assembly defect in BFINAL-016/017).  The per-label gradProxy
+    // fingerprints written below (stageB2/stage_b2_adjoint_identity.tsv)
+    // make the round-1/round-2 lambda identity auditable: with
+    // discreteFlowAdjointTolerance 1e-12 plus the functional stability
+    // check, both rounds must agree to the proxy tolerance.
     // ---------------------------------------------------------------------
     runFullB2Chain();
+    {
+        // gradProxy-equivalent fingerprint of THIS round's adjoints
+        // (same Dprobe shape as the production solver's proxy).
+        auto b2Proxy = [&](const volVectorField& lamU)
+        {
+            scalar proxy = 0.0;
+            const vectorField& C = mesh.C().primitiveField();
+            const scalar Lx = gMax(C.component(0)) - gMin(C.component(0));
+            const scalar Ly = gMax(C.component(1)) - gMin(C.component(1));
+            const scalar Lz = gMax(C.component(2)) - gMin(C.component(2));
+            forAll(lamU, celli)
+            {
+                if (designMask[celli] <= 0.5) continue;
+                const scalar xx = C[celli].x()/Foam::max(Lx, SMALL);
+                const scalar yy = C[celli].y()/Foam::max(Ly, SMALL);
+                const scalar zz = C[celli].z()/Foam::max(Lz, SMALL);
+                scalar d = Foam::sin(2.0*Foam::constant::mathematical::pi*xx)
+                    *Foam::cos(Foam::constant::mathematical::pi*yy)
+                  + 0.5*Foam::sin(3.0*Foam::constant::mathematical::pi*zz);
+                if (x[celli] < 0.02 || x[celli] > 0.98) d = 0.0;
+                proxy += (U[celli] & lamU[celli])*d;
+            }
+            reduce(proxy, sumOp<scalar>());
+            return proxy;
+        };
+        OFstream idOut(b2OutDir/"stage_b2_adjoint_identity.tsv");
+        idOut.precision(16);
+        idOut << "label\tgradProxy\tL2\n";
+        scalar nTc = gSum(magSqr(Ub.primitiveField()));
+        idOut << "thermalCoupling\t" << b2Proxy(Ub) << '\t'
+              << Foam::sqrt(nTc) << '\n';
+        scalar nPd = gSum(magSqr(Uc.primitiveField()));
+        idOut << "pressureDrop\t" << b2Proxy(Uc) << '\t'
+              << Foam::sqrt(nPd) << '\n';
+        Info<< "Stage B2 adjoint identity (round-2 lambda): TC proxy="
+            << b2Proxy(Ub) << " PD proxy=" << b2Proxy(Uc)
+            << " (compare with the main-loop [GRADPROXY-FINAL] values)"
+            << endl;
+    }
     const scalar projJ_D1 = gradientProjection(dfdx, D1);
     const scalar projJ_D2 = gradientProjection(dfdx, D2);
     const scalar projJ_D3 = gradientProjection(dfdx, D3);

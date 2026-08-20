@@ -327,73 +327,52 @@ auto applyPressureFluxCorrection =
     }
 };
 
-auto applyPressureFluxCorrectionTranspose =
-[&](const scalarField& faceAdjoint, scalarField& output)
-{
-    // Transpose of the corrected correction:
-    //   corr_f = +mobility_f*delta*Area*(p_nei - p_own)        (internal)
-    //   corr_f = +mobility*delta*Area*p_cell                   (p-fixed bnd)
-    const scalarField& deltaCoeffs = mesh.deltaCoeffs().primitiveField();
-    const scalarField& faceAreas = mesh.magSf().primitiveField();
-
-    forAll(discreteUpper, facei)
-    {
-        const label own = discreteOwner[facei];
-        const label nei = discreteNeighbour[facei];
-        const scalar weight = discreteWeights[facei];
-        const scalar multiplier = faceAdjoint[facei];
-        const scalar mobilityFace =
-            weight*primalPressureMobility[own]
-          + (1.0 - weight)*primalPressureMobility[nei];
-        const scalar normalCoefficient =
-            mobilityFace*deltaCoeffs[facei]*faceAreas[facei];
-        // corr_f = +mobility*delta*Area*(p_nei - p_own)  =>
-        // dcorr/dp_own = -normCoeff, dcorr/dp_nei = +normCoeff
-        output[discretePIndex(own)] -= normalCoefficient*multiplier;
-        output[discretePIndex(nei)] += normalCoefficient*multiplier;
-    }
-
-    forAll(mesh.boundary(), patchi)
-    {
-        if (U.boundaryField()[patchi].fixesValue())
-        {
-            continue;
-        }
-        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
-        const scalarField& patchDelta =
-            mesh.deltaCoeffs().boundaryField()[patchi];
-        const scalarField& patchArea =
-            mesh.magSf().boundaryField()[patchi];
-        const label patchStart = mesh.boundary()[patchi].start();
-        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
-
-        forAll(patchCells, facei)
-        {
-            const label celli = patchCells[facei];
-            const scalar multiplier = faceAdjoint[patchStart + facei];
-            if (pressureFixed)
-            {
-                output[discretePIndex(celli)] +=
-                    primalPressureMobility[celli]
-                   *patchDelta[facei]*patchArea[facei]*multiplier;
-            }
-        }
-    }
-};
+// BFINAL-018 (fix 3): the previous pressure-flux-correction transpose
+// helper (interior kf with the OPPOSITE sign to the operator's own J_PP
+// block) was removed together with the old plain-interpolation U-row
+// routing; the source folding below mirrors the operator's P-row flux
+// tangent slot by slot instead.
+// BFINAL-018 (fix 3, source folding): mirror of the production routing in
+// solveDiscreteFlowAdjointProduction.H - the face functional
+//   g_f = dJ/dphi_f - (dR_T/dphi_f)^T . Tb
+// is routed through the transpose of the SAME relaxed-SIMPLE flux tangent
+// the J operator's P rows implement (BFINAL-003):
+//   dphi_f = Sf & ( alphaRel*( w*rAU_o*dH_o + (1-w)*rAU_n*dH_n )
+//                 + (1-alphaRel)*( w*dU_o + (1-w)*dU_n ) )
+//          - kf_f*( dp_n - dp_o )
+// The old plain-interpolation U-routing plus the opposite-sign kf helper
+// transposed a different, unphysical
+// map and is retired (BFINAL-016 B1: 86%/70%/sign-flip vs flow truth).
 scalarField discreteExternalFluxTranspose(discreteNUnknowns, 0.0);
+vectorField discreteExternalHA(discreteNCells, vector::zero);
 forAll(discreteUpper, facei)
 {
     const label own = discreteOwner[facei];
     const label nei = discreteNeighbour[facei];
-    const vector faceTranspose =
-        discreteSf[facei]*discreteExternalFaceFluxAdjoint[facei];
+    const scalar faceFunctional =
+        discreteExternalFaceFluxAdjoint[facei];
+    const vector faceTranspose = discreteSf[facei]*faceFunctional;
+    const scalar weight = discreteWeights[facei];
+    discreteExternalHA[own] +=
+        alphaRel*rAUAdj[own]*weight*faceTranspose;
+    discreteExternalHA[nei] +=
+        alphaRel*rAUAdj[nei]*(1.0 - weight)*faceTranspose;
     for (direction cmpt = 0; cmpt < 3; ++cmpt)
     {
         discreteExternalFluxTranspose[discreteUIndex(own, cmpt)] +=
-            discreteWeights[facei]*faceTranspose.component(cmpt);
+            (1.0 - alphaRel)*weight*faceTranspose.component(cmpt);
         discreteExternalFluxTranspose[discreteUIndex(nei, cmpt)] +=
-            (1.0 - discreteWeights[facei])*faceTranspose.component(cmpt);
+            (1.0 - alphaRel)*(1.0 - weight)*faceTranspose.component(cmpt);
     }
+    const scalar mobilityFace =
+        weight*primalPressureMobility[own]
+      + (1.0 - weight)*primalPressureMobility[nei];
+    const scalar kf =
+        mobilityFace
+       *mesh.deltaCoeffs().primitiveField()[facei]
+       *mesh.magSf().primitiveField()[facei];
+    discreteExternalFluxTranspose[discretePIndex(own)] += kf*faceFunctional;
+    discreteExternalFluxTranspose[discretePIndex(nei)] -= kf*faceFunctional;
 }
 forAll(mesh.boundary(), patchi)
 {
@@ -404,24 +383,72 @@ forAll(mesh.boundary(), patchi)
     const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
     const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
     const label patchStart = mesh.boundary()[patchi].start();
+    const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
     forAll(patchCells, facei)
     {
         const label celli = patchCells[facei];
-        const vector faceTranspose =
-            patchSf[facei]
-           *discreteExternalFaceFluxAdjoint[patchStart + facei];
+        const scalar faceFunctional =
+            discreteExternalFaceFluxAdjoint[patchStart + facei];
+        const vector faceTranspose = patchSf[facei]*faceFunctional;
+        discreteExternalHA[celli] +=
+            alphaRel*rAUAdj[celli]*faceTranspose;
         for (direction cmpt = 0; cmpt < 3; ++cmpt)
         {
             discreteExternalFluxTranspose[discreteUIndex(celli, cmpt)] +=
-                faceTranspose.component(cmpt);
+                (1.0 - alphaRel)*faceTranspose.component(cmpt);
+        }
+        if (pressureFixed)
+        {
+            discreteExternalFluxTranspose[discretePIndex(celli)] +=
+                primalPressureMobility[celli]
+               *mesh.deltaCoeffs().boundaryField()[patchi][facei]
+               *mesh.magSf().boundaryField()[patchi][facei]
+               *faceFunctional;
         }
     }
 }
-applyPressureFluxCorrectionTranspose
-(
-    discreteExternalFaceFluxAdjoint,
-    discreteExternalFluxTranspose
-);
+// deltaH^T: transpose of the momentum-H tangent on the hA field (mirrors
+// the J^T deltaH block of this file / the production operator).
+forAll(discreteUpper, facei)
+{
+    const label own = discreteOwner[facei];
+    const label nei = discreteNeighbour[facei];
+    const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+    const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        discreteExternalFluxTranspose[discreteUIndex(nei, cmpt)] -=
+            discreteUpper[facei]*Vinvo
+           *discreteExternalHA[own].component(cmpt);
+        discreteExternalFluxTranspose[discreteUIndex(own, cmpt)] -=
+            discreteLower[facei]*Vinn
+           *discreteExternalHA[nei].component(cmpt);
+    }
+}
+forAll(mesh.boundary(), patchi)
+{
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    const vectorField internalCoeffs =
+        discretePrimalMomentum.internalCoeffs()[patchi];
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        const scalar cav =
+            (
+                internalCoeffs[facei].x()
+              + internalCoeffs[facei].y()
+              + internalCoeffs[facei].z()
+            )/3.0;
+        const scalar Vinvc = 1.0/Foam::max(mesh.V()[celli], SMALL);
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            discreteExternalFluxTranspose[discreteUIndex(celli, cmpt)] +=
+                (
+                    -internalCoeffs[facei].component(cmpt) + cav
+                )*Vinvc*discreteExternalHA[celli].component(cmpt);
+        }
+    }
+}
 for (label celli = 0; celli < discreteNCells; ++celli)
 {
     for (direction cmpt = 0; cmpt < 3; ++cmpt)
@@ -3123,7 +3150,7 @@ auto applyExplicitScaled = [&](const scalarField& input, scalarField& output)
 const label discreteMaxIterations =
     optProperties.lookupOrDefault<label>("discreteFlowAdjointMaxIter", 2000);
 const scalar discreteTolerance =
-    optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-9);
+    optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-12);
 
 scalarField discreteSolution(discreteNUnknowns, 0.0);
 scalarField discreteResidual(discreteNUnknowns, 0.0);

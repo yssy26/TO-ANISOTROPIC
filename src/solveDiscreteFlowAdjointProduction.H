@@ -317,72 +317,62 @@ auto applyProdFrozenDeviatoricJT =
     }
 };
 
-// Transpose of the pressure-correction contribution used by an explicit
-// objective/residual face-flux derivative.
-auto applyProdPressureFluxCorrectionTranspose =
-[&](const scalarField& faceAdjoint, scalarField& output)
-{
-    const scalarField& deltaCoeffs = mesh.deltaCoeffs().primitiveField();
-    const scalarField& faceAreas = mesh.magSf().primitiveField();
-
-    forAll(prodUpper, facei)
-    {
-        const label own = prodOwner[facei];
-        const label nei = prodNeighbour[facei];
-        const scalar weight = prodWeights[facei];
-        const scalar multiplier = faceAdjoint[facei];
-        const scalar mobilityFace =
-            weight*primalPressureMobility[own]
-          + (1.0 - weight)*primalPressureMobility[nei];
-        const scalar normalCoefficient =
-            mobilityFace*deltaCoeffs[facei]*faceAreas[facei];
-        output[prodPIndex(own)] -= normalCoefficient*multiplier;
-        output[prodPIndex(nei)] += normalCoefficient*multiplier;
-    }
-
-    forAll(mesh.boundary(), patchi)
-    {
-        if (U.boundaryField()[patchi].fixesValue())
-        {
-            continue;
-        }
-        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
-        const scalarField& patchDelta = mesh.deltaCoeffs().boundaryField()[patchi];
-        const scalarField& patchArea = mesh.magSf().boundaryField()[patchi];
-        const label patchStart = mesh.boundary()[patchi].start();
-        const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
-
-        if (!pressureFixed)
-        {
-            continue;
-        }
-        forAll(patchCells, facei)
-        {
-            const label celli = patchCells[facei];
-            output[prodPIndex(celli)] +=
-                primalPressureMobility[celli]
-               *patchDelta[facei]*patchArea[facei]
-               *faceAdjoint[patchStart + facei];
-        }
-    }
-};
+// BFINAL-018 (fix 3): the previous pressure-flux-correction transpose
+// helper (interior kf with the OPPOSITE sign to the operator's own J_PP
+// block) was removed together with the old plain-interpolation U-row
+// routing; the source folding below now mirrors the operator's P-row flux
+// tangent slot by slot instead.
 
 // Add the explicit face-flux objective/thermal-adjoint source to the physical
 // U/p right-hand side before scaling.
+//
+// BFINAL-018 (fix 3, source folding): the face functional
+//   g_f = dJ/dphi_f - (dR_T/dphi_f)^T . Tb   (AdjNS_HT.H, B0.2-verified)
+// must be routed into (U,p) rows through the transpose of the SAME
+// relaxed-SIMPLE flux tangent that the J operator's P rows implement
+// (BFINAL-003), i.e.
+//   dphi_f = Sf & ( alphaRel*( w*rAU_o*dH_o + (1-w)*rAU_n*dH_n )
+//                 + (1-alphaRel)*( w*dU_o + (1-w)*dU_n ) )
+//          - kf_f*( dp_n - dp_o )
+// slot by slot: the alphaRel*rAU part goes through the momentum-H transpose
+// (deltaH^T, identical to the hA path of applyProdFlowJT), the (1-alphaRel)
+// part is the direct interpolation transpose on the U rows, and the kf part
+// carries the SAME sign as the operator's own J^T kf slot
+// (out[P(own)] += kf*lambdaPdiff).  The previous routing (plain w*Sf*g on
+// the U rows plus kf with the opposite sign to the operator's J_PP block)
+// was the transpose of a different, unphysical map dphi = interp(dU)&Sf +
+// kf*(p_n-p_o); BFINAL-016 B1 measured the resulting b_TC contraction
+// against the flow-mediated truth at 86%/70%/sign-flip.
 scalarField prodExternalTranspose(prodNUnknowns, 0.0);
+vectorField prodExternalHA(prodNCells, vector::zero);
 forAll(prodUpper, facei)
 {
     const label own = prodOwner[facei];
     const label nei = prodNeighbour[facei];
-    const vector faceTranspose =
-        prodSf[facei]*discreteExternalFaceFluxAdjoint[facei];
+    const scalar faceFunctional =
+        discreteExternalFaceFluxAdjoint[facei];
+    const vector faceTranspose = prodSf[facei]*faceFunctional;
+    const scalar weight = prodWeights[facei];
+    prodExternalHA[own] +=
+        alphaRel*prodRAU[own]*weight*faceTranspose;
+    prodExternalHA[nei] +=
+        alphaRel*prodRAU[nei]*(1.0 - weight)*faceTranspose;
     for (direction cmpt = 0; cmpt < 3; ++cmpt)
     {
         prodExternalTranspose[prodUIndex(own, cmpt)] +=
-            prodWeights[facei]*faceTranspose.component(cmpt);
+            (1.0 - alphaRel)*weight*faceTranspose.component(cmpt);
         prodExternalTranspose[prodUIndex(nei, cmpt)] +=
-            (1.0 - prodWeights[facei])*faceTranspose.component(cmpt);
+            (1.0 - alphaRel)*(1.0 - weight)*faceTranspose.component(cmpt);
     }
+    const scalar mobilityFace =
+        weight*primalPressureMobility[own]
+      + (1.0 - weight)*primalPressureMobility[nei];
+    const scalar kf =
+        mobilityFace
+       *mesh.deltaCoeffs().primitiveField()[facei]
+       *mesh.magSf().primitiveField()[facei];
+    prodExternalTranspose[prodPIndex(own)] += kf*faceFunctional;
+    prodExternalTranspose[prodPIndex(nei)] -= kf*faceFunctional;
 }
 forAll(mesh.boundary(), patchi)
 {
@@ -393,24 +383,73 @@ forAll(mesh.boundary(), patchi)
     const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
     const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
     const label patchStart = mesh.boundary()[patchi].start();
+    const bool pressureFixed = p.boundaryField()[patchi].fixesValue();
     forAll(patchCells, facei)
     {
         const label celli = patchCells[facei];
-        const vector faceTranspose =
-            patchSf[facei]
-           *discreteExternalFaceFluxAdjoint[patchStart + facei];
+        const scalar faceFunctional =
+            discreteExternalFaceFluxAdjoint[patchStart + facei];
+        const vector faceTranspose = patchSf[facei]*faceFunctional;
+        prodExternalHA[celli] +=
+            alphaRel*prodRAU[celli]*faceTranspose;
         for (direction cmpt = 0; cmpt < 3; ++cmpt)
         {
             prodExternalTranspose[prodUIndex(celli, cmpt)] +=
-                faceTranspose.component(cmpt);
+                (1.0 - alphaRel)*faceTranspose.component(cmpt);
+        }
+        if (pressureFixed)
+        {
+            prodExternalTranspose[prodPIndex(celli)] +=
+                primalPressureMobility[celli]
+               *mesh.deltaCoeffs().boundaryField()[patchi][facei]
+               *mesh.magSf().boundaryField()[patchi][facei]
+               *faceFunctional;
         }
     }
 }
-applyProdPressureFluxCorrectionTranspose
-(
-    discreteExternalFaceFluxAdjoint,
-    prodExternalTranspose
-);
+// deltaH^T: the transpose of the momentum-H tangent acting on the hA field,
+// mirroring the corresponding block of applyProdFlowJT slot by slot
+// (including the boundary H-diagonal part; the latter is exactly zero for
+// component-isotropic boundary coefficients but is kept for operator
+// parity).
+forAll(prodUpper, facei)
+{
+    const label own = prodOwner[facei];
+    const label nei = prodNeighbour[facei];
+    const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+    const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+    for (direction cmpt = 0; cmpt < 3; ++cmpt)
+    {
+        prodExternalTranspose[prodUIndex(nei, cmpt)] -=
+            prodUpper[facei]*Vinvo*prodExternalHA[own].component(cmpt);
+        prodExternalTranspose[prodUIndex(own, cmpt)] -=
+            prodLower[facei]*Vinn*prodExternalHA[nei].component(cmpt);
+    }
+}
+forAll(mesh.boundary(), patchi)
+{
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    const vectorField internalCoeffs =
+        prodMomentum.internalCoeffs()[patchi];
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        const scalar cav =
+            (
+                internalCoeffs[facei].x()
+              + internalCoeffs[facei].y()
+              + internalCoeffs[facei].z()
+            )/3.0;
+        const scalar Vinvc = 1.0/Foam::max(mesh.V()[celli], SMALL);
+        for (direction cmpt = 0; cmpt < 3; ++cmpt)
+        {
+            prodExternalTranspose[prodUIndex(celli, cmpt)] +=
+                (
+                    -internalCoeffs[facei].component(cmpt) + cav
+                )*Vinvc*prodExternalHA[celli].component(cmpt);
+        }
+    }
+}
 for (label celli = 0; celli < prodNCells; ++celli)
 {
     for (direction cmpt = 0; cmpt < 3; ++cmpt)
@@ -696,6 +735,36 @@ pinProdPressureReference(prodRhs);
         << sumRhsU << " sumRhsP=" << sumRhsP
         << " |RhsU|L2=" << Foam::sqrt(nU)
         << " |RhsP|L2=" << Foam::sqrt(nP) << endl;
+
+    // BFINAL-018 (fix-3 gauge): switch-gated export of the PHYSICAL rhs
+    // (4 columns per cell: Ux Uy Uz p; U-scaled by prodMomentumScale, P by
+    // prodAreaScale, mirroring the diagnostic-path explicitRhs export) so
+    // the b_TC gauge b_TC^T w_true can be recomputed offline against the
+    // SAME-pass folding.  Files only; no numerical effect.
+    if
+    (
+        optProperties.lookupOrDefault<Switch>("stageB18RhsExport", false)
+     && !Pstream::parRun()
+    )
+    {
+        OFstream prodRhsOut
+        (
+            runTime.path()
+           /fileName("b18rhs_" + discreteAdjointLabel + ".mtx")
+        );
+        prodRhsOut.precision(16);
+        for (label celli = 0; celli < prodNCells; ++celli)
+        {
+            prodRhsOut
+                << prodRhs[prodUIndex(celli, 0)]*prodMomentumScale << ' '
+                << prodRhs[prodUIndex(celli, 1)]*prodMomentumScale << ' '
+                << prodRhs[prodUIndex(celli, 2)]*prodMomentumScale << ' '
+                << prodRhs[prodPIndex(celli)]*prodAreaScale << nl;
+        }
+        Info<< "B18RHSEXPORT (" << discreteAdjointLabel
+            << "): physical rhs written (cells=" << prodNCells << ")"
+            << endl;
+    }
 }
 
 auto applyProdScaledJT =
@@ -1458,9 +1527,29 @@ const label prodRestart =
 const label prodMaxIterations =
     optProperties.lookupOrDefault<label>("discreteFlowAdjointMaxIter", 4000);
 const scalar prodTolerance =
-    optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-9);
+    optProperties.lookupOrDefault<scalar>("discreteFlowAdjointTolerance", 1e-12);
 const Switch discreteCheckpointGradient =
     optProperties.lookupOrDefault<Switch>("discreteCheckpointGradient", false);
+// BFINAL-018 (fix 2): functional (gradient-proxy) stability check.  A 1e-9
+// true-residual stop is NOT sufficient for the gradient FUNCTIONALS: the
+// adjoint-residual amplification of the -lambda^T R_x contraction is
+// ~1e8 (BFINAL-017 b17_lambda_true.json), so a lambda_679-class solution
+// can pass the residual test while its functional is still 20-147% wrong.
+// When enabled (default), the FGMRES loop only accepts convergence after
+// the gradProxy of the LAST TWO restart cycles agrees within the stability
+// tolerance; otherwise it warns and keeps iterating up to maxIter.
+const Switch prodGradientStabilityCheck =
+    optProperties.lookupOrDefault<Switch>
+    (
+        "discreteProdGradientStabilityCheck",
+        true
+    );
+const scalar prodGradientStabilityTolerance =
+    optProperties.lookupOrDefault<scalar>
+    (
+        "discreteProdGradientStabilityTolerance",
+        1e-6
+    );
 const Switch prodEnableRitzPilot =
     optProperties.lookupOrDefault<Switch>
     (
@@ -1702,10 +1791,20 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
     scalarField W(prodNUnknowns, 0.0);
 
     discreteRelativeResidual = GREAT;
+    // BFINAL-018 (fix 2): per-cycle gradProxy tracking for the functional
+    // stability criterion (see prodGradientStabilityCheck above).
+    scalar prodPrevCycleProxy = 0.0;
+    scalar prodCurrCycleProxy = 0.0;
+    label prodProxyCycleCount = 0;
+    bool prodGradientStable = !prodGradientStabilityCheck;
+    auto prodResidualConverged = [&]()
+    {
+        return discreteRelativeResidual <= prodTolerance && prodGradientStable;
+    };
     while
     (
         prodIteration < prodMaxIterations
-     && discreteRelativeResidual > prodTolerance
+     && (discreteRelativeResidual > prodTolerance || !prodGradientStable)
     )
     {
         applyProdScaledJT(prodSolution, prodOperator);
@@ -1713,7 +1812,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
         pinProdPressureReference(prodResidual);
         const scalar beta = Foam::sqrt(prodDot(prodResidual, prodResidual));
         discreteRelativeResidual = beta/prodRhsNorm;
-        if (discreteRelativeResidual <= prodTolerance)
+        if (prodResidualConverged())
         {
             break;
         }
@@ -1767,7 +1866,7 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
 
         const scalar betaDef = Foam::sqrt(prodDot(prodResidual, prodResidual));
         discreteRelativeResidual = betaDef/prodRhsNorm;
-        if (discreteRelativeResidual <= prodTolerance)
+        if (prodResidualConverged())
         {
             break;
         }
@@ -2040,6 +2139,61 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
             << prodIteration << " trueRelRes="
             << discreteRelativeResidual << endl;
 
+        // BFINAL-018 (fix 2): cycle-end gradProxy tracking.  When the
+        // stability check is enabled, the residual criterion alone does
+        // NOT stop the solve: the last two cycle proxies must agree within
+        // prodGradientStabilityTolerance (guard against lambda_679-class
+        // functional false convergence, BFINAL-017).
+        if (prodGradientStabilityCheck)
+        {
+            prodPrevCycleProxy = prodCurrCycleProxy;
+            prodCurrCycleProxy = prodGradProxy(prodSolution);
+            ++prodProxyCycleCount;
+            if
+            (
+                prodProxyCycleCount >= 2
+             && discreteRelativeResidual <= prodTolerance
+            )
+            {
+                const scalar proxyChange =
+                    mag(prodCurrCycleProxy - prodPrevCycleProxy)
+                   /Foam::max
+                    (
+                        Foam::max
+                        (
+                            mag(prodCurrCycleProxy),
+                            mag(prodPrevCycleProxy)
+                        ),
+                        scalar(1e-30)
+                    );
+                if (proxyChange <= prodGradientStabilityTolerance)
+                {
+                    prodGradientStable = true;
+                    Info<< "  [GRADSTABLE " << discreteAdjointLabel
+                        << "] cycles=" << prodProxyCycleCount
+                        << " proxy=" << prodCurrCycleProxy
+                        << " prev=" << prodPrevCycleProxy
+                        << " relChange=" << proxyChange
+                        << " <= " << prodGradientStabilityTolerance << endl;
+                }
+                else if (prodIteration < prodMaxIterations)
+                {
+                    WarningInFunction
+                        << "FGMRES residual criterion met for "
+                        << discreteAdjointLabel
+                        << " (trueRelRes=" << discreteRelativeResidual
+                        << " <= " << prodTolerance
+                        << ") but the gradient proxy is NOT stable yet "
+                        << "(relChange=" << proxyChange
+                        << " > " << prodGradientStabilityTolerance
+                        << " over the last two restart cycles; proxy="
+                        << prodCurrCycleProxy << ", prev="
+                        << prodPrevCycleProxy << "). Continuing to iterate "
+                        << "up to discreteFlowAdjointMaxIter."
+                        << endl;
+                }
+            }
+        }
         if (discreteCheckpointGradient)
         {
             const scalar gproxy = prodGradProxy(prodSolution);
@@ -2050,6 +2204,24 @@ if (prodRhsNorm > 1e-145 && !prodSolved)
                 << prodIteration << " trueRelRes="
                 << discreteRelativeResidual << " proxy=" << gproxy << endl;
         }
+    }
+    if
+    (
+        prodGradientStabilityCheck
+     && discreteRelativeResidual <= prodTolerance
+     && !prodGradientStable
+    )
+    {
+        WarningInFunction
+            << "FGMRES reached the functional-stability exit for "
+            << discreteAdjointLabel
+            << " without two consecutive stable gradProxy cycles "
+            << "(last proxy=" << prodCurrCycleProxy
+            << ", prev=" << prodPrevCycleProxy
+            << ", cycles=" << prodProxyCycleCount
+            << "). The gradient functional may still be drifting; the "
+            << "residual-based converge gate below arbitrates."
+            << endl;
     }
 }
 

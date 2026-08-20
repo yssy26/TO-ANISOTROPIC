@@ -36,6 +36,9 @@ class StageBSafetyGateTests(unittest.TestCase):
         cls.b2_amplitude = (
             REPO_ROOT / "src" / "validateStageB2GradientAmplitude.H"
         ).read_text(encoding="utf-8")
+        cls.adj_ht = (
+            REPO_ROOT / "src" / "AdjNS_HT.H"
+        ).read_text(encoding="utf-8")
 
     def test_pressure_reference_follows_openfoam_need_reference(self):
         self.assertIn(
@@ -285,6 +288,66 @@ class StageBSafetyGateTests(unittest.TestCase):
             "Direction-only approval cannot bypass this gate.",
             self.mma_gate,
         )
+
+    def test_bfinal018_tolerance_and_functional_stability_gate(self):
+        # BFINAL-018 fix 2: the production/diagnostic adjoint tolerance
+        # default is tightened to 1e-12 (a 1e-9 true residual leaves an
+        # O(1) error in the ~1e8-amplified gradient functionals), and the
+        # FGMRES loop is guarded by a cross-restart gradProxy stability
+        # check (default ON, threshold 1e-6) so a lambda_679-class
+        # functional false convergence cannot pass the residual criterion
+        # alone.
+        for text in (self.production, self.diagnostic):
+            self.assertIn(
+                '"discreteFlowAdjointTolerance", 1e-12',
+                text,
+            )
+        self.assertRegex(
+            self.production,
+            re.compile(
+                r'"discreteProdGradientStabilityCheck",\s*\n\s*true'
+            ),
+        )
+        self.assertRegex(
+            self.production,
+            re.compile(
+                r'"discreteProdGradientStabilityTolerance",\s*\n\s*1e-6'
+            ),
+        )
+        self.assertIn("GRADSTABLE", self.production)
+        self.assertIn("prodGradientStable", self.production)
+        self.assertIn("B18RHSEXPORT", self.production)
+
+    def test_bfinal018_source_folding_matches_operator_flux_map(self):
+        # BFINAL-018 fix 3: the b_TC face-functional routing must be the
+        # transpose of the SAME relaxed-SIMPLE flux tangent the J operator's
+        # P rows implement (alphaRel*rAU hA path + (1-alphaRel) direct part
+        # + kf with the operator's own J_PP sign).  The retired helpers
+        # (plain-interpolation routing with opposite-sign interior kf) must
+        # not reappear.
+        self.assertIn("alphaRel*prodRAU[own]*weight*faceTranspose",
+                      self.production)
+        self.assertIn(
+            "prodExternalTranspose[prodPIndex(own)] += kf*faceFunctional",
+            self.production,
+        )
+        self.assertIn("alphaRel*rAUAdj[own]*weight*faceTranspose",
+                      self.diagnostic)
+        self.assertIn(
+            "discreteExternalFluxTranspose[discretePIndex(own)]"
+            " += kf*faceFunctional",
+            self.diagnostic,
+        )
+        self.assertNotIn(
+            "applyProdPressureFluxCorrectionTranspose",
+            self.production,
+        )
+        self.assertNotIn(
+            "applyPressureFluxCorrectionTranspose",
+            self.diagnostic,
+        )
+        # the thermal face functional itself (B0.2-verified) is unchanged
+        self.assertIn("adjointDownwind*temperatureJump", self.adj_ht)
 
 
 if __name__ == "__main__":
