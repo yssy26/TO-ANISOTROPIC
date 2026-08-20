@@ -1,9 +1,13 @@
 // =============================================================================
-// rxPressureRowTranspose.H  (BFINAL-005, PATCH_RX_PRESSURE_ROW)
+// rxPressureRowTranspose.H  (BFINAL-005, PATCH_RX_PRESSURE_ROW;
+//                            BFINAL-019 parameterized)
 // -----------------------------------------------------------------------------
-// Computes the per-cell field rxPressureRowT = J_P^T pc : the EXACT transpose
-// of the BFINAL-004-validated forward pressure/continuity-row design operator
-// R_P,x = J_P*(dAlphaDxh*z) with R_P = div(phi) (raw face-flux sum, NO 1/V).
+// Computes the per-cell field RX_OUTPUT_FIELD = J_P^T <adjoint pressure>: the
+// EXACT transpose of the BFINAL-004-validated forward pressure/continuity-row
+// design operator R_P,x = J_P*(dAlphaDxh*z) with R_P = div(phi) (raw face-flux
+// sum, NO 1/V).  Historical/default contraction: pc (pressure-drop adjoint);
+// BFINAL-019 adds the pb (thermal-coupling adjoint) contraction, see the
+// parameterization block below the header.
 //
 // Forward operator (stageB6RxDesignOracle.H assembleWeightedRPa, BFINAL-004
 // CLOSED; identical reduced-SIMPLE semantics as the task §7):
@@ -50,21 +54,61 @@
 //     w = sin(0.271*(celli+1)) on active unclipped cells
 // (identical pattern to the BFINAL-004 deltaAlpha support), re-assemble
 // J_P*w locally (exact stageB6 assembleWeightedRPa replica) and verify
-//     sum(T*w) == sum(pc*(J_P*w))    relative |diff| <= 1e-8
+//     sum(T*w) == sum(RX_ADJ_PRESSURE*(J_P*w))    relative |diff| <= 1e-8
 // FatalError on mismatch -> pins the sign/transpose BEFORE the production
 // gates consume T.  Expected relErr ~ 1e-14 (machine precision).
 //
-// Include-safe: no global state, no project-header includes.  Include exactly
-// once, inside src/sensitivity.H DISCRETE branch, before
-// gsenshPressureDropPressureRow is assembled.
+// Include-safe: no global state, no project-header includes.  Include inside
+// src/sensitivity.H DISCRETE branch, once per contraction, before the
+// corresponding sensitivity term is assembled.
+//
+// BFINAL-019 parameterization: the helper can be contracted with either
+// pressure adjoint (production pressure-drop chain uses pc; the thermal-
+// coupling J chain uses pb) and can additionally produce the Gx direct-term
+// basis.  The caller selects the contraction via the following macros; with
+// NONE of them defined the expansion is token-identical to the historical
+// (BFINAL-005) text, so the production pc path is numerically unchanged:
+//   RX_ADJ_PRESSURE   adjoint pressure field          (default pc)
+//   RX_OUTPUT_FIELD   output field variable name      (default rxPressureRowT)
+//   RX_OUTPUT_NAME    registered IOobject name string (default "rxPressureRowT")
+//   RX_LABEL          log label string                (default "pc")
+//   RX_FLUX_DIRECT_SOURCE  (OPTIONAL) name of a const scalarField of size
+//                     mesh.nFaces() holding the thermal-coupling face
+//                     functional g_f = dJ/dphi_f - (dR_T/dphi_f)^T Tb (the
+//                     SAME functional the BFINAL-018 b_TC folding routed into
+//                     the (U,p) rows).  When defined, the additional per-cell
+//                     basis field rxFluxDirectT is produced such that
+//                         sum(rxFluxDirectT*dAlphaDxh*z) == g^T phi_x
+//                     i.e. the Gx direct term of DERIVATION_FIX3,
+//                         phi_x[f] = Sf&(interp(dHbyA)*wc)
+//                                  - interp(drAU)*wc*g0[f]        (internal)
+//                         phi_x[b] = Sf_b&dHbyA[cell]*wc[cell]    (U-assignable
+//                                    boundary faces only; dflux_b == 0 exactly
+//                                    because drAU*w carries a zero boundary
+//                                    value -> interpolated gamma_b = 0)
+//                     with wc = dAlphaDxh*z and the SAME BFINAL-004-LOCKED
+//                     per-cell derivatives used by the pressure-row transpose.
 // =============================================================================
 #include <sstream>
 
-volScalarField rxPressureRowT
+#ifndef RX_ADJ_PRESSURE
+#define RX_ADJ_PRESSURE pc
+#endif
+#ifndef RX_OUTPUT_FIELD
+#define RX_OUTPUT_FIELD rxPressureRowT
+#endif
+#ifndef RX_OUTPUT_NAME
+#define RX_OUTPUT_NAME "rxPressureRowT"
+#endif
+#ifndef RX_LABEL
+#define RX_LABEL "pc"
+#endif
+
+volScalarField RX_OUTPUT_FIELD
 (
     IOobject
     (
-        "rxPressureRowT",
+        RX_OUTPUT_NAME,
         runTime.timeName(),
         mesh,
         IOobject::NO_READ,
@@ -74,6 +118,29 @@ volScalarField rxPressureRowT
     dimensionedScalar("rxPressureRowT", dimensionSet(0, 2, -2, 0, 0, 0, 0), 0.0),
     zeroGradientFvPatchScalarField::typeName
 );
+
+#ifdef RX_FLUX_DIRECT_SOURCE
+// BFINAL-019 Gx basis field (only produced for the contraction that defines
+// RX_FLUX_DIRECT_SOURCE).  Values are assigned through primitiveFieldRef()
+// from the raw scalarField contraction below; the (0, 2, -2) dimension is the
+// same per-cell adjoint-pressure scale as RX_OUTPUT_FIELD so that the
+// production term gsenshMeanTFluxDirect = +rxFluxDirectT*dAlphaDxh carries
+// the (0, 2, -3) dimensions of fsenshMeanT.
+volScalarField rxFluxDirectT
+(
+    IOobject
+    (
+        "rxFluxDirectT",
+        runTime.timeName(),
+        mesh,
+        IOobject::NO_READ,
+        IOobject::NO_WRITE
+    ),
+    mesh,
+    dimensionedScalar("rxFluxDirectT", dimensionSet(0, 2, -2, 0, 0, 0, 0), 0.0),
+    zeroGradientFvPatchScalarField::typeName
+);
+#endif
 
 {
     const label rxNCells = mesh.nCells();
@@ -161,7 +228,7 @@ volScalarField rxPressureRowT
         const label own = mesh.owner()[fi];
         const label nei = mesh.neighbour()[fi];
         const scalar wf = mesh.weights()[fi];
-        const scalar pcDiff = pc[own] - pc[nei];
+        const scalar pcDiff = RX_ADJ_PRESSURE[own] - RX_ADJ_PRESSURE[nei];
         rxT1[own] += wf*(mesh.Sf()[fi] & rxDHbyA[own])*pcDiff;
         rxT1[nei] += (1.0 - wf)*(mesh.Sf()[fi] & rxDHbyA[nei])*pcDiff;
         rxT2[own] += -wf*rxG0[fi]*pcDiff*rxDrAU[own];
@@ -179,7 +246,8 @@ volScalarField rxPressureRowT
                 const label celli = fc[f];
                 if (uAssignable)
                 {
-                    rxT1[celli] += (pSf[f] & rxDHbyA[celli])*pc[celli];
+                    rxT1[celli] +=
+                        (pSf[f] & rxDHbyA[celli])*RX_ADJ_PRESSURE[celli];
                 }
                 ++bf;
             }
@@ -188,16 +256,71 @@ volScalarField rxPressureRowT
     scalarField rxT(rxNCells, 0.0);
     forAll(rxT, celli) { rxT[celli] = rxT1[celli] + rxT2[celli]; }
 
-    // ---- PRODUCTION assignment: rxPressureRowT = T (UNCONDITIONAL) ----
+    // ---- PRODUCTION assignment: RX_OUTPUT_FIELD = T (UNCONDITIONAL) ----
     // This runs with stageB6RxDesignOracle OFF as well, so the production
-    // pressure-drop sensitivity contains the pressure/continuity-row term
-    // gsenshPressureDropPressureRow = -rxPressureRowT*dAlphaDxh.
-    forAll(rxPressureRowT.primitiveFieldRef(), celli)
+    // sensitivities contain the pressure/continuity-row term
+    // (pressure-drop chain) gsenshPressureDropPressureRow
+    //   = -rxPressureRowT*dAlphaDxh        (BFINAL-005, pc)
+    // and (thermal-coupling J chain, BFINAL-019) gsenshMeanTPressureRow
+    //   = -rxPressureRowTb*dAlphaDxh       (pb).
+    forAll(RX_OUTPUT_FIELD.primitiveFieldRef(), celli)
     {
-        rxPressureRowT.primitiveFieldRef()[celli] = rxT[celli];
+        RX_OUTPUT_FIELD.primitiveFieldRef()[celli] = rxT[celli];
     }
 
-    // ---- (d) runtime dot-test: sum(T*w) vs sum(pc*(J_P*w)) ----
+#ifdef RX_FLUX_DIRECT_SOURCE
+    // ---- (e) BFINAL-019 Gx direct-term basis: per-cell field whose
+    // contraction with dAlphaDxh*z equals g^T phi_x (see file header).
+    // Face channels mirror the (dphiHbyA_w - dflux_w) channels of the
+    // forward operator above, with the face functional g in place of the
+    // cell-centred adjoint pressure difference:
+    //   internal: own += wf*((Sf&dHbyA[own]) - g0[f]*drAU[own])*g[f]
+    //             nei += (1-wf)*((Sf&dHbyA[nei]) - g0[f]*drAU[nei])*g[f]
+    //   boundary (U-assignable): += (Sf_b&dHbyA[cell])*g[b]
+    //     (the g0/drAU channel has exactly zero boundary contribution,
+    //      identical to T2[b] above)
+    scalarField rxFx(rxNCells, 0.0);
+    forAll(mesh.owner(), fi)
+    {
+        const label own = mesh.owner()[fi];
+        const label nei = mesh.neighbour()[fi];
+        const scalar wf = mesh.weights()[fi];
+        const scalar gFace = RX_FLUX_DIRECT_SOURCE[fi];
+        rxFx[own] +=
+            wf
+           *( (mesh.Sf()[fi] & rxDHbyA[own]) - rxG0[fi]*rxDrAU[own] )
+           *gFace;
+        rxFx[nei] +=
+            (1.0 - wf)
+           *( (mesh.Sf()[fi] & rxDHbyA[nei]) - rxG0[fi]*rxDrAU[nei] )
+           *gFace;
+    }
+    {
+        label bf = rxNIntF;
+        forAll(mesh.boundary(), patchi)
+        {
+            const labelUList& fc = mesh.boundary()[patchi].faceCells();
+            const vectorField& pSf = mesh.Sf().boundaryField()[patchi];
+            const bool uAssignable = U.boundaryField()[patchi].assignable();
+            forAll(fc, f)
+            {
+                const label celli = fc[f];
+                if (uAssignable)
+                {
+                    rxFx[celli] +=
+                        (pSf[f] & rxDHbyA[celli])*RX_FLUX_DIRECT_SOURCE[bf];
+                }
+                ++bf;
+            }
+        }
+    }
+    forAll(rxFluxDirectT.primitiveFieldRef(), celli)
+    {
+        rxFluxDirectT.primitiveFieldRef()[celli] = rxFx[celli];
+    }
+#endif
+
+    // ---- (d) runtime dot-test: sum(T*w) vs sum(adjoint*(J_P*w)) ----
     // DIAGNOSTIC ONLY (gated): re-assembles the forward operator to pin the
     // sign/transpose at machine precision before the gates consume T.
     if (optProperties.lookupOrDefault<Switch>("stageB6RxDesignOracle", false))
@@ -308,7 +431,7 @@ volScalarField rxPressureRowT
         scalar rxNormT = 0.0, rxNormFwd = 0.0;
         forAll(rxT, celli)
         {
-            rxDotFwd += pc[celli]*rxAnRPw[celli];
+            rxDotFwd += RX_ADJ_PRESSURE[celli]*rxAnRPw[celli];
             rxDotT += rxT[celli]*rxW[celli];
             rxNormT += sqr(rxT[celli]);
             rxNormFwd += sqr(rxAnRPw[celli]);
@@ -328,8 +451,8 @@ volScalarField rxPressureRowT
         std::ostringstream rxDotTStr;
         rxDotTStr.precision(16);
         rxDotTStr << rxDotT;
-        Info<< "RxPressureRowTranspose: sum(T*w)=" << rxDotTStr.str()
-            << " sum(pc*(J_P*w))=" << rxDotFwdStr.str()
+        Info<< "RxPressureRowTranspose[" RX_LABEL "]: sum(T*w)=" << rxDotTStr.str()
+            << " sum(" RX_LABEL "*(J_P*w))=" << rxDotFwdStr.str()
             << " relErr=" << rxRelDot
             << " alphaRel=" << rxAlphaRel
             << " |T|L2=" << Foam::sqrt(rxNormT)
@@ -345,3 +468,11 @@ volScalarField rxPressureRowT
         }
     }
 }
+
+// Undefine the BFINAL-019 parameterization macros so each inclusion of this
+// file is self-contained (defaults re-apply unless the caller re-defines).
+#undef RX_ADJ_PRESSURE
+#undef RX_OUTPUT_FIELD
+#undef RX_OUTPUT_NAME
+#undef RX_LABEL
+#undef RX_FLUX_DIRECT_SOURCE

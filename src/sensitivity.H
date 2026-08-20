@@ -116,12 +116,199 @@ if (adjointMode == "discrete")
     // Total (single field feeds the existing filter_chainrule.H path).
     gsenshPressureDrop = gsenshPressureDropMomentum + gsenshPressureDropPressureRow;
 
+    // ------------------------------------------------------------------
+    // BFINAL-019: J (thermal-coupling) assembly completion.
+    //
+    // Independent re-derivation (agrees with BFINAL-018 DERIVATION_FIX3 §1/§5):
+    // eliminating the internal flux phi = phi(U,p,alpha) from
+    //   L = J(T, phi(U,p,alpha)) - lambda^T R_flow(U,p,alpha) - Tb^T R_T(T,phi,xh)
+    // gives the COMPLETE design gradient of the thermal objective
+    //   dJ/dxh = -lambda_U^T R_U,x - lambda_P^T R_P,x + C + g^T phi_x
+    // with lambda = (Ub, pb) = J_flow^{-T} b_TC (b_TC = M^T g, the BFINAL-018
+    // folded source), C = -Tb^T R_T,x (thermalDiffusionDerivativeDTCell) and
+    //   g_f = dJ/dphi_f - (dR_T/dphi_f)^T Tb
+    // the SAME face functional that was folded into b_TC.  Two terms are NOT
+    // absorbable by any (U,p) source and were missing from the production
+    // assembly (which carried only -dAlphaDxh*(U&Ub)*V + C):
+    //   (1) pressure row  -pb^T R_P,x = -(J_P^T pb)^T dAlphaDxh
+    //       -> gsenshMeanTPressureRow = -rxPressureRowTb*dAlphaDxh
+    //       (exact transpose of the SAME BFINAL-004-validated R_P operator,
+    //        contracted with the thermal adjoint pressure pb; isomorphic to
+    //        the gDP-side gsenshPressureDropPressureRow of BFINAL-005)
+    //   (2) flux direct   Gx = g^T phi_x (POSITIVE sign)
+    //       -> gsenshMeanTFluxDirect = +rxFluxDirectT*dAlphaDxh
+    //       with phi_x[f] = Sf&(interp(dHbyA*wc)) - interp(drAU*wc)*g0[f],
+    //       phi_x[b] = Sf_b&dHbyA[cell]*wc[cell] on U-assignable patches,
+    //       wc = dAlphaDxh*z (BFINAL-004-LOCKED dHbyA/drAU/g0 channels).
+    // ------------------------------------------------------------------
+
+    // (a) thermal-coupling face functional g: exact value-replica of the
+    // discreteExternalFaceFluxAdjoint assembly in AdjNS_HT.H (that field is
+    // block-local to the adjoint-solver include; the contraction here must
+    // consume bit-identical values to those folded into b_TC).
+    scalarField thermalCouplingFaceFunctional(mesh.nFaces(), 0.0);
+    {
+        const labelUList& tcOwner = mesh.owner();
+        const labelUList& tcNeighbour = mesh.neighbour();
+        const scalarField& tcPhi = phiThermal.primitiveField();
+        const scalarField& tcMask = coldFaceMask.primitiveField();
+        forAll(tcOwner, facei)
+        {
+            if (tcMask[facei] <= 0.0)
+            {
+                continue;
+            }
+
+            const label own = tcOwner[facei];
+            const label nei = tcNeighbour[facei];
+            const scalar temperatureJump = T[nei] - T[own];
+            const scalar adjointDownwind =
+                tcPhi[facei] >= 0.0 ? Tb[nei] : Tb[own];
+            thermalCouplingFaceFunctional[facei] =
+               -tcMask[facei]*adjointDownwind*temperatureJump;
+        }
+
+        // Cold outlet boundary: objective direct flux derivative dJ/dphi_out
+        // (the thermal-residual boundary flux term is exactly zero under the
+        // bounded-Gauss-upwind fvm discretization, B0.2).
+        {
+            const label outletStart =
+                mesh.boundary()[coldOutletPatchID].start();
+            const scalarField& outletFluxDeriv =
+                thermalObjectiveFluxDerivative.boundaryField()
+                [coldOutletPatchID];
+            forAll(outletFluxDeriv, facei)
+            {
+                thermalCouplingFaceFunctional[outletStart + facei] +=
+                    outletFluxDeriv[facei];
+            }
+        }
+    }
+
+    // (b) second exact-transpose contraction of the SAME J_P operator with
+    // the thermal adjoint pressure pb, plus the Gx direct-term basis
+    // rxFluxDirectT (see the BFINAL-019 parameterization block in the helper
+    // header).  The default (pc) include above is untouched and remains
+    // bit-identical to the BFINAL-005 production path.
+    #define RX_ADJ_PRESSURE pb
+    #define RX_OUTPUT_FIELD rxPressureRowTb
+    #define RX_OUTPUT_NAME "rxPressureRowTb"
+    #define RX_LABEL "pb"
+    #define RX_FLUX_DIRECT_SOURCE thermalCouplingFaceFunctional
+    #include "rxPressureRowTranspose.H"
+    #undef RX_FLUX_DIRECT_SOURCE
+    #undef RX_LABEL
+    #undef RX_OUTPUT_NAME
+    #undef RX_OUTPUT_FIELD
+    #undef RX_ADJ_PRESSURE
+
+    // (c) J-side decomposition fields (BFINAL-005 gDP-decomposition style).
+    // gsenshMeanTMomentum duplicates the line-65 term for transparent
+    // decomposition/evidence only — it is NOT added to fsenshMeanT again.
+    volScalarField gsenshMeanTMomentum
+    (
+        IOobject
+        (
+            "gsenshMeanTMomentum",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroGMTMomentum", fsenshMeanT.dimensions(), 0.0),
+        zeroGradientFvPatchScalarField::typeName
+    );
+    gsenshMeanTMomentum = -dAlphaDxh*(U & Ub);
+    gsenshMeanTMomentum.primitiveFieldRef() *= mesh.V();
+    // Pressure/continuity row: -lambda_P^T R_P,x with lambda_P = pb.
+    volScalarField gsenshMeanTPressureRow
+    (
+        IOobject
+        (
+            "gsenshMeanTPressureRow",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroGMTPressureRow", fsenshMeanT.dimensions(), 0.0),
+        zeroGradientFvPatchScalarField::typeName
+    );
+    gsenshMeanTPressureRow = -rxPressureRowTb*dAlphaDxh;
+    // Flux direct term Gx = g^T phi_x (positive sign, see derivation above).
+    volScalarField gsenshMeanTFluxDirect
+    (
+        IOobject
+        (
+            "gsenshMeanTFluxDirect",
+            runTime.timeName(),
+            mesh,
+            IOobject::NO_READ,
+            IOobject::NO_WRITE
+        ),
+        mesh,
+        dimensionedScalar("zeroGMTFluxDirect", fsenshMeanT.dimensions(), 0.0),
+        zeroGradientFvPatchScalarField::typeName
+    );
+    gsenshMeanTFluxDirect = rxFluxDirectT*dAlphaDxh;
+    // Feed the SAME filter_chainrule.H path: the complete thermal-objective
+    // xh sensitivity is momentum (line 65, already in fsenshMeanT)
+    // + pressure row + flux direct (+ C added below as before).
+    fsenshMeanT += gsenshMeanTPressureRow;
+    fsenshMeanT += gsenshMeanTFluxDirect;
+
+    // Decomposed diagnostics (mirrors the gDP-side print pattern; magnitudes
+    // only — per-direction projections come from the gated mtx export below
+    // and/or the B2 FD-gate projJ family).
+    {
+        scalar rxJnMom = 0.0;
+        scalar rxJnPRow = 0.0;
+        scalar rxJnFx = 0.0;
+        scalar rxJnC = 0.0;
+        forAll(fsenshMeanT.primitiveField(), celli)
+        {
+            rxJnMom += sqr(gsenshMeanTMomentum[celli]);
+            rxJnPRow += sqr(gsenshMeanTPressureRow[celli]);
+            rxJnFx += sqr(gsenshMeanTFluxDirect[celli]);
+            rxJnC += sqr(thermalDiffusionDerivativeDTCell[celli]);
+        }
+        reduce(rxJnMom, sumOp<scalar>());
+        reduce(rxJnPRow, sumOp<scalar>());
+        reduce(rxJnFx, sumOp<scalar>());
+        reduce(rxJnC, sumOp<scalar>());
+        Info<< "BFINAL-019 J assembly decomposition: "
+            << "|momentum|L2=" << Foam::sqrt(rxJnMom)
+            << " |pressureRow(pb)|L2=" << Foam::sqrt(rxJnPRow)
+            << " |fluxDirect(Gx)|L2=" << Foam::sqrt(rxJnFx)
+            << " |thermalC|L2=" << Foam::sqrt(rxJnC) << endl;
+    }
+
     if (freezeColdFlowForValidation)
     {
         fsenshMeanT = dimensionedScalar
         (
             "zeroFrozenColdFlowSensitivity",
             fsenshMeanT.dimensions(),
+            0.0
+        );
+        gsenshMeanTMomentum = dimensionedScalar
+        (
+            "zeroFrozenMeanTMomentumSensitivity",
+            gsenshMeanTMomentum.dimensions(),
+            0.0
+        );
+        gsenshMeanTPressureRow = dimensionedScalar
+        (
+            "zeroFrozenMeanTPressureRowSensitivity",
+            gsenshMeanTPressureRow.dimensions(),
+            0.0
+        );
+        gsenshMeanTFluxDirect = dimensionedScalar
+        (
+            "zeroFrozenMeanTFluxDirectSensitivity",
+            gsenshMeanTFluxDirect.dimensions(),
             0.0
         );
         gsenshPressureDropMomentum = dimensionedScalar
@@ -171,6 +358,39 @@ if (adjointMode == "discrete")
             << Foam::sqrt(rxNM)
             << " |pressureRow|L2=" << Foam::sqrt(rxNP)
             << " |total|L2=" << Foam::sqrt(rxNT) << endl;
+
+        // BFINAL-019: the same evidence channel for the thermal-objective (J)
+        // decomposition (momentum / pressure-row(pb) / flux-direct(Gx) / total
+        // pre-C).  Offline contraction with a direction z reproduces the
+        // per-term projections for FD-gate comparison.
+        OFstream rxJM("rxj_prod_gsensh_momentum.mtx");
+        OFstream rxJP("rxj_prod_gsensh_pressurerow.mtx");
+        OFstream rxJF("rxj_prod_gsensh_fluxdirect.mtx");
+        OFstream rxJT("rxj_prod_gsensh_total.mtx");
+        rxJM.precision(16); rxJP.precision(16);
+        rxJF.precision(16); rxJT.precision(16);
+        scalar rxJNM = 0.0, rxJNP = 0.0, rxJNF = 0.0, rxJNT = 0.0;
+        forAll(gsenshMeanTMomentum, celli)
+        {
+            rxJM << gsenshMeanTMomentum[celli] << nl;
+            rxJP << gsenshMeanTPressureRow[celli] << nl;
+            rxJF << gsenshMeanTFluxDirect[celli] << nl;
+            rxJT << fsenshMeanT[celli] << nl;
+            rxJNM += sqr(gsenshMeanTMomentum[celli]);
+            rxJNP += sqr(gsenshMeanTPressureRow[celli]);
+            rxJNF += sqr(gsenshMeanTFluxDirect[celli]);
+            rxJNT += sqr(fsenshMeanT[celli]);
+        }
+        rxJM.flush(); rxJP.flush(); rxJF.flush(); rxJT.flush();
+        reduce(rxJNM, sumOp<scalar>());
+        reduce(rxJNP, sumOp<scalar>());
+        reduce(rxJNF, sumOp<scalar>());
+        reduce(rxJNT, sumOp<scalar>());
+        Info<< "RxJAssembly production xh fields: |momentum|L2="
+            << Foam::sqrt(rxJNM)
+            << " |pressureRow(pb)|L2=" << Foam::sqrt(rxJNP)
+            << " |fluxDirect(Gx)|L2=" << Foam::sqrt(rxJNF)
+            << " |totalPreC|L2=" << Foam::sqrt(rxJNT) << endl;
     }
 
     // thermalDiffusionDerivativeDTCell already contains the full dJ/dxh

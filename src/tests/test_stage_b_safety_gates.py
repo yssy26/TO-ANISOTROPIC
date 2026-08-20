@@ -39,6 +39,12 @@ class StageBSafetyGateTests(unittest.TestCase):
         cls.adj_ht = (
             REPO_ROOT / "src" / "AdjNS_HT.H"
         ).read_text(encoding="utf-8")
+        cls.sensitivity = (
+            REPO_ROOT / "src" / "sensitivity.H"
+        ).read_text(encoding="utf-8")
+        cls.rx_helper = (
+            REPO_ROOT / "src" / "rxPressureRowTranspose.H"
+        ).read_text(encoding="utf-8")
 
     def test_pressure_reference_follows_openfoam_need_reference(self):
         self.assertIn(
@@ -348,6 +354,71 @@ class StageBSafetyGateTests(unittest.TestCase):
         )
         # the thermal face functional itself (B0.2-verified) is unchanged
         self.assertIn("adjointDownwind*temperatureJump", self.adj_ht)
+
+    def test_bfinal019_j_assembly_pressure_row_and_flux_direct(self):
+        # BFINAL-019: the thermal-objective (J) xh assembly must carry the
+        # two DERIVATION_FIX3 terms that no (U,p) source can absorb:
+        #   (1) -pb^T R_P,x  -> gsenshMeanTPressureRow = -rxPressureRowTb
+        #       *dAlphaDxh   (second exact-transpose contraction of the SAME
+        #                       BFINAL-004-validated J_P operator with the
+        #                       thermal adjoint pressure pb)
+        #   (2) +g^T phi_x   -> gsenshMeanTFluxDirect = +rxFluxDirectT
+        #       *dAlphaDxh   (Gx direct term; phi_x mirrors the LOCKED
+        #                       dHbyA/drAU/g0 channels of the operator)
+        # The helper must stay token-compatible with the historical pc path
+        # when no parameterization macros are defined (default include first,
+        # macro-parameterized pb include second, #undef cleanup after).
+        self.assertEqual(
+            self.sensitivity.count('#include "rxPressureRowTranspose.H"'), 2
+        )
+        self.assertEqual(
+            self.sensitivity.count("#define RX_ADJ_PRESSURE"), 1
+        )
+        # the FIRST include must be the macro-free default (pc) path: the
+        # macro block appears only for the second, pb-parameterized include
+        first = self.sensitivity.index('#include "rxPressureRowTranspose.H"')
+        second = self.sensitivity.index('#include "rxPressureRowTranspose.H"',
+                                        first + 1)
+        macro_block = self.sensitivity.index("#define RX_ADJ_PRESSURE")
+        self.assertLess(first, macro_block)
+        self.assertGreater(macro_block, first)
+        self.assertGreater(second, macro_block)
+        self.assertIn("#define RX_ADJ_PRESSURE pb", self.sensitivity)
+        self.assertIn("#define RX_OUTPUT_FIELD rxPressureRowTb",
+                      self.sensitivity)
+        self.assertIn(
+            "#define RX_FLUX_DIRECT_SOURCE thermalCouplingFaceFunctional",
+            self.sensitivity,
+        )
+        self.assertIn("#undef RX_ADJ_PRESSURE", self.sensitivity)
+        # the two production terms and their wiring into fsenshMeanT
+        self.assertIn("gsenshMeanTPressureRow = -rxPressureRowTb*dAlphaDxh;",
+                      self.sensitivity)
+        self.assertIn("gsenshMeanTFluxDirect = rxFluxDirectT*dAlphaDxh;",
+                      self.sensitivity)
+        self.assertIn("fsenshMeanT += gsenshMeanTPressureRow;",
+                      self.sensitivity)
+        self.assertIn("fsenshMeanT += gsenshMeanTFluxDirect;",
+                      self.sensitivity)
+        # the face functional consumed by Gx is the value-replica of the
+        # AdjNS_HT.H b_TC folding (masked upwind-downwind interior + cold
+        # outlet dJ/dphi_out)
+        self.assertIn("adjointDownwind*temperatureJump", self.sensitivity)
+        self.assertIn("thermalObjectiveFluxDerivative", self.sensitivity)
+        # frozen-validation mode still zeroes the new decomposition fields
+        self.assertIn("gsenshMeanTPressureRow = dimensionedScalar",
+                      self.sensitivity)
+        self.assertIn("gsenshMeanTFluxDirect = dimensionedScalar",
+                      self.sensitivity)
+        # helper contract: default macros + #undef cleanup + Gx basis
+        self.assertIn("#ifndef RX_ADJ_PRESSURE", self.rx_helper)
+        self.assertIn("#define RX_ADJ_PRESSURE pc", self.rx_helper)
+        self.assertIn("#undef RX_FLUX_DIRECT_SOURCE", self.rx_helper)
+        self.assertIn("rxFluxDirectT", self.rx_helper)
+        self.assertIn("RX_FLUX_DIRECT_SOURCE[fi]", self.rx_helper)
+        # the historical pc production term must remain untouched
+        self.assertIn("gsenshPressureDropPressureRow = -rxPressureRowT"
+                      "*dAlphaDxh;", self.sensitivity)
 
 
 if __name__ == "__main__":

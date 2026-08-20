@@ -1,0 +1,41 @@
+# BFINAL-019 cycle-1 workspace snapshot (2026-08-20T21:14:07+08:00)
+
+## git
+caba940b94e592c1827feea0c4907f6a7a91586c
+agent/dsH-stage-b-validation
+ M src/rxPressureRowTranspose.H
+ M src/sensitivity.H
+ M src/tests/test_stage_b_safety_gates.py
+?? NEXT_TASK_BFINAL012.md
+?? NEXT_TASK_BFINAL013.md
+?? NEXT_TASK_BFINAL014.md
+?? NEXT_TASK_BFINAL015.md
+?? NEXT_TASK_BFINAL016.md
+?? NEXT_TASK_BFINAL017.md
+?? evidence/agent-group/BFINAL-011/cycle-1/EXECUTOR_DONE
+?? evidence/agent-group/BFINAL-011/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-012/cycle-1/EXECUTOR_DONE
+?? evidence/agent-group/BFINAL-012/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-013/cycle-1/EXECUTOR_DONE
+?? evidence/agent-group/BFINAL-013/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-014/cycle-1/EXECUTOR_DONE
+?? evidence/agent-group/BFINAL-014/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-015/cycle-1/EXECUTOR_DONE
+?? evidence/agent-group/BFINAL-015/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-016/cycle-1/EXECUTOR_DONE
+?? evidence/agent-group/BFINAL-016/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-017/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-018/cycle-1/REVIEW_BY_REVIEWER.md
+?? evidence/agent-group/BFINAL-019/
+?? wmake_b18.log
+?? wmake_b19.log
+?? wmake_bfinal009.log
+?? wmake_bfinal010.log
+?? wmake_bfinal011.log
+?? wmake_bfinal012.log
+
+## diff stat (leftover audit input)
+ src/rxPressureRowTranspose.H           | 173 ++++++++++++++++++++++----
+ src/sensitivity.H                      | 220 +++++++++++++++++++++++++++++++++
+ src/tests/test_stage_b_safety_gates.py |  71 +++++++++++
+ 3 files changed, 443 insertions(+), 21 deletions(-)

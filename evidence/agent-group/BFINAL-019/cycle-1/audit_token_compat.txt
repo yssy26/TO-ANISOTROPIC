@@ -1,0 +1,19 @@
+# Audit artifact: token-level compatibility of rxPressureRowTranspose.H (no macros defined)
+
+gcc -E -P old (HEAD caba940) vs new (working tree), no macros defined. Only differences:
+
+19461c19461,19462
+<                     rxT1[celli] += (pSf[f] & rxDHbyA[celli])*pc[celli];
+---
+>                     rxT1[celli] +=
+>                         (pSf[f] & rxDHbyA[celli])*pc[celli];
+19598,19599c19599,19600
+<         Info<< "RxPressureRowTranspose: sum(T*w)=" << rxDotTStr.str()
+<             << " sum(pc*(J_P*w))=" << rxDotFwdStr.str()
+---
+>         Info<< "RxPressureRowTranspose[" "pc" "]: sum(T*w)=" << rxDotTStr.str()
+>             << " sum(" "pc" "*(J_P*w))=" << rxDotFwdStr.str()
+
+=> identical except (1) a line rewrap of rxT1[celli] += ... (same tokens) and (2) the gated diagnostic Info label string
+   'RxPressureRowTranspose[' 'pc' ']...' (compile-time concatenation; log text only, no numeric effect).
+   => pc production path numerics bit-identical.

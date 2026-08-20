@@ -1,0 +1,264 @@
+Making dependency list for source file MTO_HF.C
+could not open file ompi/mpi/cxx/pmpicxx.h for source file MTO_HF.C due to No such file or directory
+could not open file ompi/mpi/cxx/pop_inln.h for source file MTO_HF.C due to No such file or directory
+could not open file ompi/mpi/cxx/pgroup_inln.h for source file MTO_HF.C due to No such file or directory
+could not open file ompi/mpi/cxx/pstatus_inln.h for source file MTO_HF.C due to No such file or directory
+could not open file ompi/mpi/cxx/prequest_inln.h for source file MTO_HF.C due to No such file or directory
+Making dependency list for source file MMA.C
+Making dependency list for source file adjointInletPressurePDFvPatchScalarField.C
+Making dependency list for source file adjointOutletVelocityPDFvPatchVectorField.C
+Making dependency list for source file adjointOutletPressurePDFvPatchScalarField.C
+Making dependency list for source file adjointOutletVelocityPowerFvPatchVectorField.C
+Making dependency list for source file adjointOutletPressurePowerFvPatchScalarField.C
+Making dependency list for source file adjointOutletVelocityHeatFvPatchVectorField.C
+Making dependency list for source file adjointOutletPressureHeatFvPatchScalarField.C
+Making dependency list for source file harmonicSymmTensor.C
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c harmonicSymmTensor.C -o Make/linux64GccDPInt32Opt/harmonicSymmTensor.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointOutletPressureHeat/adjointOutletPressureHeatFvPatchScalarField.C -o Make/linux64GccDPInt32Opt/adjointOutletPressureHeat/adjointOutletPressureHeatFvPatchScalarField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointOutletVelocityHeat/adjointOutletVelocityHeatFvPatchVectorField.C -o Make/linux64GccDPInt32Opt/adjointOutletVelocityHeat/adjointOutletVelocityHeatFvPatchVectorField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointOutletPressurePower/adjointOutletPressurePowerFvPatchScalarField.C -o Make/linux64GccDPInt32Opt/adjointOutletPressurePower/adjointOutletPressurePowerFvPatchScalarField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointOutletVelocityPower/adjointOutletVelocityPowerFvPatchVectorField.C -o Make/linux64GccDPInt32Opt/adjointOutletVelocityPower/adjointOutletVelocityPowerFvPatchVectorField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointOutletPressurePD/adjointOutletPressurePDFvPatchScalarField.C -o Make/linux64GccDPInt32Opt/adjointOutletPressurePD/adjointOutletPressurePDFvPatchScalarField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointOutletVelocityPD/adjointOutletVelocityPDFvPatchVectorField.C -o Make/linux64GccDPInt32Opt/adjointOutletVelocityPD/adjointOutletVelocityPDFvPatchVectorField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c adjointInletPressurePD/adjointInletPressurePDFvPatchScalarField.C -o Make/linux64GccDPInt32Opt/adjointInletPressurePD/adjointInletPressurePDFvPatchScalarField.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c MMA/MMA.C -o Make/linux64GccDPInt32Opt/MMA/MMA.o
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -c MTO_HF.C -o Make/linux64GccDPInt32Opt/MTO_HF.o
+In file included from MTO_HF.C:38:
+NS.H: In function 'int main(int, char**)':
+NS.H:718:31: warning: unused variable 'nHA' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                               ^~~
+NS.H:718:53: warning: unused variable 'dotH' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                                                     ^~~~
+In file included from AdjNS_HT.H:101,
+                 from MTO_HF.C:69:
+solveDiscreteFlowAdjoint.H:101:21: warning: unused variable 'nei' [-Wunused-variable]
+  101 |         const label nei = discreteNeighbour[fi];
+      |                     ^~~
+In file included from AdjNS_HT.H:101,
+                 from MTO_HF.C:69:
+solveDiscreteFlowAdjoint.H:1372:58: warning: unused variable 'nBS' [-Wunused-variable]
+ 1372 |                 scalar nOff = 0.0, nBnd = 0.0, nS = 0.0, nBS = 0.0;
+      |                                                          ^~~
+solveDiscreteFlowAdjoint.H:2068:38: warning: unused variable 'numT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                      ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2068:55: warning: unused variable 'denT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                                       ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2475:18: warning: unused variable 'rAUo' [-Wunused-variable]
+ 2475 |     const scalar rAUo = rAUAdj[own];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2476:18: warning: unused variable 'rAUn' [-Wunused-variable]
+ 2476 |     const scalar rAUn = rAUAdj[nei];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2477:18: warning: unused variable 'Vinvo' [-Wunused-variable]
+ 2477 |     const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+      |                  ^~~~~
+solveDiscreteFlowAdjoint.H:2478:18: warning: unused variable 'Vinn' [-Wunused-variable]
+ 2478 |     const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2967:26: warning: comparison of integer expressions of different signedness: '__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type' {aka 'int'} and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 2967 |      && csrRowPtr[r + 1] == csrCol.size())
+In file included from AdjNS_PD.H:16,
+                 from MTO_HF.C:93:
+solveDiscreteFlowAdjoint.H:101:21: warning: unused variable 'nei' [-Wunused-variable]
+  101 |         const label nei = discreteNeighbour[fi];
+      |                     ^~~
+In file included from AdjNS_PD.H:16,
+                 from MTO_HF.C:93:
+solveDiscreteFlowAdjoint.H:1372:58: warning: unused variable 'nBS' [-Wunused-variable]
+ 1372 |                 scalar nOff = 0.0, nBnd = 0.0, nS = 0.0, nBS = 0.0;
+      |                                                          ^~~
+solveDiscreteFlowAdjoint.H:2068:38: warning: unused variable 'numT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                      ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2068:55: warning: unused variable 'denT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                                       ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2475:18: warning: unused variable 'rAUo' [-Wunused-variable]
+ 2475 |     const scalar rAUo = rAUAdj[own];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2476:18: warning: unused variable 'rAUn' [-Wunused-variable]
+ 2476 |     const scalar rAUn = rAUAdj[nei];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2477:18: warning: unused variable 'Vinvo' [-Wunused-variable]
+ 2477 |     const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+      |                  ^~~~~
+solveDiscreteFlowAdjoint.H:2478:18: warning: unused variable 'Vinn' [-Wunused-variable]
+ 2478 |     const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2967:26: warning: comparison of integer expressions of different signedness: '__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type' {aka 'int'} and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 2967 |      && csrRowPtr[r + 1] == csrCol.size())
+In file included from evaluateCandidate.H:42,
+                 from sensitivity.H:824,
+                 from MTO_HF.C:110:
+NS.H:718:31: warning: unused variable 'nHA' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                               ^~~
+NS.H:718:53: warning: unused variable 'dotH' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                                                     ^~~~
+In file included from MTO_HF.C:123:
+stageB13GradientProbe.H:207:21: warning: unused variable 'outletStart' [-Wunused-variable]
+  207 |         const label outletStart =
+      |                     ^~~~~~~~~~~
+In file included from AdjNS_HT.H:101,
+                 from validateStageBRepeatability.H:451,
+                 from MTO_HF.C:128:
+solveDiscreteFlowAdjoint.H: In lambda function:
+solveDiscreteFlowAdjoint.H:101:21: warning: unused variable 'nei' [-Wunused-variable]
+  101 |         const label nei = discreteNeighbour[fi];
+      |                     ^~~
+In file included from AdjNS_HT.H:101,
+                 from validateStageBRepeatability.H:451,
+                 from MTO_HF.C:128:
+solveDiscreteFlowAdjoint.H:1372:58: warning: unused variable 'nBS' [-Wunused-variable]
+ 1372 |                 scalar nOff = 0.0, nBnd = 0.0, nS = 0.0, nBS = 0.0;
+      |                                                          ^~~
+solveDiscreteFlowAdjoint.H:2068:38: warning: unused variable 'numT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                      ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2068:55: warning: unused variable 'denT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                                       ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2475:18: warning: unused variable 'rAUo' [-Wunused-variable]
+ 2475 |     const scalar rAUo = rAUAdj[own];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2476:18: warning: unused variable 'rAUn' [-Wunused-variable]
+ 2476 |     const scalar rAUn = rAUAdj[nei];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2477:18: warning: unused variable 'Vinvo' [-Wunused-variable]
+ 2477 |     const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+      |                  ^~~~~
+solveDiscreteFlowAdjoint.H:2478:18: warning: unused variable 'Vinn' [-Wunused-variable]
+ 2478 |     const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2967:26: warning: comparison of integer expressions of different signedness: '__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type' {aka 'int'} and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 2967 |      && csrRowPtr[r + 1] == csrCol.size())
+In file included from AdjNS_PD.H:16,
+                 from validateStageBRepeatability.H:452,
+                 from MTO_HF.C:128:
+solveDiscreteFlowAdjoint.H:101:21: warning: unused variable 'nei' [-Wunused-variable]
+  101 |         const label nei = discreteNeighbour[fi];
+      |                     ^~~
+In file included from AdjNS_PD.H:16,
+                 from validateStageBRepeatability.H:452,
+                 from MTO_HF.C:128:
+solveDiscreteFlowAdjoint.H:1372:58: warning: unused variable 'nBS' [-Wunused-variable]
+ 1372 |                 scalar nOff = 0.0, nBnd = 0.0, nS = 0.0, nBS = 0.0;
+      |                                                          ^~~
+solveDiscreteFlowAdjoint.H:2068:38: warning: unused variable 'numT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                      ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2068:55: warning: unused variable 'denT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                                       ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2475:18: warning: unused variable 'rAUo' [-Wunused-variable]
+ 2475 |     const scalar rAUo = rAUAdj[own];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2476:18: warning: unused variable 'rAUn' [-Wunused-variable]
+ 2476 |     const scalar rAUn = rAUAdj[nei];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2477:18: warning: unused variable 'Vinvo' [-Wunused-variable]
+ 2477 |     const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+      |                  ^~~~~
+solveDiscreteFlowAdjoint.H:2478:18: warning: unused variable 'Vinn' [-Wunused-variable]
+ 2478 |     const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2967:26: warning: comparison of integer expressions of different signedness: '__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type' {aka 'int'} and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 2967 |      && csrRowPtr[r + 1] == csrCol.size())
+In file included from evaluateCandidate.H:42,
+                 from sensitivity.H:824,
+                 from validateStageBRepeatability.H:455,
+                 from MTO_HF.C:128:
+NS.H:718:31: warning: unused variable 'nHA' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                               ^~~
+NS.H:718:53: warning: unused variable 'dotH' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                                                     ^~~~
+In file included from AdjNS_HT.H:101,
+                 from validateStageB2GradientAmplitude.H:343,
+                 from MTO_HF.C:132:
+solveDiscreteFlowAdjoint.H: In lambda function:
+solveDiscreteFlowAdjoint.H:101:21: warning: unused variable 'nei' [-Wunused-variable]
+  101 |         const label nei = discreteNeighbour[fi];
+      |                     ^~~
+In file included from AdjNS_HT.H:101,
+                 from validateStageB2GradientAmplitude.H:343,
+                 from MTO_HF.C:132:
+solveDiscreteFlowAdjoint.H:1372:58: warning: unused variable 'nBS' [-Wunused-variable]
+ 1372 |                 scalar nOff = 0.0, nBnd = 0.0, nS = 0.0, nBS = 0.0;
+      |                                                          ^~~
+solveDiscreteFlowAdjoint.H:2068:38: warning: unused variable 'numT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                      ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2068:55: warning: unused variable 'denT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                                       ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2475:18: warning: unused variable 'rAUo' [-Wunused-variable]
+ 2475 |     const scalar rAUo = rAUAdj[own];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2476:18: warning: unused variable 'rAUn' [-Wunused-variable]
+ 2476 |     const scalar rAUn = rAUAdj[nei];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2477:18: warning: unused variable 'Vinvo' [-Wunused-variable]
+ 2477 |     const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+      |                  ^~~~~
+solveDiscreteFlowAdjoint.H:2478:18: warning: unused variable 'Vinn' [-Wunused-variable]
+ 2478 |     const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2967:26: warning: comparison of integer expressions of different signedness: '__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type' {aka 'int'} and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 2967 |      && csrRowPtr[r + 1] == csrCol.size())
+In file included from AdjNS_PD.H:16,
+                 from validateStageB2GradientAmplitude.H:344,
+                 from MTO_HF.C:132:
+solveDiscreteFlowAdjoint.H:101:21: warning: unused variable 'nei' [-Wunused-variable]
+  101 |         const label nei = discreteNeighbour[fi];
+      |                     ^~~
+In file included from AdjNS_PD.H:16,
+                 from validateStageB2GradientAmplitude.H:344,
+                 from MTO_HF.C:132:
+solveDiscreteFlowAdjoint.H:1372:58: warning: unused variable 'nBS' [-Wunused-variable]
+ 1372 |                 scalar nOff = 0.0, nBnd = 0.0, nS = 0.0, nBS = 0.0;
+      |                                                          ^~~
+solveDiscreteFlowAdjoint.H:2068:38: warning: unused variable 'numT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                      ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2068:55: warning: unused variable 'denT1Conv' [-Wunused-variable]
+ 2068 |     scalar numT1 = 0.0, denT1 = 0.0, numT1Conv = 0.0, denT1Conv = 0.0;
+      |                                                       ^~~~~~~~~
+solveDiscreteFlowAdjoint.H:2475:18: warning: unused variable 'rAUo' [-Wunused-variable]
+ 2475 |     const scalar rAUo = rAUAdj[own];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2476:18: warning: unused variable 'rAUn' [-Wunused-variable]
+ 2476 |     const scalar rAUn = rAUAdj[nei];
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2477:18: warning: unused variable 'Vinvo' [-Wunused-variable]
+ 2477 |     const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+      |                  ^~~~~
+solveDiscreteFlowAdjoint.H:2478:18: warning: unused variable 'Vinn' [-Wunused-variable]
+ 2478 |     const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+      |                  ^~~~
+solveDiscreteFlowAdjoint.H:2967:26: warning: comparison of integer expressions of different signedness: '__gnu_cxx::__alloc_traits<std::allocator<int>, int>::value_type' {aka 'int'} and 'std::vector<int>::size_type' {aka 'long unsigned int'} [-Wsign-compare]
+ 2967 |      && csrRowPtr[r + 1] == csrCol.size())
+In file included from evaluateCandidate.H:42,
+                 from sensitivity.H:824,
+                 from validateStageB2GradientAmplitude.H:347,
+                 from MTO_HF.C:132:
+NS.H:718:31: warning: unused variable 'nHA' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                               ^~~
+NS.H:718:53: warning: unused variable 'dotH' [-Wunused-variable]
+  718 |             scalar nHF = 0.0, nHA = 0.0, nHD = 0.0, dotH = 0.0;
+      |                                                     ^~~~
+In file included from MTO_HF.C:17:
+createFields.H: In function 'int main(int, char**)':
+createFields.H:236:7: warning: unused variable 'stageB2FDStepsMulti' [-Wunused-variable]
+  236 | label stageB2FDStepsMulti
+      |       ^~~~~~~~~~~~~~~~~~~
+g++ -std=c++11 -m64 -Dlinux64 -DWM_ARCH_OPTION=64 -DWM_DP -DWM_LABEL_SIZE=32 -Wall -Wextra -Wold-style-cast -Wnon-virtual-dtor -Wno-unused-parameter -Wno-invalid-offsetof -Wno-attributes -O3  -DNoRepository -ftemplate-depth-100 -DOMPI_SKIP_MPICXX -I/opt/openfoam7/src/TurbulenceModels/turbulenceModels/lnInclude -I/opt/openfoam7/src/TurbulenceModels/incompressible/lnInclude -I/opt/openfoam7/src/TurbulenceModels/compressible/lnInclude -I/opt/openfoam7/src/transportModels -I/opt/openfoam7/src/transportModels/incompressible/singlePhaseTransportModel -I/opt/openfoam7/src/finiteVolume/lnInclude -I/opt/openfoam7/src/meshTools/lnInclude -IadjointOutletPressureHeat -IadjointOutletVelocityHeat -IadjointOutletPressurePower -IadjointOutletVelocityPower -IadjointOutletPressurePD -IadjointOutletVelocityPD -IadjointInletPressurePD -I/usr/lib/gcc/x86_64-linux-gnu/9/include -I/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi -I/usr/lib/x86_64-linux-gnu/openmpi/include -pthread -IlnInclude -I. -I/opt/openfoam7/src/OpenFOAM/lnInclude -I/opt/openfoam7/src/OSspecific/POSIX/lnInclude   -fPIC -fuse-ld=bfd -Xlinker --add-needed -Xlinker --no-as-needed Make/linux64GccDPInt32Opt/harmonicSymmTensor.o Make/linux64GccDPInt32Opt/adjointOutletPressureHeat/adjointOutletPressureHeatFvPatchScalarField.o Make/linux64GccDPInt32Opt/adjointOutletVelocityHeat/adjointOutletVelocityHeatFvPatchVectorField.o Make/linux64GccDPInt32Opt/adjointOutletPressurePower/adjointOutletPressurePowerFvPatchScalarField.o Make/linux64GccDPInt32Opt/adjointOutletVelocityPower/adjointOutletVelocityPowerFvPatchVectorField.o Make/linux64GccDPInt32Opt/adjointOutletPressurePD/adjointOutletPressurePDFvPatchScalarField.o Make/linux64GccDPInt32Opt/adjointOutletVelocityPD/adjointOutletVelocityPDFvPatchVectorField.o Make/linux64GccDPInt32Opt/adjointInletPressurePD/adjointInletPressurePDFvPatchScalarField.o Make/linux64GccDPInt32Opt/MMA/MMA.o Make/linux64GccDPInt32Opt/MTO_HF.o -L/opt/openfoam7/platforms/linux64GccDPInt32Opt/lib \
+    -lturbulenceModels -lincompressibleTurbulenceModels -lincompressibleTransportModels -lfiniteVolume -lmeshTools -lfvOptions -pthread -L/usr/lib/x86_64-linux-gnu/openmpi/lib -lmpi -lOpenFOAM -ldl  \
+     -lm -o /home/ys/dsH/TO-ANISOTROPIC/build/bin/MTO_HF
