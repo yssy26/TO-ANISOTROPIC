@@ -1,0 +1,11 @@
+=== BFINAL-016 A1b: production-vs-export lambda localization ===
+fields read: |Uc|=1.081585e+02 |pc|=1.519801e+05 (t=0.0s)
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-016/cycle-1/b16_a1b_lambda.py:88: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+splu done (t=648.3s)
+[1] contractions: bPD.lam_prod=0.0275159666  bPD.lam_exp=0.0267617281  bTC.lam_prod=-0.0035186177
+[2] lam_prod vs lam_exp: cos=0.999924 relL2=3.5883e-02 relU=3.6165e-02 relP=3.5883e-02
+[3] M@lam_prod - bPD: |r|=1.179541e+03 (rel 4.5870e+08)  |rU|=2.109948e-04  |rP|=1.179541e+03
+    top U-row residual cells: [0, 1120, 80, 1, 2240, 1121, 1200, 81]
+    |rU|/|bU|=2.1099e+296  |rP|/|bP|=4.5870e+08
+A1B_DONE t=684.1s

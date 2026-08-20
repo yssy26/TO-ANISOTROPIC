@@ -1,0 +1,9 @@
+=== BFINAL-016 A1: deviatoric alignment ===
+mesh loaded: nIF=96860 cells=33600 nBnd=7880 (t=0.1s)
+/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-016/cycle-1/b16_a1_dev.py:110: SparseEfficiencyWarning: splu converted its input to CSC format
+  lu = spla.splu(J, permc_spec="COLAMD")
+splu done (t=965.6s)
+A1 D1: iters=199 dw=2.65e-13 combinedResid=5.81e-14 bPD^T w'=-4.3260185401 (prod ADJ -5.4050587339, sigdig=1, rel=1.996e-01)
+A1 D2: iters=199 dw=2.23e-13 combinedResid=4.31e-14 bPD^T w'=0.4261494601 (prod ADJ 1.1059269805, sigdig=1, rel=6.147e-01)
+A1 D3: iters=199 dw=2.46e-13 combinedResid=9.48e-14 bPD^T w'=14.2521741400 (prod ADJ 14.0447142088, sigdig=2, rel=1.477e-02)
+A1_DONE t=1455.1s

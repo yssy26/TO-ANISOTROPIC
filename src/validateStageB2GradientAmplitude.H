@@ -151,6 +151,31 @@ if (stageB2Enabled)
             pOut.precision(16);
             forAll(p, celli) { pOut << p[celli] << nl; }
         }
+        {
+            OFstream tOut(b2OutDir/"wstate_baseline_T.mtx");
+            tOut.precision(16);
+            forAll(T, celli) { tOut << T[celli] << nl; }
+        }
+        // BFINAL-016 B1: objective sources for the independent thermal
+        // decomposition (dJ/dT per cell, cold-outlet flux and mass flow,
+        // reference temperature).
+        {
+            OFstream dOut(b2OutDir/"wstate_dJdT.mtx");
+            dOut.precision(16);
+            forAll(thermalObjectiveDerivative, celli)
+            {
+                dOut << thermalObjectiveDerivative[celli] << nl;
+            }
+        }
+        {
+            const scalarField& phiOutlet =
+                phi.boundaryField()[coldOutletPatchID];
+            scalar mFlow = sum(phiOutlet);
+            reduce(mFlow, sumOp<scalar>());
+            OFstream mOut(b2OutDir/"wstate_outletMeta.mtx");
+            mOut.precision(16);
+            mOut << mFlow << ' ' << thermalReferenceTemperature << nl;
+        }
     }
 
     // ---------------------------------------------------------------------
@@ -497,6 +522,13 @@ if (stageB2Enabled)
                     OFstream pOut(b2OutDir/(b15Name + "_p.mtx"));
                     pOut.precision(16);
                     forAll(p, celli) { pOut << p[celli] << nl; }
+                }
+                // BFINAL-016 B1 gauge: temperature state for the
+                // thermal-mediated decomposition of the J objective.
+                {
+                    OFstream tOut(b2OutDir/(b15Name + "_T.mtx"));
+                    tOut.precision(16);
+                    forAll(T, celli) { tOut << T[celli] << nl; }
                 }
             }
         }

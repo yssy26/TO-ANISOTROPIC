@@ -39,6 +39,93 @@ const auto prodPIndex = [&](const label celli)
     return prodNVelocity + celli;
 };
 
+// BFINAL-016 A1 gauge: one-shot mesh/frozen-field export so the frozen
+// deviatoric-stress transpose (applyProdFrozenDeviatoricJT below) can be
+// replicated offline (numpy/scipy) and added to the exported-matrix
+// tangent solves.  Switch-gated ("stageB16MeshExport", default false),
+// static-guarded, files only - no numerical effect.
+if (optProperties.lookupOrDefault<Switch>("stageB16MeshExport", false))
+{
+    static bool b16MeshExportDone = false;
+    if (!b16MeshExportDone)
+    {
+        b16MeshExportDone = true;
+        {
+            OFstream o("b16mesh_owner.mtx");
+            for (label f = 0; f < mesh.nInternalFaces(); ++f)
+            {
+                o << prodOwner[f] << nl;
+            }
+        }
+        {
+            OFstream o("b16mesh_neighbour.mtx");
+            for (label f = 0; f < mesh.nInternalFaces(); ++f)
+            {
+                o << prodNeighbour[f] << nl;
+            }
+        }
+        {
+            OFstream o("b16mesh_sf.mtx");
+            o.precision(16);
+            for (label f = 0; f < mesh.nInternalFaces(); ++f)
+            {
+                o << prodSf[f].x() << ' ' << prodSf[f].y() << ' '
+                  << prodSf[f].z() << nl;
+            }
+        }
+        {
+            OFstream o("b16mesh_weights.mtx");
+            o.precision(16);
+            for (label f = 0; f < mesh.nInternalFaces(); ++f)
+            {
+                o << prodWeights[f] << nl;
+            }
+        }
+        {
+            OFstream o("b16mesh_V_nueff.mtx");
+            o.precision(16);
+            for (label c = 0; c < prodNCells; ++c)
+            {
+                o << mesh.V()[c] << ' ' << nuEffFrozen[c] << nl;
+            }
+        }
+        {
+            // boundary faces: cell, Sf, |Sf|, deltaCoeff, nuEff_b, U-fixed
+            OFstream o("b16mesh_boundary.mtx");
+            o.precision(16);
+            forAll(mesh.boundary(), patchi)
+            {
+                const labelUList& patchCells =
+                    mesh.boundary()[patchi].faceCells();
+                const vectorField& patchSf =
+                    mesh.Sf().boundaryField()[patchi];
+                const scalarField& patchMagSf =
+                    mesh.magSf().boundaryField()[patchi];
+                const scalarField& patchDelta =
+                    mesh.deltaCoeffs().boundaryField()[patchi];
+                const scalarField& patchNuEff =
+                    nuEffFrozen.boundaryField()[patchi];
+                const bool velocityFixed =
+                    U.boundaryField()[patchi].fixesValue();
+                forAll(patchCells, facei)
+                {
+                    o << patchCells[facei] << ' '
+                      << patchSf[facei].x() << ' '
+                      << patchSf[facei].y() << ' '
+                      << patchSf[facei].z() << ' '
+                      << patchMagSf[facei] << ' '
+                      << patchDelta[facei] << ' '
+                      << patchNuEff[facei] << ' '
+                      << (velocityFixed ? 1 : 0) << nl;
+                }
+            }
+        }
+        Info<< "B16MESHEXPORT: written (internalFaces="
+            << mesh.nInternalFaces() << " cells=" << prodNCells << ")"
+            << endl;
+    }
+}
+
 // OpenFOAM only inserts a pressure reference when the pressure field has no
 // value-fixing boundary.  Keep the reduced adjoint, its RHS, preconditioner,
 // residual checks and solution gauge on exactly the same condition.  In the

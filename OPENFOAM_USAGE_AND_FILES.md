@@ -305,12 +305,12 @@ grep -E "PRODPRECSETUP|PRODPRECGAMGSCHEME|PRODPRECGAMGSETUP|PRODPRECGAMGCHECK|GA
 
 ---
 
-## 10. 当前状态速查（BFINAL-015 cycle-1 已完成：λ 首次外部验证 + 双缺陷拆分，2026-08-20）
+## 10. 当前状态速查（BFINAL-016 cycle-1 第〇阶段完成：量具对齐 + 重要修正，2026-08-20）
 
 - **阶段**：B-final —— 冻结湍流梯度 / 生产伴随闭合。
 - **已闭合（求解层）**：J_PU（BFINAL-003）、R_x 压力行（BFINAL-005）、J_PP 实际原始闭包（BFINAL-008）；预条件矩阵/算子四组等价性硬门（BFINAL-010，1e-16）；两标签生产伴随迭代收敛（BFINAL-011）。
-- **BFINAL-012（FAIL）→ 013（定位到收缩项）→ 014（推导 STOP：缺陷在 J 系统-Jacobi 语义）**。
-- **BFINAL-015 cycle-1（测量轮完成，零修复）**：T2/T3 切线—状态对照首次外部验证 λ/w′。**真值链闭合**（b_PD^T w_true = FD_gDP 三方向机器精度）；**gDP ≈2.13× = J 算子缺陷**（w′/w_true = 1.705/0.814/2.200 方向依赖，失配集中 P 行——预注册 U 行子预测被证伪；生产与导出算子互不相同且各自错）；**J 目标 = 热源消除层缺陷**（b_TC^T w_true ≠ FD_J，2.6×/7.4×/158×，独立于算子）。新量具：`stageB15StateExport` 状态导出 + `b^T w_true vs FD` 源校验（永久）。见 `evidence/agent-group/BFINAL-015/cycle-1/`。
-- **当前阻塞**：两个待修缺陷——①J 算子 P 行/通量耦合语义（生产 vs 导出需先互审）；②b_TC 热源消除装配（AdjHeatTransfer/通量转置折叠）。
-- **下一步任务**：用户授权的算子修正轮 + 热源修正轮（验收 = BFINAL-012 FD 门重跑）→ C0 串行 MMA smoke。B4 诊断求解器路径修复（独立小任务）。
+- **BFINAL-012（FAIL）→ 013（定位）→ 014（推导 STOP）→ 015（T2/T3 拆分双缺陷）**。
+- **BFINAL-016 cycle-1 第〇阶段（量具对齐，修复未启动）**：(A1) 偏应力块可忽略（3.5e-6）；**(A1b/c) 生产 λ 以 8e-11 满足导出系统——产=导同一算子，BFINAL-015「双算子」系钉扎伪影已更正**；修正后算子量具 λ-direct vs 真值 = **1.769/0.856/2.274**；(B1) **b_TC ≠ T-消除后的 dJ/d(U,p)**（与真流介导差 86%/70%/符号翻转）；**新发现装配矛盾：sensitivity 装配 ≠ λ-direct（D2 147%）**——收缩装配链有独立缺陷，BFINAL-013 单项定位据此修订。A2/B2 留待下一 cycle（顺序：装配审计→算子→源）。见 `evidence/agent-group/BFINAL-016/cycle-1/`。
+- **当前阻塞**：三个待修缺陷——算子 P 行语义（产=导）、sensitivity 装配链、b_TC 热消除折叠。
+- **下一步任务**：装配审计（gsenshMomentum/rxPressureRowT vs rxc 的 anRUa/assembleWeightedRPa 逐项对比）→ A2 算子修正 → B2 源修正 → BFINAL-012 FD 门全套重验 → C0 串行 MMA smoke。
 - **并行伴随（P2）**：未解锁（见 §8.5）。**MMA**：锁定。
