@@ -1,0 +1,26 @@
+=== BFINAL-021 E3: anchor analysis ===
+mesh ready (t=4.9s)
+[0] FD scan bit-identical to archived b13_probe3: False
+[0] wstate exports bit-identical: True
+A-B recheck: U relL2=1.3570e-01 p relL2=1.0629e-01 phi relL2=1.3412e-01
+
+[1] E1(b): continuity of exported probe fluxes
+    baseline B: |div(phi_B)|inf=7.970e-15 L2=8.300e-14
+
+[2] flux-map rebuild fidelity (internal faces + outlet boundary only;
+    non-assignable boundary fluxes are not rebuilt by the machinery):
+    B(turbulent): internal relL2=3.6265e-02 outlet-boundary relL2=3.4289e-01
+    A(molecular): internal relL2=3.3452e-02 outlet-boundary relL2=3.9580e-01 (instrument floor)
+
+[3] face-level flux-response anchor (dphi_state-FD vs operator):
+  D1 h=0.0003: cont=1.8e-14 | B-tot cos=0.9972 rel=0.0868 | A-tot cos=0.9994 rel=0.0343 | identB |rP|=3.136 cos=-0.6621 | identA_re |rP|=1.873 cos=-0.2013 | alpha_share=0.042
+  D1 h=0.001: cont=4.4e-14 | B-tot cos=0.9972 rel=0.0868 | A-tot cos=0.9994 rel=0.0343 | identB |rP|=3.134 cos=-0.6628 | identA_re |rP|=1.869 cos=-0.2019 | alpha_share=0.042
+  D1 h=0.003: cont=9.0e-14 | B-tot cos=0.9972 rel=0.0868 | A-tot cos=0.9994 rel=0.0343 | identB |rP|=3.127 cos=-0.6643 | identA_re |rP|=1.860 cos=-0.2030 | alpha_share=0.042
+  D2 h=0.0003: cont=4.5e-14 | B-tot cos=0.9099 rel=0.4486 | A-tot cos=0.9151 rel=0.4514 | identB |rP|=2.289 cos=-0.6417 | identA_re |rP|=2.341 cos=-0.6124 | alpha_share=0.180
+  D2 h=0.001: cont=1.2e-13 | B-tot cos=0.9098 rel=0.4490 | A-tot cos=0.9151 rel=0.4517 | identB |rP|=2.288 cos=-0.6429 | identA_re |rP|=2.339 cos=-0.6134 | alpha_share=0.180
+  D3 h=0.0003: cont=1.2e-13 | B-tot cos=0.9979 rel=0.0899 | A-tot cos=0.9994 rel=0.0359 | identB |rP|=3.511 cos=-0.7126 | identA_re |rP|=1.667 cos=-0.0999 | alpha_share=0.035
+  D3 h=0.001: cont=4.6e-14 | B-tot cos=0.9979 rel=0.0899 | A-tot cos=0.9994 rel=0.0359 | identB |rP|=3.511 cos=-0.7126 | identA_re |rP|=1.666 cos=-0.1000 | alpha_share=0.035
+
+[5] mobility staleness mobB/mobA: median=1.0000 [p10=0.990 p90=1.000] min=0.562 max=1.572 frac_out_1pm10%=0.033
+
+DONE t=8.5s

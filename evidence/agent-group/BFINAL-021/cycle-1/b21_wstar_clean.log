@@ -1,0 +1,7 @@
+=== BFINAL-021 E2c: clean unpinned w* ===
+M loaded nnz=6209576 (t=16.7s)
+splu done (t=1765.2s)
+  D1: |r_P(w*)|/|rxdP|=1.765e-11  cos(w*,w_state)=0.998157 relL2=0.7593 (relU=0.1800 relP=0.7593) |J_P dw|/|rxdP|=1.6620
+  D2: |r_P(w*)|/|rxdP|=1.250e-11  cos(w*,w_state)=0.981801 relL2=1.0244 (relU=0.5260 relP=1.0244) |J_P dw|/|rxdP|=2.1355
+  D3: |r_P(w*)|/|rxdP|=2.989e-11  cos(w*,w_state)=0.998106 relL2=1.1722 (relU=0.1903 relP=1.1722) |J_P dw|/|rxdP|=1.5144
+DONE t=1769.1s

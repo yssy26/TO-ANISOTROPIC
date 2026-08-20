@@ -1,0 +1,26 @@
+=== BFINAL-021 E2: identity ladder (A-basis) ===
+mesh+fields ready (t=5.0s)
+A-basis rebuild ready (t=5.2s)
+PsiU/PsiP ready (t=5.3s)
+PsiA/rxd ready (t=5.4s)
+
+[E4-input] PsiA rebuild vs exported rxd_P (A-basis):
+    D1: cos=0.926047 relL2=8.7634e-01
+    D2: cos=0.962888 relL2=8.7365e-01
+    D3: cos=0.948110 relL2=8.5982e-01
+
+[E2] identity ladder (A-basis operator, exported rxd_P):
+  D1 h=0.0003: cos=-0.7090 |r_P|/|rxdP|=1.470 (vs PsiA: cos=-0.6590 |r_P|=5.011)  |w-w'|/|w'|=0.4213
+  D1 h=0.001: cos=-0.7134 |r_P|/|rxdP|=1.468 (vs PsiA: cos=-0.6632 |r_P|=4.988)  |w-w'|/|w'|=0.4213
+  D1 h=0.003: cos=-0.7210 |r_P|/|rxdP|=1.465 (vs PsiA: cos=-0.6702 |r_P|=4.944)  |w-w'|/|w'|=0.4217
+  D2 h=0.0003: cos=-0.7944 |r_P|/|rxdP|=1.534 (vs PsiA: cos=-0.7650 |r_P|=5.461)  |w-w'|/|w'|=0.5146
+  D2 h=0.001: cos=-0.7967 |r_P|/|rxdP|=1.534 (vs PsiA: cos=-0.7670 |r_P|=5.450)  |w-w'|/|w'|=0.5148
+  D3 h=0.0003: cos=-0.7311 |r_P|/|rxdP|=1.426 (vs PsiA: cos=-0.6915 |r_P|=4.247)  |w-w'|/|w'|=0.5310
+  D3 h=0.001: cos=-0.7313 |r_P|/|rxdP|=1.426 (vs PsiA: cos=-0.6918 |r_P|=4.244)  |w-w'|/|w'|=0.5312
+
+[control] r_P(w') (operator's own solve; must be ~0):
+    D1: |r_P(w')|/|rxdP|=1.098e+00 cos=0.482596
+    D2: |r_P(w')|/|rxdP|=4.276e-01 cos=0.927091
+    D3: |r_P(w')|/|rxdP|=1.772e+00 cos=0.288661
+
+DONE t=6.1s

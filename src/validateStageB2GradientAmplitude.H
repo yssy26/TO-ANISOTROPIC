@@ -156,6 +156,43 @@ if (stageB2Enabled)
             tOut.precision(16);
             forAll(T, celli) { tOut << T[celli] << nl; }
         }
+        // BFINAL-021 E3: baseline frozen-system ingredients for the R_P
+        // design-FD external anchor (switch-gated, read-only side effects:
+        // files only).  phi = the frozen solver's final pressure-corrected
+        // flux at the stageB2 baseline (= state B); nutFrozen/nuEffFrozen
+        // = the frozen-turbulence viscosity the FD probes actually used.
+        {
+            OFstream o(b2OutDir/"wstate_baseline_phi.mtx");
+            o.precision(16);
+            forAll(phi.primitiveField(), fi) { o << phi[fi] << nl; }
+        }
+        {
+            OFstream o(b2OutDir/"wstate_baseline_phiB.mtx");
+            o.precision(16);
+            forAll(mesh.boundary(), pi)
+            {
+                const fvsPatchScalarField& pf = phi.boundaryField()[pi];
+                for (label fi = 0; fi < pf.size(); ++fi)
+                {
+                    o << pf[fi] << nl;
+                }
+            }
+        }
+        {
+            OFstream o(b2OutDir/"wstate_baseline_nutFrozen.mtx");
+            o.precision(16);
+            forAll(nutFrozen, celli) { o << nutFrozen[celli] << nl; }
+        }
+        {
+            OFstream o(b2OutDir/"wstate_baseline_nuEffFrozen.mtx");
+            o.precision(16);
+            forAll(nuEffFrozen, celli) { o << nuEffFrozen[celli] << nl; }
+        }
+        {
+            OFstream o(b2OutDir/"wstate_baseline_alpha.mtx");
+            o.precision(16);
+            forAll(alpha, celli) { o << alpha[celli] << nl; }
+        }
         // BFINAL-016 B1: objective sources for the independent thermal
         // decomposition (dJ/dT per cell, cold-outlet flux and mass flow,
         // reference temperature).
@@ -581,6 +618,42 @@ if (stageB2Enabled)
                     OFstream tOut(b2OutDir/(b15Name + "_T.mtx"));
                     tOut.precision(16);
                     forAll(T, celli) { tOut << T[celli] << nl; }
+                }
+                // BFINAL-021 E3: R_P design-FD external anchor (switch
+                // gated, read-only: files only).  Exports the frozen
+                // solver's final phi (internal + boundary), the frozen
+                // viscosity and alpha actually used by this probe solve.
+                {
+                    OFstream o(b2OutDir/(b15Name + "_phi.mtx"));
+                    o.precision(16);
+                    forAll(phi.primitiveField(), fi) { o << phi[fi] << nl; }
+                }
+                {
+                    OFstream o(b2OutDir/(b15Name + "_phiB.mtx"));
+                    o.precision(16);
+                    forAll(mesh.boundary(), pi)
+                    {
+                        const fvsPatchScalarField& pf = phi.boundaryField()[pi];
+                        for (label fi = 0; fi < pf.size(); ++fi)
+                        {
+                            o << pf[fi] << nl;
+                        }
+                    }
+                }
+                {
+                    OFstream o(b2OutDir/(b15Name + "_nutFrozen.mtx"));
+                    o.precision(16);
+                    forAll(nutFrozen, celli) { o << nutFrozen[celli] << nl; }
+                }
+                {
+                    OFstream o(b2OutDir/(b15Name + "_nuEffFrozen.mtx"));
+                    o.precision(16);
+                    forAll(nuEffFrozen, celli) { o << nuEffFrozen[celli] << nl; }
+                }
+                {
+                    OFstream o(b2OutDir/(b15Name + "_alpha.mtx"));
+                    o.precision(16);
+                    forAll(alpha, celli) { o << alpha[celli] << nl; }
                 }
             }
         }

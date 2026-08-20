@@ -1,0 +1,2 @@
+421be2dbc722e7e58bba90c2c45e42593a4192752481ac9ef1c26a96c7f91fdb  b21_wstar_cache.npz
+# (not committed: *.npz/*.mtx per .gitignore, B15 convention)

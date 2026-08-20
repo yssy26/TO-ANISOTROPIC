@@ -1,0 +1,23 @@
+=== BFINAL-021 E2b: identity via exported J ===
+M loaded nnz=6209576 (t=20.2s)
+
+[E2b] identity ladder (exported J P-rows + exported rxd_P):
+  D1 h=0.0003: cos=-0.1712 |r_P|/|rxdP|=1.6651 |J_P w|/|rxdP|=1.1711
+  D1 h=0.001: cos=-0.1717 |r_P|/|rxdP|=1.6620 |J_P w|/|rxdP|=1.1669
+  D1 h=0.003: cos=-0.1729 |r_P|/|rxdP|=1.6551 |J_P w|/|rxdP|=1.1573
+  D2 h=0.0003: cos=-0.6270 |r_P|/|rxdP|=2.1369 |J_P w|/|rxdP|=1.3628
+  D2 h=0.001: cos=-0.6282 |r_P|/|rxdP|=2.1355 |J_P w|/|rxdP|=1.3605
+  D3 h=0.0003: cos=-0.0623 |r_P|/|rxdP|=1.5150 |J_P w|/|rxdP|=1.0774
+  D3 h=0.001: cos=-0.0623 |r_P|/|rxdP|=1.5144 |J_P w|/|rxdP|=1.0767
+
+[control] r_P(w') (b15 cached solve):
+    D1: |r_P(w')|/|rxdP|=7.0216e-01 cos=0.818400
+    D2: |r_P(w')|/|rxdP|=4.1119e-02 cos=0.999156
+    D3: |r_P(w')|/|rxdP|=1.5620e+00 cos=0.539172
+
+[decomp] r_P(w_state) = J_P (w_state - w') (h=1e-3):
+    D1: |J_P dw|/|rxdP|=1.8043  |r_P|/|rxdP|=1.6620  identity-resid=4.225e-01  (|dw_U|/|w_U|=0.180 |dw_P|/|w_P|=0.725)
+    D2: |J_P dw|/|rxdP|=2.1359  |r_P|/|rxdP|=2.1355  identity-resid=1.926e-02  (|dw_U|/|w_U|=0.526 |dw_P|/|w_P|=1.022)
+    D3: |J_P dw|/|rxdP|=2.1756  |r_P|/|rxdP|=1.5144  identity-resid=1.031e+00  (|dw_U|/|w_U|=0.191 |dw_P|/|w_P|=1.129)
+
+DONE t=20.9s
