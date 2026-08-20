@@ -1,0 +1,31 @@
+=== BFINAL-020 phase-0 offline pre-validation ===
+mesh ready: nIF=96860 nBnd=7880 (t=4.8s)
+fields ready (t=5.1s)
+matrix rebuilt: rAU_u avg=7.104711e-07 |contRes|max=1.527e-14 (t=5.2s)
+M loaded nnz=6209576 (t=24.9s)
+[V1a] kf check: M[P(o),P(n)] vs -kf ...
+      maxRel=1.226e-02  medRel=2.553e-05  (fails>1e-9: 96860/96860)
+[V1b] P-row U-slot: M[P(o),U(down,c)] = -kf*jump_c -/+ w*sf_c ...
+      maxRel=1.250e+18 medRel=1.489e-10
+[V1c] hA conv-slot: M[U(n_f,0),U(o_f,0)] = upper_f + sum_{fp of o, down_fp=o}(-upper_f/V_o*convCo*sf_fp,0*jump_fp,0) ...
+      maxRel=1.589e+02 medRel=1.589e+02 over 3000 faces (c=0)
+building DeltaM ...
+DeltaM built nnz=3771267 |DeltaM|=1.322732e-03 (t=33.2s)
+[BL] factorizing M (baseline) ...
+    splu done (t=1351.9s)
+[V4] factorizing M_new = M + DeltaM (pinned column PREF mirrors b15's J row pin) ...
+    splu done (t=2622.1s)
+    D1: lam-direct old=-4.485903 (ratio 1.7679) -> new=-4.294159 (ratio 1.6923)
+    D2: lam-direct old=0.447879 (ratio 0.8557) -> new=0.469295 (ratio 0.8966)
+    D3: lam-direct old=14.730269 (ratio 2.2742) -> new=14.121883 (ratio 2.1802)
+[V2] w' solves (new, via M_new^T with pinned row) ...
+    D1: OLD cos=0.998167 relL2=7.2468e-01 (relU=1.802e-01 relP=7.247e-01)
+    D1: NEW cos=0.998283 relL2=7.1983e-01 (relU=2.009e-01 relP=7.199e-01)
+    D1: gDP factor old=1.7049 -> new=1.6923 | J factor old=1.3558 -> new=1.3680
+    D2: OLD cos=0.981585 relL2=1.0223e+00 (relU=5.260e-01 relP=1.022e+00)
+    D2: NEW cos=0.982171 relL2=1.0393e+00 (relU=5.240e-01 relP=1.039e+00)
+    D2: gDP factor old=0.8142 -> new=0.8966 | J factor old=1.4041 -> new=1.2109
+    D3: OLD cos=0.998266 relL2=1.1292e+00 (relU=1.906e-01 relP=1.129e+00)
+    D3: NEW cos=0.998448 relL2=1.1284e+00 (relU=1.946e-01 relP=1.128e+00)
+    D3: gDP factor old=2.2003 -> new=2.1802 | J factor old=1.4549 -> new=1.4316
+B20_CHECK_DONE t=2626.6s

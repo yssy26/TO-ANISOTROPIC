@@ -1,0 +1,23 @@
+=== BFINAL-020 phase-0c variant sweep: ['R3', 'R2', 'S1'] ===
+mesh ready (t=5.6s)
+fields ready (t=5.8s)
+rebuild ready (t=5.8s)
+M loaded nnz=6209576 (t=26.0s)
+data ready (t=26.3s)
+K_dev built nnz=2877135 (t=26.9s)
+--- variant R3 ---
+  factorizing (nnz=11306513) ...
+  D1: relL2 0.7247 -> 0.8552 (relP 0.725 -> 0.855) gDPf 1.7049 -> 2.0292 Jf 0.3216 lamdir-ratio -> 2.0292
+  D2: relL2 1.0223 -> 0.9917 (relP 1.022 -> 0.992) gDPf 0.8142 -> 0.5465 Jf 1.0396 lamdir-ratio -> 0.5465
+  D3: relL2 1.1292 -> 1.0160 (relP 1.129 -> 1.016) gDPf 2.2003 -> 1.9727 Jf 2.6080 lamdir-ratio -> 1.9727
+--- variant R2 ---
+  factorizing (nnz=6129590) ...
+  D1: relL2 0.7247 -> 0.9657 (relP 0.725 -> 0.966) gDPf 1.7049 -> 2.1378 Jf 1.6679 lamdir-ratio -> 2.1378
+  D2: relL2 1.0223 -> 1.0102 (relP 1.022 -> 1.010) gDPf 0.8142 -> 0.7447 Jf 3.2519 lamdir-ratio -> 0.7447
+  D3: relL2 1.1292 -> 1.0288 (relP 1.129 -> 1.029) gDPf 2.2003 -> 1.9848 Jf 3.3158 lamdir-ratio -> 1.9848
+--- variant S1 ---
+  factorizing (nnz=11309491) ...
+  D1: relL2 0.7247 -> 0.5021 (relP 0.725 -> 0.502) gDPf 1.7049 -> 1.4180 Jf 1.0885 lamdir-ratio -> 1.4180
+  D2: relL2 1.0223 -> 1.0092 (relP 1.022 -> 1.009) gDPf 0.8142 -> 0.2414 Jf 0.6105 lamdir-ratio -> 0.2414
+  D3: relL2 1.1292 -> 1.1679 (relP 1.129 -> 1.168) gDPf 2.2003 -> 2.0786 Jf 1.3246 lamdir-ratio -> 2.0786
+SWEEP_DONE t=7329.8s
