@@ -420,6 +420,56 @@ class StageBSafetyGateTests(unittest.TestCase):
         self.assertIn("gsenshPressureDropPressureRow = -rxPressureRowT"
                       "*dAlphaDxh;", self.sensitivity)
 
+    def test_bfinal022_b2_module_refreshes_kf_basis_at_state_b(self):
+        # BFINAL-022 W1 (SLOT-2): the stage-B2 module must re-capture
+        # primalPressureMobility at the full-SST baseline (state B)
+        # BEFORE the round-2 adjoint chain runs, because the main-loop
+        # NS.H capture (state A, molecular frozen system) is otherwise
+        # the only write and would leave the module adjoint contracting
+        # an A-basis kf against a B-state frozen system.
+        ns_h = (REPO_ROOT / "src" / "NS.H").read_text(encoding="utf-8")
+        self.assertIn(
+            "primalPressureMobility = rAtU().primitiveField();",
+            ns_h,
+        )
+        self.assertIn(
+            "primalPressureMobility = b22rAtU().primitiveField();",
+            self.b2_amplitude,
+        )
+        refresh = self.b2_amplitude.index(
+            "primalPressureMobility = b22rAtU().primitiveField();"
+        )
+        # after the phase-1 full-SST re-baseline + turbulence freeze...
+        self.assertGreater(
+            refresh,
+            self.b2_amplitude.index(
+                '#include "updateFrozenTurbulenceFields.H"'
+            ),
+        )
+        # ...and before the round-2 adjoint chain is invoked.
+        self.assertLess(
+            refresh,
+            self.b2_amplitude.index("runFullB2Chain();"),
+        )
+        # the refresh must rebuild the SAME relaxed momentum matrix the
+        # frozen solver uses (measurement-layer replica of NS.H:129)
+        self.assertIn("b22MobUEqn.relax();", self.b2_amplitude)
+        self.assertIn("fvOptions.constrain(b22MobUEqn);", self.b2_amplitude)
+        # the NS.H production write stays the only other capture site
+        writers = [
+            name for name in ("solveDiscreteFlowAdjoint.H",
+                              "solveDiscreteFlowAdjointProduction.H",
+                              "AdjNS_PD.H", "AdjNS_HT.H", "sensitivity.H")
+            if "primalPressureMobility ="
+               in (REPO_ROOT / "src" / name).read_text(encoding="utf-8")
+        ]
+        self.assertEqual(writers, [])
+        # W3: the state-B kf basis is exported under the state-export switch
+        self.assertIn(
+            "wstate_baseline_primalPressureMobility.mtx",
+            self.b2_amplitude,
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

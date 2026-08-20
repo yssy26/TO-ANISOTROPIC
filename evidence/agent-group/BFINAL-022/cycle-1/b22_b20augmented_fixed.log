@@ -1,0 +1,11 @@
+=== BFINAL-022 W2: b20 augmented check, da design-chain FIXED ===
+mesh+fields ready (t=5.2s)
+rebuild ready (t=5.4s)
+Psi_phi built nnz=534848 (t=13.9s)
+da-chain check: |z|/|rawD| = 5.645/5.913/5.113 (expect ~5.6/5.9/5.1)
+Psi_alpha ready (FIXED chain, t=14.0s)
+(I-Psi_phi) factorized (t=15.0s)
+D1: closure_relL2=9.7232e-02 (B20-bugged was 0.0488) ; corrP=0.918 x |rxdP| cos=-0.348 ; identP_unc |rP|/|rxdP|=1.468 cos=-0.713
+D2: closure_relL2=2.7950e-01 (B20-bugged was 0.0707) ; corrP=0.115 x |rxdP| cos=-0.362 ; identP_unc |rP|/|rxdP|=1.534 cos=-0.797
+D3: closure_relL2=8.0758e-02 (B20-bugged was 0.0421) ; corrP=0.989 x |rxdP| cos=-0.292 ; identP_unc |rP|/|rxdP|=1.426 cos=-0.731
+DONE t=15.5s

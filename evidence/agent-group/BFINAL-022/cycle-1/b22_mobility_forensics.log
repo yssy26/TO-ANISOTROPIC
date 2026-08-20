@@ -1,0 +1,20 @@
+[baseline rebuild] relL2=1.2932e-01
+[S3 interp gamma ] relL2=1.2517e-01 (delta 9.46e-03)
+[S2 V*divphi     ] relL2=1.2932e-01 (delta 2.77e-11)
+
+[structure of the residual deviation]
+  solid(alpha>1e6)       n=21280 meanRelErr=2.623e-05 frac>1%=0.000
+  transition(1e2..1e6)   n=10640 meanRelErr=6.022e-02 frac>1%=0.520
+  fluid(alpha<=1e2)      n= 1680 meanRelErr=1.037e-01 frac>1%=0.936
+  bnd-adjacent           n= 7392 meanRelErr=7.123e-03 frac>1%=0.144
+  interior               n=26208 meanRelErr=2.911e-02 frac>1%=0.230
+  clamp binds (sumOff>|D|): 14.1% of cells; err mean=1.301e-01 frac>1%=0.977
+  diag-dominant            : err mean=6.824e-03 frac>1%=0.085
+  nut>1e-6 (turbulent)     : n=6720 err mean=1.181e-01 frac>1%=0.984
+  nut<=1e-6 (molecular)    : n=26880 err mean=8.218e-04 frac>1%=0.018
+
+verdict: S1 (boundary diag) is exactly represented by the old formula
+(relax's -cmptMin + D()'s +cmptAv cancel for uniform ic); S2/S3 change
+<0.5%%; the ~13%% deviation is concentrated in nut-active clamp-bound
+transition/fluid cells -- offline off-diagonal assembly semantics,
+not yet fully identified.

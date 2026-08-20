@@ -1,0 +1,20 @@
+=== BFINAL-022 W4.3/W5: B-point consistent gauge ===
+mesh ready (t=4.9s)
+[0] exact vs rebuild mobility @B: relL2=1.2932e-01 maxRel=3.959e-01 frac>1%=0.211
+    true B-capture vs A-rebuild: median=1.0000 frac_out_10%=0.092 min=0.472 max=1.362
+[1] flux-rebuild fidelity @B: rebuild 3.6265e-02 internal / 3.429e-01 outlet -> exact-kf 1.1871e-01 / 1.710e-01
+
+[2] face-level anchor at B (exact-kf basis) + [3] P-row identity:
+  D1 h=0.0003: exact cos=0.9969 rel=0.1199 (rebuild rel=0.0868) ; identP |rP|=3.524 cos=-0.5488
+  D1 h=0.001: exact cos=0.9969 rel=0.1199 (rebuild rel=0.0868) ; identP |rP|=3.520 cos=-0.5495
+  D1 h=0.003: exact cos=0.9969 rel=0.1199 (rebuild rel=0.0868) ; identP |rP|=3.509 cos=-0.5512
+  D2 h=0.0003: exact cos=0.9218 rel=0.3974 (rebuild rel=0.4486) ; identP |rP|=2.824 cos=-0.6312
+  D2 h=0.001: exact cos=0.9217 rel=0.3977 (rebuild rel=0.4490) ; identP |rP|=2.822 cos=-0.6324
+  D3 h=0.0003: exact cos=0.9978 rel=0.1243 (rebuild rel=0.0899) ; identP |rP|=4.103 cos=-0.5788
+  D3 h=0.001: exact cos=0.9978 rel=0.1243 (rebuild rel=0.0899) ; identP |rP|=4.102 cos=-0.5789
+
+[4] D2 localization: relL2 by x-decile=['0.37', '0.76', '0.35', '0.53', '0.37', '0.34', '0.46', '0.26', '0.54', '0.18']
+    solid(owner α>1e3) faces: 0.458 ; fluid faces: 0.218 ; top-10% faces carry 98.0% of mismatch energy
+    mismatch energy by face normal (x/y/z/mixed): {'x-norm_faces_frac': 0.9707034254466775, 'y-norm_faces_frac': 0.005149534575819565, 'z-norm_faces_frac': 0.024147039977502813, 'mixed_frac': 0.0}
+
+DONE t=7.7s

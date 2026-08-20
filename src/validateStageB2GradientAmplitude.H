@@ -113,6 +113,67 @@ if (stageB2Enabled)
     freezeTurbulenceForValidation = true;
     #include "updateFrozenTurbulenceFields.H"
 
+    // ---------------------------------------------------------------------
+    // BFINAL-022 W1 (SLOT-2 fix; measurement layer of this module only):
+    // re-capture the frozen-adjoint kf basis at the full-SST baseline
+    // (state B).  primalPressureMobility is otherwise ONLY written in the
+    // main-loop NS.H capture (state A, molecular-viscosity frozen system),
+    // so the round-2 module adjoint (runFullB2Chain below) would contract
+    // an A-basis kf against a B-state frozen system and contaminate the
+    // ADJ columns of the formal FD gate (BFINAL-021 SLOT-2).  The rebuild
+    // re-assembles the SAME momentum matrix the frozen solver uses
+    // (identical assembly/relax/constrain sequence as NS.H and
+    // solveFrozenPrimalConverged) and records rAtU exactly as NS.H does.
+    // No other field is touched; the frozen primal FD probes never read
+    // this field, so the FD side of the gate stays bit-identical.  Every
+    // other round-2 input is already at state B (U/p/phi/alpha from
+    // phase 1; nutFrozen/nuEffFrozen/alphaTurbulent from the freeze above;
+    // pressureConstraintDerivative is geometry-only).
+    // ---------------------------------------------------------------------
+    {
+        tmp<fvVectorMatrix> tB22MobUEqn
+        (
+            fvm::div(phi, U)
+          - fvm::laplacian(nuEffFrozen, U)
+          + fvm::Sp(alpha, U)
+         ==
+           -fvc::grad(p)
+          + fvOptions(U)
+        );
+        fvVectorMatrix& b22MobUEqn = tB22MobUEqn.ref();
+        if (ransFlowModel)
+        {
+            b22MobUEqn -= fvc::div
+            (
+                nuEffFrozen*dev2(Foam::T(fvc::grad(U)))
+            );
+        }
+        b22MobUEqn.relax();
+        fvOptions.constrain(b22MobUEqn);
+        volScalarField b22rAU(1.0/b22MobUEqn.A());
+        tmp<volScalarField> b22rAtU(b22rAU);
+        if (simple.consistent())
+        {
+            b22rAtU = 1.0/(1.0/b22rAU - b22MobUEqn.H1());
+        }
+        scalar b22Num = 0.0, b22Den = 0.0;
+        forAll(primalPressureMobility, celli)
+        {
+            const scalar b22d =
+                b22rAtU()[celli] - primalPressureMobility[celli];
+            b22Num += sqr(b22d);
+            b22Den += sqr(primalPressureMobility[celli]);
+        }
+        reduce(b22Num, sumOp<scalar>());
+        reduce(b22Den, sumOp<scalar>());
+        primalPressureMobility = b22rAtU().primitiveField();
+        Info<< "Stage B2 kf-basis refresh (BFINAL-022 W1): "
+            << "primalPressureMobility re-captured at the full-SST baseline "
+            << "(state B); relL2 change vs the stale main-loop (state A) "
+            << "capture = "
+            << Foam::sqrt(b22Num/Foam::max(b22Den, SMALL)) << endl;
+    }
+
     const B2State baselineState =
     {
         x.primitiveField(), xp.primitiveField(), xh.primitiveField(),
@@ -187,6 +248,21 @@ if (stageB2Enabled)
             OFstream o(b2OutDir/"wstate_baseline_nuEffFrozen.mtx");
             o.precision(16);
             forAll(nuEffFrozen, celli) { o << nuEffFrozen[celli] << nl; }
+        }
+        // BFINAL-022 W3: the EXACT frozen-adjoint kf basis at state B
+        // (internal rAtU of the W1 refresh above) so the offline
+        // B-consistent gauge needs no rAU rebuild in the kf/rAU channels
+        // (files only; read-only).
+        {
+            OFstream o
+            (
+                b2OutDir/"wstate_baseline_primalPressureMobility.mtx"
+            );
+            o.precision(16);
+            forAll(primalPressureMobility, celli)
+            {
+                o << primalPressureMobility[celli] << nl;
+            }
         }
         {
             OFstream o(b2OutDir/"wstate_baseline_alpha.mtx");
