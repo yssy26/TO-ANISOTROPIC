@@ -1,0 +1,8 @@
+D1: <gmom16(writtenUc), D> = -3.2625859527
+D2: <gmom16(writtenUc), D> = 1.4745402967
+D3: <gmom16(writtenUc), D> = 2.2924146549
+B13 P2 log (in-pass Uc, B2-baseline): momentum=-3.5036 +1.5889 +2.2240
+D1: <E(gtot16)=written gsensh, D> = -5.9951278903
+D2: <E(gtot16)=written gsensh, D> = 1.0991809219
+D3: <E(gtot16)=written gsensh, D> = 16.3348142872
+B13 chained-xh: -5.9951 +1.0992 +16.3348

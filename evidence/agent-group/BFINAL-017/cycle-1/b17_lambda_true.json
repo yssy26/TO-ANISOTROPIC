@@ -1,0 +1,35 @@
+{
+ "D1": {
+  "lambda_direct_true": -4.485902831078941,
+  "lambda_direct_902": -4.485902855631131,
+  "assembly_B12": -5.4050587339,
+  "inv_norm_amplification": 64883267.23621753,
+  "truth_gdp_wt": -2.537459771850754,
+  "truth_gdp_wp_b15": -4.326003067670186,
+  "ratio_true": 1.7678715071045423,
+  "ratio_902": 1.7678715167804355,
+  "ratio_assembly_679": 2.130106176996728
+ },
+ "D2": {
+  "lambda_direct_true": 0.44787869703488675,
+  "lambda_direct_902": 0.44787866660803377,
+  "assembly_B12": 1.10592698054,
+  "inv_norm_amplification": 46514374.03464989,
+  "truth_gdp_wt": 0.5234094521578995,
+  "truth_gdp_wp_b15": 0.4261509085574695,
+  "ratio_true": 0.8556947055281169,
+  "ratio_902": 0.8556946473960888,
+  "ratio_assembly_679": 2.1129289430683986
+ },
+ "D3": {
+  "lambda_direct_true": 14.730268923134206,
+  "lambda_direct_902": 14.730268781930677,
+  "assembly_B12": 14.0447142088,
+  "inv_norm_amplification": 113608109.90194777,
+  "truth_gdp_wt": 6.477215547073193,
+  "truth_gdp_wp_b15": 14.252071425591499,
+  "ratio_true": 2.2741668570517546,
+  "ratio_902": 2.2741668352517195,
+  "ratio_assembly_679": 2.1683258966341286
+ }
+}

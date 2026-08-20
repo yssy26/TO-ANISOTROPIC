@@ -1,0 +1,8 @@
+|gtot16|=2.940268e-01 |gmom16|=2.815477e-01 |gpr16|=4.264318e-02
+gpr16 max on dAlphaDxh==0 cells: 0.000e+00
+D1: <gpr,z>=-1.01082540 -pc*Jw=-0.09166953 diff=-0.919156 | corr(diff,gmom)=0.062949 | max|diff|=2.908e-02 @5610 ct=2 dA=-2.769e+05
+D2: <gpr,z>=0.69660155 -pc*Jw=0.03855324 diff=0.658048 | corr(diff,gmom)=0.056816 | max|diff|=4.180e-02 @5610 ct=2 dA=-2.769e+05
+D3: <gpr,z>=-0.83232802 -pc*Jw=-0.14677344 diff=-0.685555 | corr(diff,gmom)=0.045213 | max|diff|=3.166e-02 @6650 ct=2 dA=-2.769e+05
+SIN-W pr : <gpr16,s>=-4.2471277787e-09  -pc16*(J_P*deltaAlpha)=1.6665761760e-09  diff=-5.914e-09
+SIN-W mom: <gmom16,s>=-3.9170221826e-11  -Uc*anRUaW=-3.9170222123e-11  diff=2.966e-19
+SIN-W tot: <gtot,s>=-4.2862980005e-09  oracle=1.6274059539e-09  diff=-5.914e-09

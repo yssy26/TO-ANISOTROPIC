@@ -1,0 +1,24 @@
+mesh ready (t=7.0s)
+fields ready (t=7.2s)
+UEqn rebuilt: rAU avg=2.841034e-07 min=4.000008e-09 max=2.079544e-06 (t=7.3s)
+g0: |bnd|max=6.506204e-02 (b15 log: 0.0650620425279)
+V1 T(pc15) vs b15 raw export: |diff|=6.604e-10 |export|=1.048e-07 rel=6.302e-03  maxabs=1.836e-10
+V2 J_P*w(D1) vs anRPd: relL2=8.376e-03 cos=0.999996563812736
+V2 J_P*w(D2) vs anRPd: relL2=7.729e-03 cos=0.999997613303713
+V2 J_P*w(D3) vs anRPd: relL2=7.623e-03 cos=0.999997163179228
+V2 J_P*sin vs anRPaW: relL2=7.095e-03
+ADJ T(pc16) vs implied production T16: |diff|=3.277e-07 |implied|=3.379e-07 rel=9.697e-01 maxabs=2.136e-08
+   cell 1232: mine=-8.213891e-12 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1292: mine=-2.017588e-13 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1231: mine=-9.114049e-12 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1291: mine=-5.228450e-13 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1172: mine=-9.648190e-12 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1352: mine=-7.182164e-13 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1173: mine=-9.810968e-12 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1353: mine=-4.322413e-13 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1233: mine=-7.163164e-12 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+   cell 1293: mine=3.116839e-13 implied=0.000000e+00 dA=0.000e+00 alpha=1.000e+06
+ADJ D1: <-T16_mine*dA, z>=-0.0919078856  -pc16*anRPd=-0.0916695260  diff=-2.384e-04
+ADJ D2: <-T16_mine*dA, z>=0.0389658111  -pc16*anRPd=0.0385532443  diff=4.126e-04
+ADJ D3: <-T16_mine*dA, z>=-0.1511340446  -pc16*anRPd=-0.1467734393  diff=-4.361e-03
+REBUILD_DONE t=7.5s

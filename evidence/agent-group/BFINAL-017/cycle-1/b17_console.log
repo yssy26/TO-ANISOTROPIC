@@ -1,0 +1,55 @@
+=== BFINAL-017 phase-0 audit ===
+polymesh: points=37665 faces=104740 internalFaces=96860 (t=0.2s)
+[mesh] Sf reproduction vs b16mesh_sf: maxabs=1.411e-19
+[mesh] cell centres built (33600 cells, t=3.5s)
+[mesh] orthogonality cos(Sf,d): min=1.000000000000000 max=1.000000000000000
+[filter] len=0.00050000000000000023 b=5333020.4444444394  V sum=4.1439999999999996e-06
+[filter] A built: nnz=61272 (t=3.6s)
+[filter][VALIDATE fwd ] |A@xp + b*V*x|=9.266e-11 rel=9.789e-10
+[filter][VALIDATE adj ] |A@gsens + b*V*gsensh|=2.876e-13 rel=6.547e-10
+[proj] eta5 mine=0.748005161573616  (b15 log: 0.748005161603)
+[proj] projectionEtaDenominator mine=-3.138599681023e-06 (b15 log: -3.1385996818e-06)
+[proj] drho vs stageB6_proj.mtx: maxabs=7.484e-09
+[data] gauge data loaded (t=3.8s)
+[xchk] -dAlphaDxh(U&Uc15)V vs rxpr_prod_gsensh_momentum: maxabs=3.461e-14
+--- AD1: chain adjoint point tests ---
+AD1a L(g15_tot) vs rxpr_prod_gsens (production chain pair): |diff|=1.116e-10 |gsens|=1.563e-01 rel=7.139e-10 maxabs=2.454e-11
+AD1b filter(gsenshPD16_written) vs gsensPD16_written: rel=4.623e-10
+AD1c <L(g15_tot),D1>=-5.623563345872e-02   <g,L^T(g15_tot)>=-5.623563345872e-02   rel=4.936e-16
+AD1c <L(g15_tot),D2>=2.976724315086e-01   <g,L^T(g15_tot)>=2.976724315086e-01   rel=1.678e-15
+AD1c <L(g15_tot),D3>=-3.634142961846e-02   <g,L^T(g15_tot)>=-3.634142961846e-02   rel=3.055e-15
+AD1c <L(g_rand),d_rand>=-7.126010077501e+01   <g,L^T(g_rand)>=-7.126010077501e+01   rel=4.188e-15
+AD1c <L(g_rand),D2>=2.267023778463e+02   <g,L^T(g_rand)>=2.267023778463e+02   rel=7.522e-16
+AD1d |L(2g15_tot)-2L(g15_tot)|=0.000e+00
+AD1d |L(2g_rand)-2L(g_rand)|=0.000e+00
+AD1e z(D1): vs z_analytic rel=5.623e-10 ; vs zFD(eps=1e-5) rel=1.215e-04 ; z_analytic vs zFD eps=1e-3..1e-5 rel=['4.76e-04', '8.10e-05', '2.14e-05', '1.21e-04', '1.21e-04']
+AD1e z(D2): vs z_analytic rel=6.190e-10 ; vs zFD(eps=1e-5) rel=9.657e-05 ; z_analytic vs zFD eps=1e-3..1e-5 rel=['7.23e-04', '1.27e-04', '2.86e-05', '9.67e-05', '9.66e-05']
+AD1e z(D3): vs z_analytic rel=7.778e-10 ; vs zFD(eps=1e-5) rel=9.700e-05 ; z_analytic vs zFD eps=1e-3..1e-5 rel=['7.86e-04', '1.41e-04', '2.58e-05', '9.70e-05', '9.70e-05']
+--- AD2: R_x contraction path comparison ---
+AD2a eta-inversion round-trip |E(g_tot16)-written|=1.332e-16 (|written|=6.589e-01)
+AD2b |g_tot16|=2.940268e-01  |g_mom16|=2.815477e-01  |g_pr16|=4.264318e-02
+AD2 D1: assembly=-5.4050587339 (B12 -5.4050587339)
+      <g_tot,z>=-5.4050587342   -lam^T rxd=-4.4859028556 (B16 -4.4859028556)
+      delta_chain=2.790e-10   delta_contraction=-9.192e-01   delta_total=-9.192e-01
+      momentum: prod=-4.3942333297 oracle=-4.3942333297 (diff -3.197e-14)
+      pressure: prod=-1.0108254045 oracle=-0.0916695260 (diff -9.192e-01)
+AD2 D2: assembly=1.1059269805 (B12 1.1059269805)
+      <g_tot,z>=1.1059269766   -lam^T rxd=0.4478786666 (B16 0.4478786666)
+      delta_chain=3.968e-09   delta_contraction=6.580e-01   delta_total=6.580e-01
+      momentum: prod=0.4093254223 oracle=0.4093254223 (diff 7.067e-14)
+      pressure: prod=0.6966015543 oracle=0.0385532443 (diff 6.580e-01)
+AD2 D3: assembly=14.0447142088 (B12 14.0447142088)
+      <g_tot,z>=14.0447142060   -lam^T rxd=14.7302687819 (B16 14.7302687819)
+      delta_chain=2.866e-09   delta_contraction=-6.856e-01   delta_total=-6.856e-01
+      momentum: prod=14.8770422212 oracle=14.8770422212 (diff -6.217e-14)
+      pressure: prod=-0.8323280152 oracle=-0.1467734393 (diff -6.856e-01)
+AD2loc D1: |mom diff| L2=1.419e-12 max=1.130e-13@8775 |pr diff| L2=1.855e-01 max=2.908e-02@5610
+AD2loc D2: |mom diff| L2=2.391e-12 max=1.664e-13@7533 |pr diff| L2=4.408e-01 max=4.180e-02@5610
+AD2loc D3: |mom diff| L2=2.349e-12 max=1.605e-13@10603 |pr diff| L2=2.509e-01 max=3.166e-02@6650
+XID D1 (b15 in-run lambda): <g15_tot,z>=-0.0562356334  -lam15^T rxd=-0.0562356334  rel=1.234e-16
+XID D2 (b15 in-run lambda): <g15_tot,z>=0.2976724318  -lam15^T rxd=0.2976724318  rel=3.730e-16
+XID D3 (b15 in-run lambda): <g15_tot,z>=-0.0363414298  -lam15^T rxd=-0.0363414298  rel=4.964e-15
+CTX D1: <g_tot16, drho*y (eta-response OFF)>=-17.8797177890
+CTX D2: <g_tot16, drho*y (eta-response OFF)>=8.8973825205
+CTX D3: <g_tot16, drho*y (eta-response OFF)>=2.6241794055
+AUDIT_DONE t=3.9s

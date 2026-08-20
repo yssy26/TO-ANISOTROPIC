@@ -1,0 +1,16 @@
+loading explicitJT (467MB) ...
+matrix loaded nnz=6209576 (t=0.5s)
+splu done (t=1157.8s)
+lambda*: |M@lam*-bPD|=5.518e-17  rel=2.146e-11
+w*: |J@w*-bTC|=2.772e-14 rel=4.794e-11
+lambda_902(written) vs lambda*: cos=1.000000000000 relL2=2.329e-09
+gradProxy(lambda*)=-205194.1410089870   [round1=-205194.1411 round2=-219717.0666]
+gradProxy(lambda_902)=-205194.1411241132
+D1: -lam*^T rxd=-4.4859028311 | -lam902^T rxd=-4.4859028556 | assembly(679)=-5.4050587339 | |M^-1 rxd|/|rxd|=6.488e+07
+D2: -lam*^T rxd=0.4478786970 | -lam902^T rxd=0.4478786666 | assembly(679)=1.1059269805 | |M^-1 rxd|/|rxd|=4.651e+07
+D3: -lam*^T rxd=14.7302689231 | -lam902^T rxd=14.7302687819 | assembly(679)=14.0447142088 | |M^-1 rxd|/|rxd|=1.136e+08
+--- operator gauge re-rating ---
+D1: truth=-2.537460 | lam*-direct=-4.485903 (ratio 1.7679) | lam902-direct=-4.485903 (ratio 1.7679) | assembly679=-5.405059 (ratio 2.1301) | b15 wprime-tangent=-4.326003
+D2: truth=0.523409 | lam*-direct=0.447879 (ratio 0.8557) | lam902-direct=0.447879 (ratio 0.8557) | assembly679=1.105927 (ratio 2.1129) | b15 wprime-tangent=0.426151
+D3: truth=6.477216 | lam*-direct=14.730269 (ratio 2.2742) | lam902-direct=14.730269 (ratio 2.2742) | assembly679=14.044714 (ratio 2.1683) | b15 wprime-tangent=14.252071
+LAMBDA_TRUE_DONE t=1162.6s

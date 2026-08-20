@@ -1,0 +1,11 @@
+design region bbox: x[0.0052,0.0348] y[0.0003,0.0067] z[0.0026,0.0052]
+domain bbox:        x[0.0003,0.0398] y[0.0003,0.0067] z[0.0002,0.0146]
+cell 5610: C=(0.00525,0.00025,0.00265) inDesign=True alpha=74515.6 dA=-2.769e+05 |z| D1/D2/D3=3.871e+00/5.845e+00/3.816e+00
+cell 6650: C=(0.00525,0.00675,0.00265) inDesign=True alpha=74515.7 dA=-2.769e+05 |z| D1/D2/D3=1.770e+00/5.845e+00/4.326e+00
+cell 7812: C=(0.02625,0.00675,0.00315) inDesign=True alpha=29666.1 dA=-1.528e+05 |z| D1/D2/D3=5.730e+00/5.261e+00/6.263e+00
+cell 26334: C=(0.00725,0.00375,0.01155) inDesign=False alpha=100000000.0 dA=0.000e+00 |z| D1/D2/D3=0.000e+00/0.000e+00/0.000e+00
+cell 10253: C=(0.00675,0.00125,0.00465) inDesign=True alpha=29814.3 dA=-1.532e+05 |z| D1/D2/D3=3.080e+00/6.938e+00/1.265e+00
+cell 5610: nearest design-region edge cell dist=0.00000 (dx to edges: x- 0.0000, x+ 0.0295)
+cell 6650: nearest design-region edge cell dist=0.00000 (dx to edges: x- 0.0000, x+ 0.0295)
+cell 5610: is boundary-adjacent=True
+cell 6650: is boundary-adjacent=True

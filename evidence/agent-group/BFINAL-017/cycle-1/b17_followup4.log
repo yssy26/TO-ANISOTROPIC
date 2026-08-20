@@ -1,0 +1,14 @@
+b16_states: gradProxy(written Uc) = -205194.1411241132
+b12_fdgate: gradProxy(written Uc) = -205194.1411241132
+b13_probe: gradProxy(written Uc) = -205194.1411241132
+round2 GRADPROXY-FINAL = -219717.0666091381
+round1 GRADPROXY-FINAL = -205194.141124
+b16 vs b12: maxabs=0.000e+00 relL2=0.000e+00
+b16 vs b13: maxabs=0.000e+00 relL2=0.000e+00
+b12 vs b13: maxabs=0.000e+00 relL2=0.000e+00
+pc b16 vs b12: maxabs=0.000e+00 rel=0.000e+00
+pc b16 vs b13: maxabs=0.000e+00 rel=0.000e+00
+b16: <gmom,D> = -3.2625859527 1.4745402967 2.2924146549
+b12: <gmom,D> = -3.2625859527 1.4745402967 2.2924146549
+b13: <gmom,D> = -3.2625859527 1.4745402967 2.2924146549
+B13 in-pass: -3.5036 +1.5889 +2.2240
