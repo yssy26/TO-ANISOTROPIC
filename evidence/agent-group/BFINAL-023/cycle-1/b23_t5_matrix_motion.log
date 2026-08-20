@@ -1,0 +1,14 @@
+=== BFINAL-023 cycle-1 T5: matrix-motion discrimination ===
+mesh ready (t=8.1s)
+[H5a] value rebuild @B: internal relL2=3.0088e-02 outlet relL2=2.904e-01 p99rel=3.823e+00
+[H5b] D1: A-form cos=0.9979 relL2=0.0672 ; B-form cos=0.9981 relL2=0.0658 ; |motion|/|truth|=0.060 corr(motion, residA)=-0.693
+[H5b] D2: A-form cos=0.9517 relL2=0.3124 ; B-form cos=0.9074 relL2=0.4778 ; |motion|/|truth|=0.204 corr(motion, residA)=0.700
+    D2 partial-forms: alpha-driven matrix cos=0.9046 relL2=0.4799 (motion|x 0.203) ; flux-driven cos=0.9531 relL2=0.3100 (motion|x 0.030)
+[H5b] D3: A-form cos=0.9981 relL2=0.0645 ; B-form cos=0.9985 relL2=0.0574 ; |motion|/|truth|=0.047 corr(motion, residA)=-0.747
+[H5c] D2 fixed-matrix channel attribution:
+    residual projections (all faces): du=0.957 dp=-0.217 da=0.341
+    residual projections (carrier):   du=1.016 dp=-0.217 da=0.344
+    leave-one-out relL2: none=0.4542 -du=0.9499 -dp=0.5527 -da=0.3124
+[H5d] upwind flips (B vs +/-): all 0.0245 ; carrier 0.0000 ; residA energy on flip faces 0.000 ; truth energy on flip faces 0.006 ; carrier small-|phi| frac 0.000
+
+DONE t=9.9s

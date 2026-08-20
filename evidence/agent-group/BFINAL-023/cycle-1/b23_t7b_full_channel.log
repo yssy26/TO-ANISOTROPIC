@@ -1,0 +1,9 @@
+=== BFINAL-023 cycle-1 T7b: combined exact instrument ===
+[T7b] value gate with full channel: 0.0260
+    err structure: x-normal 0.998 ; bndadj 0.981 ; fluid-owner 0.981
+[T7b] D1: relL2=0.0268 cos=0.9996 (chan du/dp/da 0.97/0.01/0.04)
+[T7b] D2: relL2=0.3818 cos=0.9357 (chan du/dp/da 0.97/0.18/0.19)
+    D2 residual: proj du/dp/da = 1.124/-0.511/0.472 ; LOO none/-du/-dp/-da = 0.3825/0.9531/0.5781/0.2216 ; carrier relL2=0.4112 (energy 0.97, x-faces 0.97)
+[T7b] D3: relL2=0.0245 cos=0.9997 (chan du/dp/da 0.97/0.01/0.03)
+
+DONE t=17.8s

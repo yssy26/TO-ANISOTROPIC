@@ -1,0 +1,8 @@
+=== BFINAL-023 cycle-1 T8: relax-source boundary post-piece ===
+[H8a] value gate: without bnd-post 0.0260 -> with 0.0200
+    err structure: x 0.997 bndadj 0.968
+[H8b] D1: du_dp_press 0.0666 (cos 0.9985) ; full3 0.0541 ; full3_nobndpost 0.0268 ; corr(bndpost-corr, resid)=0.001
+[H8b] D2: du_dp_press 0.2224 (cos 0.9750) ; full3 0.3827 ; full3_nobndpost 0.3818 ; corr(bndpost-corr, resid)=0.003
+[H8b] D3: du_dp_press 0.0613 (cos 0.9987) ; full3 0.0479 ; full3_nobndpost 0.0245 ; corr(bndpost-corr, resid)=-0.011
+
+DONE t=54.2s

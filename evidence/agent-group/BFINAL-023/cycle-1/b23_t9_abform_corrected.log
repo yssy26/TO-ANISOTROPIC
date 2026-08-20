@@ -1,0 +1,7 @@
+=== BFINAL-023 cycle-1 T9: A/B-form with corrected map ===
+[T9] corrected-map value gate: 0.0200
+[T9] D1: A-form cos=0.9994 relL2=0.0469 ; B-form(+motion) cos=0.9996 relL2=0.0277 ; alpha-matrix-only relL2=0.0275
+[T9] D2: A-form cos=0.9752 relL2=0.2212 ; B-form(+motion) cos=0.9320 relL2=0.3948 ; alpha-matrix-only relL2=0.3959
+[T9] D3: A-form cos=0.9994 relL2=0.0449 ; B-form(+motion) cos=0.9997 relL2=0.0240 ; alpha-matrix-only relL2=0.0228
+
+DONE t=7.3s

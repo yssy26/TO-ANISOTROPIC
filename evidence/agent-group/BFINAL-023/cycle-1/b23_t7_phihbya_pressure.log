@@ -1,0 +1,9 @@
+=== BFINAL-023 cycle-1 T7: phiHbyA pressure channel ===
+mesh ready (t=8.0s)
+[H7a] value: no-channel 0.0301 ; with -interp(mob*grad p).Sf 0.0380 ; wrong-sign + 0.0260
+    |channel|/|phi|=0.012 ; |channel|/|residual|=0.413
+[H7b] D1: no-ext relL2=0.0332 cos=0.9995 -> with-ext relL2=0.0274 cos=0.9996 ; corr(corr, resid)=-0.879 ; |ext|/|resid|=0.203
+[H7b] D2: no-ext relL2=0.4534 cos=0.9134 -> with-ext relL2=0.3568 cos=0.9433 ; corr(corr, resid)=-0.996 ; |ext|/|resid|=0.214
+[H7b] D3: no-ext relL2=0.0335 cos=0.9995 -> with-ext relL2=0.0279 cos=0.9996 ; corr(corr, resid)=-0.948 ; |ext|/|resid|=0.178
+
+DONE t=23.9s

@@ -1,0 +1,13 @@
+=== BFINAL-023 cycle-1 T6: deviatoric slot ===
+patches: ['inlet', 'outlet', 'hotInlet', 'hotOutlet', 'solidEndWalls', 'bottomWall', 'topWall', 'sideWalls'] sizes [84, 84, 196, 196, 280, 1120, 1120, 4800]
+mesh ready (t=5.1s)
+[H6a] value gate: no-dev 0.0301 -> dev(calc) 0.0301 ; dev(wall-1s) 0.0302 ; |mob*dev|/|phi| 9091.733
+[H6b] D1: no-dev relL2=0.0332 cos=0.9995 -> with-dev relL2=0.0330 cos=0.9995
+[H6c]    corr(correction, residual)=-0.099 ; |corr|/|resid|=0.088 ; devchan/|tot|=0.003
+[H6b] D2: no-dev relL2=0.4534 cos=0.9134 -> with-dev relL2=0.4535 cos=0.9139
+[H6c]    corr(correction, residual)=0.036 ; |corr|/|resid|=0.009 ; devchan/|tot|=0.004
+[H6b] D3: no-dev relL2=0.0336 cos=0.9995 -> with-dev relL2=0.0332 cos=0.9995
+[H6c]    corr(correction, residual)=-0.154 ; |corr|/|resid|=0.122 ; devchan/|tot|=0.004
+[H6b] D2 A-form (du+dp, no da) with dev: relL2=0.3122 cos=0.9519
+
+DONE t=7.5s

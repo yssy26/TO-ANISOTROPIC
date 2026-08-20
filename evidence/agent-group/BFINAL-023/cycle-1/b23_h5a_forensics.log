@@ -1,0 +1,9 @@
+[orth] 1-n·d̂: p50=0.0000 p99=0.0000 max=0.0000 ; frac>0.1: 0.0000
+[weights] min=0.490 max=0.510 (uniform hex would be 0.5)
+[H5a] internal relL2=3.0088e-02
+  err energy on x/y/z faces: 0.997/0.000/0.002
+  err energy boundary-adjacent: 0.805 (adj frac 0.224) ; interior 0.195
+  err energy solid-owner faces: 0.268 ; fluid-owner: 0.732
+  |div(rebuild)|=6.381e-04 |div(truth)|=6.330e-04 (ratio 1.008)
+  top-2000 |err| faces: frac x-normal 1.000 ; frac boundary-adj 0.398 ; median |phi_B| 3.043e-05 (all-face median 7.967e-09)
+  deltaCoeffs*|dvec|: p50=1.0000 p99=1.0000 (orthogonal mesh => 1.0)
