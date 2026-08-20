@@ -305,12 +305,12 @@ grep -E "PRODPRECSETUP|PRODPRECGAMGSCHEME|PRODPRECGAMGSETUP|PRODPRECGAMGCHECK|GA
 
 ---
 
-## 10. 当前状态速查（BFINAL-013 cycle-1 已完成：定位到项，2026-08-20）
+## 10. 当前状态速查（BFINAL-014 cycle-1 已完成：推导裁决 + STOP，2026-08-20）
 
 - **阶段**：B-final —— 冻结湍流梯度 / 生产伴随闭合。
 - **已闭合（求解层）**：J_PU（BFINAL-003）、R_x 压力行（BFINAL-005）、J_PP 实际原始闭包（BFINAL-008）；预条件矩阵/算子四组等价性硬门（BFINAL-010，1e-16）；两标签生产伴随迭代收敛（BFINAL-011）。
-- **BFINAL-012（FAIL）**：端到端 FD 幅值门——J 符号翻转（D1/D3）+ 6.7–11.2× 放大；gDP 恒定 ≈2.13× 偏大；gV 通过（1e-7）。伴随全 ≤1e-9、FD 平台 <0.15%——确定性梯度装配缺陷。
-- **BFINAL-013 cycle-1（定位完成，未修复）**：**gDP 缺陷定位到 `sensitivity.H:89-90` 动量行收缩项（−dAlphaDxh·(U&Uc)·V，占原始梯度 97.6%）；J 缺陷定位到 `sensitivity.H:65-66` Brinkman 项（−dAlphaDxh·(U&Ub)·V）**。排除项（全部定量）：目标定义（P0 双侧一致）、导数源（P1 点测试机器精度 PASS，新永久仪器 `stageB13GradientProbe` 开关）、滤波/投影链（gV 1e-7 穿同链）、R_x 压力行（2.9% 份额，内部一致 1.7e-15）、算子/求解（BFINAL-008/010/011）。修复轮假设：H-F1 松弛语义失配（alphaRel=0.4）、H-F2 缺失 α 依赖项、H-F3 FD 侧不动点差异。见 `evidence/agent-group/BFINAL-013/cycle-1/`。
-- **当前阻塞**：动量行收缩项与端到端 FD 的幅值/结构一致性（修复轮单独授权）。
-- **下一步任务**：BFINAL-014（修复轮：H-F1 优先——松弛语义收缩推导与验证；验收 = BFINAL-012 FD 门重跑通过）→ C0 串行 MMA smoke。
+- **BFINAL-012（FAIL）**：端到端 FD 幅值门——J 符号翻转 + 6.7–11.2×；gDP 恒定 ≈2.13×；gV 通过。BFINAL-013 定位到动量行/Brinkman 收缩项（97.6% 承载）。
+- **BFINAL-014 cycle-1（推导轮，STOP）**：从 NS.H 实际路径完成不动点代数推导——H-F1/H-F2 被代数与读码双拒（不动点=未松弛动量方程、nuEffFrozen 与 α 无关），收缩公式在给定正确 λ 时正确；新裁决实验证明 R_x 外部正确（设计 FD ~1e-7）、**历史「D_mom-prod≈2e-9」为 λ-相对内部一致性**（复跑中诊断路径 λ 退化→MMA 门 abort），**λ 本身从未被外部验证**（BFINAL-006 的 T2/T3 搁置至今）。缺陷收敛到 J 的系统-Jacobi 语义（算子层，超授权）→ 停止。附带发现：B4 诊断求解器路径在当前 HEAD 退化。见 `evidence/agent-group/BFINAL-014/cycle-1/`。
+- **当前阻塞**：λ（=J⁻ᵀ源）的系统-Jacobi 语义外部验证与修复（需单独授权）。
+- **下一步任务**：T2/T3 补课（P8 机制解 J·w′=−R_x·d 对照全链状态 FD，定位缺陷 J 块）→ 修复轮 → C0 串行 MMA smoke。可选：B4 诊断路径修复。
 - **并行伴随（P2）**：未解锁（见 §8.5）。**MMA**：锁定。
