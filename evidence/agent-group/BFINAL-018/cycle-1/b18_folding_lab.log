@@ -1,0 +1,4 @@
+  File "/home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-018/cycle-1/b18_folding_lab.py", line 1191
+    np.add.at(hU2[:, cix], nei, -(upper*Vinvo := (1.0/V[owner]))*0+hAc[owner]*0)
+                                  ^^^^^^^^^^^
+SyntaxError: cannot use assignment expressions with expression
