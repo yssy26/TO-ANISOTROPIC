@@ -25,6 +25,31 @@
 
 thermalObjectiveDerivative = 0.0;
 
+// --- BFINAL-025: M_frozen snapshot (maximizeTotalHeatTransfer only) ----------
+// Q = N - T_in*M, J_Q = -Q/(Tref*M_frozen).  M_frozen = sum(phi_out) is
+// snapshotted ONCE per outer state HERE and kept CONSTANT for every J
+// evaluation in that state: probeFD (validateStageB2GradientAmplitude.H) and
+// the F1/F2/F3 probes (validateFrozenGradient.H) evaluate J via
+// evaluateObjective() and never re-include this file, so all FD +/-h points
+// and all adjoint projections share the same snapshot (reviewer point 1:
+// no FD point silently re-normalizes by the current M).
+if (thermalObjectiveType == "maximizeTotalHeatTransfer")
+{
+    const scalarField& phiOutlet =
+        phi.boundaryField()[coldOutletPatchID];
+    thermalObjectiveMassFlowFrozen = sum(phiOutlet);
+    reduce(thermalObjectiveMassFlowFrozen, sumOp<scalar>());
+
+    if (mag(thermalObjectiveMassFlowFrozen) < SMALL)
+    {
+        FatalErrorInFunction
+            << "Cold outlet mass flow is near zero ("
+            << thermalObjectiveMassFlowFrozen
+            << "). Cannot compute total-heat-transfer objective."
+            << abort(FatalError);
+    }
+}
+
 if (thermalObjectiveType == "maximizeColdOutletTemperature")
 {
     const scalarField& phiOutlet =
@@ -51,6 +76,27 @@ if (thermalObjectiveType == "maximizeColdOutletTemperature")
            /Foam::max
             (
                 coldOutletMassFlow*thermalReferenceTemperature,
+                SMALL
+            );
+    }
+}
+// BFINAL-025: Q = N - T_in*M, J_Q = -Q/(Tref*M_frozen).
+//   dJ_Q/dT[celli] = -phi_f/(Tref*M_frozen)   (cells at cold outlet)
+// Same form as the old type with M -> M_frozen (snapshot, constant in state).
+else if (thermalObjectiveType == "maximizeTotalHeatTransfer")
+{
+    const scalarField& phiOutlet =
+        phi.boundaryField()[coldOutletPatchID];
+    const labelUList& outletCells =
+        mesh.boundary()[coldOutletPatchID].faceCells();
+
+    forAll(outletCells, facei)
+    {
+        thermalObjectiveDerivative[outletCells[facei]] -=
+            phiOutlet[facei]
+           /Foam::max
+            (
+                thermalObjectiveMassFlowFrozen*thermalReferenceTemperature,
                 SMALL
             );
     }
@@ -95,6 +141,33 @@ if (thermalObjectiveType == "maximizeColdOutletTemperature")
         thermalObjectiveFluxDerivative.boundaryFieldRef()[coldOutletPatchID][facei] =
            -(TOutlet[facei] - Tmix)
            /Foam::max(M*thermalReferenceTemperature, SMALL);
+    }
+}
+// BFINAL-025: Q = N - T_in*M, J_Q = -Q/(Tref*M_frozen).
+//   dJ_Q/dphi_f = -(T_f - T_in)/(Tref*M_frozen)
+// The old type's near-cancellation (T_f - Tmix) ~ 0 is replaced by the
+// full temperature rise (T_f - T_in) ~ O(heating), which is non-small.
+// T_in is read from the cold-inlet case BC (gAverage of the fixedValue
+// boundary field), never hardcoded.
+else if (thermalObjectiveType == "maximizeTotalHeatTransfer")
+{
+    const scalarField& phiOutlet =
+        phi.boundaryField()[coldOutletPatchID];
+    const scalarField TOutlet =
+        T.boundaryField()[coldOutletPatchID].patchInternalField();
+    const scalar TIn =
+        gAverage(T.boundaryField()[coldInletPatchID]);
+    const labelUList& outletCells =
+        mesh.boundary()[coldOutletPatchID].faceCells();
+    forAll(outletCells, facei)
+    {
+        thermalObjectiveFluxDerivative.boundaryFieldRef()[coldOutletPatchID][facei] =
+           -(TOutlet[facei] - TIn)
+           /Foam::max
+            (
+                thermalObjectiveMassFlowFrozen*thermalReferenceTemperature,
+                SMALL
+            );
     }
 }
 

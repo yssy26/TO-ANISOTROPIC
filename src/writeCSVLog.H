@@ -45,6 +45,24 @@ if (enableCSVLog)
         reduce(mT, sumOp<scalar>());
         csvMeanT = mag(mFlow) > SMALL ? mT/mFlow : 0.0;
     }
+    else if (thermalObjectiveType == "maximizeTotalHeatTransfer")
+    {
+        // BFINAL-025: csv logs the physical Q = N - T_in*M metric (K*kg/s);
+        // T_in read from the cold-inlet case BC.  Not a mean temperature.
+        scalar mFlow = sum(phi.boundaryField()[coldOutletPatchID]);
+        scalar mT = sum
+        (
+            phi.boundaryField()[coldOutletPatchID]
+           *T.boundaryField()[coldOutletPatchID]
+        );
+        reduce(mFlow, sumOp<scalar>());
+        reduce(mT, sumOp<scalar>());
+        if (mag(mFlow) > SMALL)
+        {
+            const scalar TIn = gAverage(T.boundaryField()[coldInletPatchID]);
+            csvMeanT = mT - TIn*mFlow;
+        }
+    }
     else
     {
         csvMeanT =
@@ -188,7 +206,13 @@ if (enableCSVLog)
     const scalar csvNormalizedThermal =
         thermalObjectiveType == "maximizeColdOutletTemperature"
       ? -csvMeanT/Foam::max(thermalReferenceTemperature, SMALL)
-      :  csvMeanT/Foam::max(thermalReferenceTemperature, SMALL);
+      : thermalObjectiveType == "maximizeTotalHeatTransfer"
+        ? -csvMeanT/Foam::max
+          (
+              thermalObjectiveMassFlowFrozen*thermalReferenceTemperature,
+              SMALL
+          )
+        :  csvMeanT/Foam::max(thermalReferenceTemperature, SMALL);
 
     scalar csvRawPowerDiss = 0.0;
     for (label patchI = 0; patchI < nObjPatch; ++patchI)

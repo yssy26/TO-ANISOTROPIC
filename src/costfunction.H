@@ -39,6 +39,46 @@ else if (thermalObjectiveType == "maximizeColdOutletTemperature")
         coldOutletMassFlowTemperatureIntegral
        /coldOutletMassFlow;
 }
+else if (thermalObjectiveType == "maximizeTotalHeatTransfer")
+{
+    // BFINAL-025: total heat transfer Q = N - T_in*M, with
+    //   N    = sum(phi_out * T_out)
+    //   M    = sum(phi_out)                      (current value, diagnostics)
+    //   T_in = cold-inlet fixedValue temperature read from the case BC
+    //          (gAverage of the inlet boundary field, never hardcoded).
+    // The M_frozen normalization snapshot is refreshed at the top of
+    // computeObjective.H and is CONSTANT within this state; MeanT here logs
+    // the physical Q metric (temperature units) for the diagnostics/CSV.
+    scalar coldOutletMassFlow = sum
+    (
+        phi.boundaryField()[coldOutletPatchID]
+    );
+    scalar coldOutletMassFlowTemperatureIntegral = sum
+    (
+        phi.boundaryField()[coldOutletPatchID]
+       *T.boundaryField()[coldOutletPatchID]
+    );
+    reduce(coldOutletMassFlow, sumOp<scalar>());
+    reduce
+    (
+        coldOutletMassFlowTemperatureIntegral,
+        sumOp<scalar>()
+    );
+
+    if (mag(coldOutletMassFlow) < SMALL)
+    {
+        FatalErrorInFunction
+            << "Cold outlet mass flow is near zero ("
+            << coldOutletMassFlow << "). Cannot compute "
+            << "total heat transfer objective."
+            << abort(FatalError);
+    }
+
+    const scalar TIn = gAverage(T.boundaryField()[coldInletPatchID]);
+    MeanT =
+        coldOutletMassFlowTemperatureIntegral
+      - TIn*coldOutletMassFlow;
+}
 else
 {
     FatalErrorInFunction
@@ -71,7 +111,13 @@ PowerDiss = rawPowerDiss/Foam::max(PowerDiss0, SMALL);
 const scalar normalizedThermalObjective =
     thermalObjectiveType == "maximizeColdOutletTemperature"
   ? -MeanT/Foam::max(thermalReferenceTemperature, SMALL)
-  :  MeanT/Foam::max(thermalReferenceTemperature, SMALL);
+  : thermalObjectiveType == "maximizeTotalHeatTransfer"
+    ? -MeanT/Foam::max
+      (
+          thermalObjectiveMassFlowFrozen*thermalReferenceTemperature,
+          SMALL
+      )
+    :  MeanT/Foam::max(thermalReferenceTemperature, SMALL);
 
 Objective =
     objectiveMode == "outletTemperature"

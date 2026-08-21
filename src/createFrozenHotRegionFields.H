@@ -15,6 +15,13 @@ scalar hotMassBalanceTolerance(1e-6);
 scalar hotDivergenceTolerance(1e-8);
 scalar thermalReferenceTemperature(Foam::max(MeanT0, SMALL));
 
+// BFINAL-025: M_frozen = sum(phi_out) snapshotted ONCE per outer state at the
+// top of computeObjective.H.  J_Q = -Q/(Tref*M_frozen) uses it as a CONSTANT
+// normalization for every J evaluation in that state (all FD +/-h probes and
+// the adjoint projections share the snapshot; probeFD never re-includes
+// computeObjective.H).  Declared here so it is visible to every include site.
+scalar thermalObjectiveMassFlowFrozen(0.0);
+
 dimensionedScalar hotRhoCp
 (
     "hotRhoCp",
@@ -134,11 +141,13 @@ if
 (
     frozenHotRegionEnabled
  && thermalObjectiveType != "maximizeColdOutletTemperature"
+ && thermalObjectiveType != "maximizeTotalHeatTransfer"
 )
 {
     FatalErrorInFunction
         << "Frozen-hot mode supports thermalObjectiveType "
-        << "'maximizeColdOutletTemperature' only. Received '"
+        << "'maximizeColdOutletTemperature' or "
+        << "'maximizeTotalHeatTransfer' only. Received '"
         << thermalObjectiveType << "'." << abort(FatalError);
 }
 

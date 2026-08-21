@@ -1,0 +1,25 @@
+# F1-equivalent judgment (R1 PREREGISTRATION 8.2): F1 thresholds applied to ALL 13 Stage-B2 scan rows
+# Stage F is structurally inert in this lineage (validateFrozenGradient.H L17 gate + all gauges gradientValidated=true + zero F1 hits in full log corpus).
+# This is the same-threshold substitute on B2 data. Verdict: FAIL on all three thresholds.
+Metric	Value	F1_threshold	Pass
+median_relJ	2.152917858642112	<=0.01	0
+max_relJ	2.208041260544834	<=0.05	0
+signMismatch_rows	7	==0	0
+rows_total	13	-	-
+verdict	FAIL	all_three	0
+
+# Per-row detail (Dir Step relJ signJ)
+Dir	Step	relJ	signJ
+D1	1e-05	2.184498212299149	0
+D1	3e-05	2.18573738039734	0
+D1	0.0001	2.184993929009414	0
+D1	0.0003	2.185022777158944	0
+D1	0.001	2.186679188267447	0
+D1	0.003	2.208041260544834	0
+D1	0.01	2.152917858642112	0
+D2	0.0001	0.8515804781780565	1
+D2	0.0003	0.8556163015603481	1
+D2	0.001	0.8584219739002364	1
+D3	0.0001	0.9649112869862096	1
+D3	0.0003	0.9654396394414865	1
+D3	0.001	0.9629300396006835	1

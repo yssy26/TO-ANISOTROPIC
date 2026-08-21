@@ -468,6 +468,104 @@ class StageBSafetyGateTests(unittest.TestCase):
         self.assertIn("BFINAL-024 scope note", self.production)
         self.assertIn("PRODH7SHARE", self.production)
 
+    def test_bfinal025_maximize_total_heat_transfer_q_objective(self):
+        # BFINAL-025: new frozen-hot objective type maximizeTotalHeatTransfer.
+        # Q = N - T_in*M (N=sum(phi_out*T_out), M=sum(phi_out), T_in read from
+        # the cold-inlet case BC via gAverage, never hardcoded);
+        # J_Q = -Q/(Tref*M_frozen) with M_frozen snapshotted ONCE per outer
+        # state at the top of computeObjective.H and constant across all FD
+        # +/-h probes and adjoint projections (probeFD/F1/F2/F3 evaluate via
+        # evaluateObjective() and never re-include computeObjective.H).
+        # All new code lives in NEW branches; the legacy and
+        # maximizeColdOutletTemperature paths must remain byte-identical.
+        create_fields = (
+            REPO_ROOT / "src" / "createFrozenHotRegionFields.H"
+        ).read_text(encoding="utf-8")
+        costfunction = (
+            REPO_ROOT / "src" / "costfunction.H"
+        ).read_text(encoding="utf-8")
+        compute_objective = (
+            REPO_ROOT / "src" / "computeObjective.H"
+        ).read_text(encoding="utf-8")
+        evaluate_candidate = (
+            REPO_ROOT / "src" / "evaluateCandidate.H"
+        ).read_text(encoding="utf-8")
+        validate_common = (
+            REPO_ROOT / "src" / "validateCommon.H"
+        ).read_text(encoding="utf-8")
+        csv_log = (
+            REPO_ROOT / "src" / "writeCSVLog.H"
+        ).read_text(encoding="utf-8")
+
+        # -- M_frozen snapshot variable exists and is declared pre-loop -------
+        self.assertIn(
+            "scalar thermalObjectiveMassFlowFrozen(0.0);",
+            create_fields,
+        )
+        # -- frozen-hot whitelist admits the new type -------------------------
+        self.assertIn(
+            'thermalObjectiveType != "maximizeTotalHeatTransfer"',
+            create_fields,
+        )
+        # -- computeObjective.H: snapshot refresh at entry + dJ/dT + dJ/dphi --
+        self.assertIn(
+            'thermalObjectiveType == "maximizeTotalHeatTransfer"',
+            compute_objective,
+        )
+        # snapshot refresh happens BEFORE the dJ/dT branch (top of entry)
+        snapshot = compute_objective.index(
+            "thermalObjectiveMassFlowFrozen = sum(phiOutlet);"
+        )
+        self.assertLess(
+            snapshot,
+            compute_objective.index(
+                'else if (thermalObjectiveType == "maximizeTotalHeatTransfer")'
+            ),
+        )
+        # dJ_Q/dphi uses T_in from the case BC, never hardcoded 600
+        self.assertIn(
+            "gAverage(T.boundaryField()[coldInletPatchID])",
+            compute_objective,
+        )
+        # -- costfunction.H: Q metric + J_Q normalization --------------------
+        self.assertIn(
+            "const scalar TIn = gAverage(T.boundaryField()[coldInletPatchID]);",
+            costfunction,
+        )
+        self.assertIn(
+            "coldOutletMassFlowTemperatureIntegral\n      - TIn*coldOutletMassFlow;",
+            costfunction,
+        )
+        # -- evaluateCandidate.H: Q candidate + FROZEN normalization ---------
+        self.assertIn(
+            "candidateMeanT = mT - TIn*mFlow;",
+            evaluate_candidate,
+        )
+        # -- validateCommon.H: evaluateObjective() Q branch (FD gate) ---------
+        self.assertIn(
+            'if (thermalObjectiveType == "maximizeTotalHeatTransfer")',
+            validate_common,
+        )
+        self.assertIn(
+            "-(mT - TIn*mFlow)",
+            validate_common,
+        )
+        # -- writeCSVLog.H: csvMeanT + csvNormalizedThermal branches ----------
+        self.assertIn(
+            'else if (thermalObjectiveType == "maximizeTotalHeatTransfer")',
+            csv_log,
+        )
+        # -- old paths stay byte-identical: legacy denominator forms ----------
+        self.assertIn(
+            "candidateMeanT = mT/mFlow;",
+            evaluate_candidate,
+        )
+        self.assertIn(
+            "MeanT =\n        coldOutletMassFlowTemperatureIntegral\n"
+            "       /coldOutletMassFlow;",
+            costfunction,
+        )
+
     def test_bfinal022_b2_module_refreshes_kf_basis_at_state_b(self):
         # BFINAL-022 W1 (SLOT-2): the stage-B2 module must re-capture
         # primalPressureMobility at the full-SST baseline (state B)

@@ -29,6 +29,22 @@ auto evaluateObjective = [&]() -> scalar
 
     if (mag(mFlow) < SMALL) return GREAT;
 
+    // BFINAL-025: Q = N - T_in*M, J_Q = -Q/(Tref*M_frozen).  The M_frozen
+    // snapshot is refreshed once per outer state at the top of
+    // computeObjective.H (NOT here) and is constant across all FD +/-h
+    // probes and the adjoint projections; T_in is read from the cold-inlet
+    // case BC.  The old-type path below is byte-identical.
+    if (thermalObjectiveType == "maximizeTotalHeatTransfer")
+    {
+        const scalar TIn = gAverage(T.boundaryField()[coldInletPatchID]);
+        return -(mT - TIn*mFlow)
+          /Foam::max
+            (
+                thermalObjectiveMassFlowFrozen*thermalReferenceTemperature,
+                SMALL
+            );
+    }
+
     scalar meanT = mT/mFlow;
     return -meanT/Foam::max(thermalReferenceTemperature, SMALL);
 };

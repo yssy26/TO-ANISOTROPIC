@@ -69,7 +69,7 @@ do
             fvc::domainIntegrate(T*thermalObjectiveMask).value()
            /Foam::max(thermalObjectiveVolume, SMALL);
     }
-    else  // maximizeColdOutletTemperature
+    else if (thermalObjectiveType == "maximizeColdOutletTemperature")
     {
         scalar mFlow = sum(phi.boundaryField()[coldOutletPatchID]);
         scalar mT = sum
@@ -89,6 +89,30 @@ do
             break;
         }
         candidateMeanT = mT/mFlow;
+    }
+    else  // maximizeTotalHeatTransfer
+    {
+        // BFINAL-025: candidate total heat transfer Q_cand = N - T_in*M.
+        // T_in read from the cold-inlet case BC (gAverage), never hardcoded.
+        scalar mFlow = sum(phi.boundaryField()[coldOutletPatchID]);
+        scalar mT = sum
+        (
+            phi.boundaryField()[coldOutletPatchID]
+           *T.boundaryField()[coldOutletPatchID]
+        );
+        reduce(mFlow, sumOp<scalar>());
+        reduce(mT, sumOp<scalar>());
+
+        if (mag(mFlow) < SMALL)
+        {
+            Info<< "Transaction: REJECT - cold outlet mass flow near zero."
+                << endl;
+            candidateAccepted = false;
+            candidateRejectionReason = "ColdOutletMassFlowNearZero";
+            break;
+        }
+        const scalar TIn = gAverage(T.boundaryField()[coldInletPatchID]);
+        candidateMeanT = mT - TIn*mFlow;
     }
 
     // --- Volume constraint ---
@@ -137,10 +161,19 @@ do
         candidatePressureDropPa/Foam::max(pressureDropMaxPa, SMALL) - 1.0;
 
     // --- Normalized objective ---
+    // BFINAL-025: the new type normalizes by the FROZEN M_frozen snapshot
+    // (state-level constant), NOT the candidate's own M, so the candidate
+    // evaluation and every FD +/-h probe share one Qref.
     const scalar candidateNormalizedThermal =
         thermalObjectiveType == "maximizeColdOutletTemperature"
       ? -candidateMeanT/Foam::max(thermalReferenceTemperature, SMALL)
-      :  candidateMeanT/Foam::max(thermalReferenceTemperature, SMALL);
+      : thermalObjectiveType == "maximizeTotalHeatTransfer"
+        ? -candidateMeanT/Foam::max
+          (
+              thermalObjectiveMassFlowFrozen*thermalReferenceTemperature,
+              SMALL
+          )
+        :  candidateMeanT/Foam::max(thermalReferenceTemperature, SMALL);
 
     {
         scalar rawPowerDiss = 0.0;
