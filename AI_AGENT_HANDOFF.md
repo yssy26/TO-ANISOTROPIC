@@ -405,6 +405,29 @@ The archived BFINAL-008 evidence reports:
 
 Treat **BFINAL-003 (`J_PU`) + BFINAL-005 (`R_x`) + BFINAL-008 (`J_PP`) as locked mathematical milestones** unless a new independent test actually disproves one of them.
 
+## BFINAL-024 (2026-08-20) — formal milestone UPGRADE of the BFINAL-003/008 P-row flux-tangent semantics (H7)
+
+**Date-annotated declaration (supersedes the literal scope of BFINAL-003/008; their
+slots are unchanged inside the upgraded map).** The first independently confirmed
+production-operator defect (BFINAL-023 H7) was implemented: the true forward flux
+
+    phi_f = interp(HbyA).Sf - kf*(p_n - p_o),   HbyA = rAU*UEqn.H()
+
+carries, through the ONE `-V*grad(p)` source copy inside `UEqn.H()` (the
+construction `... == -fvc::grad(p)`; the second copy in `solve(UEqn ==
+-fvc::grad(p))` enters the temporary only), the pressure channel
+`-interp(rAtU*grad p).Sf` which the BFINAL-003 relaxed mapping and the BFINAL-008
+kf closure both omitted. The production `J^T`, the diagnostic forward `J`/`J^T`,
+the external face-functional folding, and the explicit CSR export now all carry
+the channel slot by slot (BFINAL-024 evidence: transpose dot tests 6.4e-14,
+ExplicitJToracle 5.5e-16, CSR +1.53M nnz; equivalence-gate four values
+bit-identical - the pressureGAMG preconditioner deliberately remains the
+kf-Laplacian approximation, H7 share ~0.70 of kf on the probe direction).
+Face-level anchor D2 31.2% -> 22.1% (du+kf+H7, no da), D1/D3 4.9% -> 4.6-4.8%;
+gDP factor ADJ/FD 2.145/2.159/2.181 -> 2.061/2.007/2.100. The J sign table is
+unchanged (D1 flipped); the remaining O(1) mismatch is direction-uniform and
+therefore NOT attributable to P-row face-level tangent defects.
+
 ---
 
 # 8. Why BFINAL-009 exists: production scalability

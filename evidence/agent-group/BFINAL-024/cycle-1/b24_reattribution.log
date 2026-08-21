@@ -1,0 +1,11 @@
+=== BFINAL-024: corrected-instrument re-attribution (H7 live) ===
+[0] corrected-basis mobility reproduction vs exact export: 2.185e-15 (b23: 2.19e-15)
+  D1 h=0.0003: pre-H7 relL2=0.0492 -> post-H7 0.0475 (+da ref 0.0268) |H7|/|FD|=0.007 ; |div(tangent)| 2.175e-04 -> 1.788e-04 (truth 3.083e-11)
+  D1 h=0.001: pre-H7 relL2=0.0492 -> post-H7 0.0475 (+da ref 0.0268) |H7|/|FD|=0.007 ; |div(tangent)| 2.167e-04 -> 1.780e-04 (truth 2.191e-11)
+  D2 h=0.0003: pre-H7 relL2=0.3117 -> post-H7 0.2212 (+da ref 0.3816) |H7|/|FD|=0.097 ; |div(tangent)| 6.215e-04 -> 4.773e-04 (truth 7.536e-11)
+  D2 h=0.001: pre-H7 relL2=0.3119 -> post-H7 0.2213 (+da ref 0.3818) |H7|/|FD|=0.097 ; |div(tangent)| 6.205e-04 -> 4.762e-04 (truth 6.086e-11)
+  D3 h=0.0003: pre-H7 relL2=0.0493 -> post-H7 0.0456 (+da ref 0.0245) |H7|/|FD|=0.006 ; |div(tangent)| 2.644e-04 -> 2.187e-04 (truth 1.930e-10)
+  D3 h=0.001: pre-H7 relL2=0.0493 -> post-H7 0.0456 (+da ref 0.0245) |H7|/|FD|=0.006 ; |div(tangent)| 2.642e-04 -> 2.185e-04 (truth 2.322e-11)
+[L3] gDP factor ADJ/FD: B22 2.145/2.159/2.181 -> B24 2.061/2.007/2.100
+
+DONE t=27.9s

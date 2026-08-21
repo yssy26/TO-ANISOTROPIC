@@ -309,6 +309,7 @@ grep -E "PRODPRECSETUP|PRODPRECGAMGSCHEME|PRODPRECGAMGSETUP|PRODPRECGAMGCHECK|GA
 
 - **阶段**：B-final —— 冻结湍流梯度 / 生产伴随闭合。
 - **已闭合（求解层）**：J_PU（BFINAL-003）、R_x 压力行（BFINAL-005）、J_PP 实际原始闭包（BFINAL-008）；预条件矩阵/算子四组等价性硬门（BFINAL-010，1e-16）；两标签生产伴随迭代收敛（BFINAL-011）。
+- **BFINAL-024（2026-08-20，实现轮）里程碑正式升级声明**：BFINAL-023 证实的第一个生产算子真缺陷 **H7（phiHbyA 压力通道 −interp(rAtU·∇p)·Sf，源于 UEqn 源内一次 −∇p 拷贝）已进入生产 J^T、诊断 J/J^T、b_TC 折叠与显式 CSR（四处一致）**——BFINAL-003/008 的 P 行通量切线语义据此正式升级（原槽位不变，新增 H7 槽）；pressureGAMG 预条件器保持 kf-Laplacian 近似（等价性门四值逐位不变，PRODH7SHARE ~0.70 量化排除份额）。面锚 D2 31.2→22.1%、D1/D3 4.9→4.6-4.8%；gDP 因子 2.145/2.159/2.181 → 2.061/2.007/2.100；J 符号表不变（D1 反）。残余 O(1) 失配方向均匀（~2.0-2.1×），不能归因于 P 行面级切线缺陷 → 上移至 J 链更高层。见 `evidence/agent-group/BFINAL-024/cycle-1/`。
 - **BFINAL-012（FAIL）→ 013（定位）→ 014（推导 STOP）→ 015（T2/T3 拆分双缺陷）**。
 - **BFINAL-016 cycle-1 第〇阶段（量具对齐，修复未启动）**：(A1) 偏应力块可忽略（3.5e-6）；**(A1b/c) 生产 λ 以 8e-11 满足导出系统——产=导同一算子，BFINAL-015「双算子」系钉扎伪影已更正**；修正后算子量具 λ-direct vs 真值 = **1.769/0.856/2.274**；(B1) **b_TC ≠ T-消除后的 dJ/d(U,p)**（与真流介导差 86%/70%/符号翻转）；**新发现装配矛盾：sensitivity 装配 ≠ λ-direct（D2 147%）**——收缩装配链有独立缺陷，BFINAL-013 单项定位据此修订。A2/B2 留待下一 cycle（顺序：装配审计→算子→源）。见 `evidence/agent-group/BFINAL-016/cycle-1/`。
 - **当前阻塞**：三个待修缺陷——算子 P 行语义（产=导）、sensitivity 装配链、b_TC 热消除折叠。

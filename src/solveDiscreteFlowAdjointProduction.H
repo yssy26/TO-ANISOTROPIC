@@ -345,6 +345,9 @@ auto applyProdFrozenDeviatoricJT =
 // against the flow-mediated truth at 86%/70%/sign-flip.
 scalarField prodExternalTranspose(prodNUnknowns, 0.0);
 vectorField prodExternalHA(prodNCells, vector::zero);
+// BFINAL-024 (H7): stage-1 accumulator of the phiHbyA pressure channel for
+// the SAME face-functional folding (mob = primalPressureMobility).
+vectorField prodH7ExtG(prodNCells, vector::zero);
 forAll(prodUpper, facei)
 {
     const label own = prodOwner[facei];
@@ -373,6 +376,13 @@ forAll(prodUpper, facei)
        *mesh.magSf().primitiveField()[facei];
     prodExternalTranspose[prodPIndex(own)] += kf*faceFunctional;
     prodExternalTranspose[prodPIndex(nei)] -= kf*faceFunctional;
+    // BFINAL-024 (H7): stage 1 of the phiHbyA pressure channel transpose
+    // (face functional in place of the P-row divergence weight).
+    prodH7ExtG[own] +=
+        primalPressureMobility[own]*weight*faceFunctional*prodSf[facei];
+    prodH7ExtG[nei] +=
+        primalPressureMobility[nei]*(1.0 - weight)*faceFunctional
+       *prodSf[facei];
 }
 forAll(mesh.boundary(), patchi)
 {
@@ -397,6 +407,9 @@ forAll(mesh.boundary(), patchi)
             prodExternalTranspose[prodUIndex(celli, cmpt)] +=
                 (1.0 - alphaRel)*faceTranspose.component(cmpt);
         }
+        // BFINAL-024 (H7): assignable-U boundary stage 1 (outlet).
+        prodH7ExtG[celli] +=
+            primalPressureMobility[celli]*faceFunctional*patchSf[facei];
         if (pressureFixed)
         {
             prodExternalTranspose[prodPIndex(celli)] +=
@@ -450,6 +463,39 @@ forAll(mesh.boundary(), patchi)
         }
     }
 }
+// BFINAL-024 (H7): stage 2 of the face-functional folding - the transpose
+// of the Gauss-linear gradient spread, mirroring applyProdFlowJT slot by
+// slot (internal faces + zeroGradient-p boundary self terms).
+forAll(prodUpper, facei)
+{
+    const label own = prodOwner[facei];
+    const label nei = prodNeighbour[facei];
+    const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+    const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+    const scalar q =
+        prodSf[facei]
+      & (prodH7ExtG[own]*Vinvo - prodH7ExtG[nei]*Vinn);
+    prodExternalTranspose[prodPIndex(own)] -= prodWeights[facei]*q;
+    prodExternalTranspose[prodPIndex(nei)] -=
+        (1.0 - prodWeights[facei])*q;
+}
+forAll(mesh.boundary(), patchi)
+{
+    if (p.boundaryField()[patchi].fixesValue())
+    {
+        continue;
+    }
+    const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+    const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        prodExternalTranspose[prodPIndex(celli)] -=
+            (prodH7ExtG[celli] & patchSf[facei])
+           /Foam::max(mesh.V()[celli], SMALL);
+    }
+}
+
 for (label celli = 0; celli < prodNCells; ++celli)
 {
     for (direction cmpt = 0; cmpt < 3; ++cmpt)
@@ -481,6 +527,13 @@ auto applyProdFlowJT =
     scalarField hAx(prodNCells, 0.0);
     scalarField hAy(prodNCells, 0.0);
     scalarField hAz(prodNCells, 0.0);
+
+    // BFINAL-024 (H7 channel, stage-1 accumulator): g_c collects the
+    // divergence-transposed P-row face weights of the phiHbyA pressure
+    // channel  dphi_f = -[w*mob_o*grad(dp)_o + (1-w)*mob_n*grad(dp)_n].S_f.
+    scalarField h7Gx(prodNCells, 0.0);
+    scalarField h7Gy(prodNCells, 0.0);
+    scalarField h7Gz(prodNCells, 0.0);
 
     forAll(prodUpper, facei)
     {
@@ -569,6 +622,27 @@ auto applyProdFlowJT =
         output[prodUIndex(nei, 0)] += (1.0 - weight)*directRel.x();
         output[prodUIndex(nei, 1)] += (1.0 - weight)*directRel.y();
         output[prodUIndex(nei, 2)] += (1.0 - weight)*directRel.z();
+
+        // BFINAL-024 (H7 channel, stage 1): the true forward flux
+        //   phi_f = interp(HbyA).Sf - kf*(p_n - p_o)     (NS.H:113-115,1032)
+        // contains, through the UEqn source copy == -fvc::grad(p)
+        // (operator== adds V*(-grad p) to UEqn.source(), fvMatrix.C:1428;
+        // the second -grad p in solve(UEqn == -fvc::grad(p)) only enters
+        // the solve temporary, B23 T7 derivation entry), the pressure
+        // channel  dphi_f = -interp(mob*grad dp).S_f  with
+        // mob = rAU = rAtU = primalPressureMobility (SIMPLE dict has no
+        // "consistent" entry -> simple.consistent() false -> rAtU==rAU;
+        // alphaRel*prodRAU == rAtU machine-verified, B23 corrected basis
+        // 2.19e-15).  Transpose stage 1 uses the PURE divergence weight
+        // lambdaPdiff (the channel has no U columns; mob already carries
+        // alphaRel):  g_c += mob_c*kappa(c,f)*lambdaPdiff_f*S_f.
+        const vector h7Own =
+            primalPressureMobility[own]*weight*lambdaPdiff*prodSf[facei];
+        const vector h7Nei =
+            primalPressureMobility[nei]*(1.0 - weight)*lambdaPdiff
+           *prodSf[facei];
+        h7Gx[own] += h7Own.x(); h7Gy[own] += h7Own.y(); h7Gz[own] += h7Own.z();
+        h7Gx[nei] += h7Nei.x(); h7Gy[nei] += h7Nei.y(); h7Gz[nei] += h7Nei.z();
     }
 
     // Boundary reduced-flux transpose and direct U-p transpose.
@@ -601,6 +675,18 @@ auto applyProdFlowJT =
                 output[prodUIndex(celli, 0)] += dB.x();
                 output[prodUIndex(celli, 1)] += dB.y();
                 output[prodUIndex(celli, 2)] += dB.z();
+
+                // BFINAL-024 (H7 channel, boundary stage 1): the assignable-U
+                // (outlet) boundary flux S_b&HbyA_c carries the same source
+                // pressure channel  dphi_b = -(S_b&mob_c*grad(dp)_c)
+                // (fvc::flux extrapolated face value = cell value; T7b
+                // boundary replica), so with the P-row boundary weight
+                // lambdaPc:  g_c += mob_c*lambdaPc*S_b.
+                const vector h7B =
+                    primalPressureMobility[celli]*lambdaPc*patchSf[facei];
+                h7Gx[celli] += h7B.x();
+                h7Gy[celli] += h7B.y();
+                h7Gz[celli] += h7B.z();
             }
 
             if (!pressureFixed)
@@ -628,6 +714,51 @@ auto applyProdFlowJT =
                    *mesh.magSf().boundaryField()[patchi][facei]
                    *input[prodPIndex(celli)];
             }
+        }
+    }
+
+    // BFINAL-024 (H7 channel, stage 2): transpose of the Gauss-linear cell
+    // gradient (gradSchemes "Gauss linear", case-verified)
+    //   (grad dp)_c = (1/V_c)*( +S_f'*interp(dp)_f'  (faces owned by c)
+    //                           -S_f'*interp(dp)_f'  (faces neighboured by c)
+    //                           +S_b*dp_c )           (zeroGradient-p faces;
+    //                                                 fixedValue-p -> dp_b = 0)
+    // spread of -g_c.(grad dp)_c:
+    //   q_f' = S_f'&(g_o'/V_o' - g_n'/V_n')
+    //   out[P(o')] -= w'*q_f' ; out[P(n')] -= (1-w')*q_f'
+    //   out[P(c)]  -= (g_c&S_b)/V_c   (zeroGradient-p boundary faces)
+    // (verified entrywise on the f'=f'' diagonal: out[P(o')] coefficient of
+    // lambdaPdiff_f' = -w'^2*mob_o*|S|^2/V_o' + w'(1-w')*mob_n*|S|^2/V_n'
+    // = dphi_f'/ddp_{o'}, B24 derivation note in evidence.)
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+        const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+        const vector gOwn(h7Gx[own], h7Gy[own], h7Gz[own]);
+        const vector gNei(h7Gx[nei], h7Gy[nei], h7Gz[nei]);
+        const scalar q =
+            prodSf[facei] & (gOwn*Vinvo - gNei*Vinn);
+        output[prodPIndex(own)] -= prodWeights[facei]*q;
+        output[prodPIndex(nei)] -= (1.0 - prodWeights[facei])*q;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (p.boundaryField()[patchi].fixesValue())
+        {
+            // fixedValue-p boundary faces have dp_b = 0 in the gradient.
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const vector gC(h7Gx[celli], h7Gy[celli], h7Gz[celli]);
+            output[prodPIndex(celli)] -=
+                (gC & patchSf[facei])
+               /Foam::max(mesh.V()[celli], SMALL);
         }
     }
 
@@ -1040,6 +1171,77 @@ if (prodPressureNeedsReference)
     prodPressurePrecMatrix.setReference(pRefCell, 0.0);
 }
 
+// BFINAL-024 (H7): read-only magnitude diagnostic of the phiHbyA pressure
+// channel relative to the kf (pEqn.flux) channel on the deterministic
+// direction dp_c = sin(0.173*(c+1)) (stageB8 dir3 pattern).  Quantifies the
+// preconditioner's deliberate exclusion of the distance-2 H7 part from the
+// distance-1 Poisson matrix (see the PRODPRECGAMGCHECK scope note above).
+{
+    vectorField h7DirGrad(prodNCells, vector::zero);
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const scalar dpFace =
+            prodWeights[facei]*Foam::sin(0.173*(own + 1))
+          + (1.0 - prodWeights[facei])*Foam::sin(0.173*(nei + 1));
+        h7DirGrad[own] += prodSf[facei]*dpFace;
+        h7DirGrad[nei] -= prodSf[facei]*dpFace;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (p.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells = mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf = mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            h7DirGrad[celli] +=
+                patchSf[facei]*Foam::sin(0.173*(celli + 1));
+        }
+    }
+    for (label celli = 0; celli < prodNCells; ++celli)
+    {
+        h7DirGrad[celli] /= Foam::max(mesh.V()[celli], SMALL);
+    }
+    scalar nH7 = 0.0, nKf = 0.0;
+    forAll(prodUpper, facei)
+    {
+        const label own = prodOwner[facei];
+        const label nei = prodNeighbour[facei];
+        const scalar weight = prodWeights[facei];
+        const vector interpMobGrad =
+            weight*primalPressureMobility[own]*h7DirGrad[own]
+          + (1.0 - weight)*primalPressureMobility[nei]*h7DirGrad[nei];
+        nH7 += sqr(prodSf[facei] & interpMobGrad);
+        const scalar mobilityFace =
+            weight*primalPressureMobility[own]
+          + (1.0 - weight)*primalPressureMobility[nei];
+        const scalar kf =
+            mobilityFace
+           *mesh.deltaCoeffs().primitiveField()[facei]
+           *mesh.magSf().primitiveField()[facei];
+        nKf += sqr
+            (
+                kf
+               *(
+                    Foam::sin(0.173*(nei + 1))
+                  - Foam::sin(0.173*(own + 1))
+                )
+            );
+    }
+    reduce(nH7, sumOp<scalar>());
+    reduce(nKf, sumOp<scalar>());
+    Info<< "PRODH7SHARE (" << discreteAdjointLabel
+        << "): |H7 dp-channel|L2/|kf dp-channel|L2 (dir sin(0.173(c+1))) = "
+        << Foam::sqrt(nH7/Foam::max(nKf, scalar(VSMALL)))
+        << "  (preconditioner keeps the kf-Laplacian part only; see the"
+        << " PRODPRECGAMGCHECK scope note)" << endl;
+}
+
 const scalar prodPressurePrecTolerance =
     optProperties.lookupOrDefault<scalar>
     (
@@ -1157,6 +1359,14 @@ else
 }
 
 // BFINAL-010 (b): four-group matrix/operator equivalence decomposition.
+// BFINAL-024 scope note: with the H7 phiHbyA pressure channel the operator's
+// P-P block is  J_PP = (kf Laplacian) + (H7 distance-2 Gauss-gradient
+// coupling  G^T diag(mob/V) M div).  An fvScalarMatrix laplacian is a
+// distance-1 stencil and CANNOT represent the H7 part exactly, so the
+// pressureGAMG preconditioner deliberately remains the kf-Laplacian
+// APPROXIMATION of J_PP (preconditioners need not equal the block).  This
+// gate therefore verifies the preconditioner matrix against the Laplacian
+// (kf) PART of the scaled P-P block, term by term:
 // The preconditioner fvScalarMatrix from -fvm::laplacian(mobility, psi)
 // must reproduce the scaled J^T P-P block term by term:
 //   interior diag  +kf per face   (negSumDiag diag(), boundary excluded)

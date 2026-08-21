@@ -345,6 +345,9 @@ auto applyPressureFluxCorrection =
 // map and is retired (BFINAL-016 B1: 86%/70%/sign-flip vs flow truth).
 scalarField discreteExternalFluxTranspose(discreteNUnknowns, 0.0);
 vectorField discreteExternalHA(discreteNCells, vector::zero);
+// BFINAL-024 (H7): stage-1 accumulator of the phiHbyA pressure channel for
+// the SAME face-functional folding (mob = primalPressureMobility).
+vectorField discreteH7ExtG(discreteNCells, vector::zero);
 forAll(discreteUpper, facei)
 {
     const label own = discreteOwner[facei];
@@ -373,6 +376,13 @@ forAll(discreteUpper, facei)
        *mesh.magSf().primitiveField()[facei];
     discreteExternalFluxTranspose[discretePIndex(own)] += kf*faceFunctional;
     discreteExternalFluxTranspose[discretePIndex(nei)] -= kf*faceFunctional;
+    // BFINAL-024 (H7): stage 1 of the phiHbyA pressure channel transpose
+    // (face functional in place of the P-row divergence weight).
+    discreteH7ExtG[own] +=
+        primalPressureMobility[own]*weight*faceFunctional*discreteSf[facei];
+    discreteH7ExtG[nei] +=
+        primalPressureMobility[nei]*(1.0 - weight)*faceFunctional
+       *discreteSf[facei];
 }
 forAll(mesh.boundary(), patchi)
 {
@@ -397,6 +407,9 @@ forAll(mesh.boundary(), patchi)
             discreteExternalFluxTranspose[discreteUIndex(celli, cmpt)] +=
                 (1.0 - alphaRel)*faceTranspose.component(cmpt);
         }
+        // BFINAL-024 (H7): assignable-U boundary stage 1 (outlet).
+        discreteH7ExtG[celli] +=
+            primalPressureMobility[celli]*faceFunctional*patchSf[facei];
         if (pressureFixed)
         {
             discreteExternalFluxTranspose[discretePIndex(celli)] +=
@@ -449,6 +462,42 @@ forAll(mesh.boundary(), patchi)
         }
     }
 }
+// BFINAL-024 (H7): stage 2 of the face-functional folding - transpose of
+// the Gauss-linear gradient spread, mirroring applyDiscreteFlowJT slot by
+// slot (internal faces + zeroGradient-p boundary self terms).
+forAll(discreteUpper, facei)
+{
+    const label own = discreteOwner[facei];
+    const label nei = discreteNeighbour[facei];
+    const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+    const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+    const scalar q =
+        discreteSf[facei]
+      & (discreteH7ExtG[own]*Vinvo - discreteH7ExtG[nei]*Vinn);
+    discreteExternalFluxTranspose[discretePIndex(own)] -=
+        discreteWeights[facei]*q;
+    discreteExternalFluxTranspose[discretePIndex(nei)] -=
+        (1.0 - discreteWeights[facei])*q;
+}
+forAll(mesh.boundary(), patchi)
+{
+    if (p.boundaryField()[patchi].fixesValue())
+    {
+        continue;
+    }
+    const labelUList& patchCells =
+        mesh.boundary()[patchi].faceCells();
+    const vectorField& patchSf =
+        mesh.Sf().boundaryField()[patchi];
+    forAll(patchCells, facei)
+    {
+        const label celli = patchCells[facei];
+        discreteExternalFluxTranspose[discretePIndex(celli)] -=
+            (discreteH7ExtG[celli] & patchSf[facei])
+           /Foam::max(mesh.V()[celli], SMALL);
+    }
+}
+
 for (label celli = 0; celli < discreteNCells; ++celli)
 {
     for (direction cmpt = 0; cmpt < 3; ++cmpt)
@@ -645,6 +694,64 @@ auto applyDiscreteFlowJ =
             << " max=" << mxH << endl;
     }
 
+    // BFINAL-024 (H7): Gauss-linear gradient of the input pressure part -
+    // the basis of the phiHbyA pressure channel
+    //   dphi_f = -[w*mob_o*grad(dp)_o + (1-w)*mob_n*grad(dp)_n].S_f,
+    // dphi_b = -(S_b&mob_c*grad(dp)_c) on assignable-U boundary faces.
+    // Derivation (B23 T7 entry, OF7-source verified): the UEqn construction
+    // == -fvc::grad(p) leaves ONE -V*grad(p) copy in UEqn.source()
+    // (operator== copies the matrix, fvMatrix.C:1428; the second copy in
+    // solve(UEqn == -fvc::grad(p)) enters the temporary only), so
+    // HbyA = rAU*UEqn.H() contains -rAU*grad(p) and phi = flux(HbyA) -
+    // pEqn.flux() carries -interp(mob*grad dp).Sf with
+    // mob = rAU = rAtU = primalPressureMobility (SIMPLE dict has no
+    // "consistent" entry; alphaRel*rAUAdj == rAtU machine-verified, B23).
+    // Gauss-linear boundary: zeroGradient-p faces dp_b = dp_c, fixedValue-p
+    // faces (outlet) dp_b = 0.
+    scalarField h7Gx(discreteNCells, 0.0);
+    scalarField h7Gy(discreteNCells, 0.0);
+    scalarField h7Gz(discreteNCells, 0.0);
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+        const scalar dpFace =
+            discreteWeights[facei]*input[discretePIndex(own)]
+          + (1.0 - discreteWeights[facei])*input[discretePIndex(nei)];
+        h7Gx[own] += discreteSf[facei].x()*dpFace;
+        h7Gy[own] += discreteSf[facei].y()*dpFace;
+        h7Gz[own] += discreteSf[facei].z()*dpFace;
+        h7Gx[nei] -= discreteSf[facei].x()*dpFace;
+        h7Gy[nei] -= discreteSf[facei].y()*dpFace;
+        h7Gz[nei] -= discreteSf[facei].z()*dpFace;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (p.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells =
+            mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf =
+            mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const scalar dpC = input[discretePIndex(celli)];
+            h7Gx[celli] += patchSf[facei].x()*dpC;
+            h7Gy[celli] += patchSf[facei].y()*dpC;
+            h7Gz[celli] += patchSf[facei].z()*dpC;
+        }
+    }
+    for (label celli = 0; celli < discreteNCells; ++celli)
+    {
+        const scalar Vinv = 1.0/Foam::max(mesh.V()[celli], SMALL);
+        h7Gx[celli] *= Vinv;
+        h7Gy[celli] *= Vinv;
+        h7Gz[celli] *= Vinv;
+    }
+
     forAll(discreteUpper, facei)
     {
         const label own = discreteOwner[facei];
@@ -704,10 +811,20 @@ auto applyDiscreteFlowJ =
         // momentum velocityJump (convective) term below, which is part of
         // the J_UU block and must stay byte-for-byte unchanged.
         const vector interpDU = wf*deltaUOwn + (1.0 - wf)*deltaUNei;
+        // BFINAL-024 (H7): the phiHbyA pressure channel
+        // -interp(mob*grad dp).Sf joins the P-row flux tangent (the true
+        // forward phi carries it through the UEqn source copy; see the H7
+        // derivation note above the gradient loop).
+        const vector h7InterpMobGrad =
+            wf*primalPressureMobility[own]
+           *vector(h7Gx[own], h7Gy[own], h7Gz[own])
+          + (1.0 - wf)*primalPressureMobility[nei]
+           *vector(h7Gx[nei], h7Gy[nei], h7Gz[nei]);
         const scalar deltaPhiFacePU =
             (discreteSf[facei] & (alphaRel*rAUdH + (1.0 - alphaRel)*interpDU))
           - mobF*(input[discretePIndex(nei)] - input[discretePIndex(own)])
-           *dcfF*mafF;
+           *dcfF*mafF
+          - (discreteSf[facei] & h7InterpMobGrad);
         if (collectDPhiJ)
         {
             collectedDPhiJ[facei] = deltaPhiFacePU;
@@ -780,6 +897,18 @@ auto applyDiscreteFlowJ =
                 output[discretePIndex(celli)] +=
                     (patchSf[facei]
                      & (alphaRel*rAUb*dHb + (1.0 - alphaRel)*dUb));
+                // BFINAL-024 (H7): boundary pressure channel
+                // dphi_b = -(S_b&mob_c*grad(dp)_c) on assignable-U faces
+                // (the extrapolated face HbyA carries the same source
+                // -grad p copy).
+                output[discretePIndex(celli)] -=
+                    (
+                        patchSf[facei]
+                      & (
+                            primalPressureMobility[celli]
+                           *vector(h7Gx[celli], h7Gy[celli], h7Gz[celli])
+                        )
+                    );
             }
 
             if (!pressureFixed)
@@ -833,6 +962,12 @@ auto applyDiscreteFlowJT =
     scalarField hAx(mesh.nCells(), 0.0);
     scalarField hAy(mesh.nCells(), 0.0);
     scalarField hAz(mesh.nCells(), 0.0);
+
+    // BFINAL-024 (H7): stage-1 accumulator of the phiHbyA pressure channel
+    // transpose (see applyDiscreteFlowJ H7 note for the derivation).
+    scalarField h7Gx(mesh.nCells(), 0.0);
+    scalarField h7Gy(mesh.nCells(), 0.0);
+    scalarField h7Gz(mesh.nCells(), 0.0);
 
     // Stage 1: internal faces
     forAll(discreteUpper, facei)
@@ -922,6 +1057,19 @@ auto applyDiscreteFlowJT =
         output[discreteUIndex(nei, 0)] += (1.0 - wf)*directRel.x();
         output[discreteUIndex(nei, 1)] += (1.0 - wf)*directRel.y();
         output[discreteUIndex(nei, 2)] += (1.0 - wf)*directRel.z();
+
+        // BFINAL-024 (H7 channel, stage 1): transpose of
+        // dphi_f = -interp(mob*grad dp).Sf uses the PURE divergence weight
+        // lambdaPdiff (no convTerm/alphaRel mixing: the channel has no U
+        // columns and mob already carries alphaRel):
+        //   g_c += mob_c*kappa(c,f)*lambdaPdiff_f*S_f
+        const vector h7Own =
+            primalPressureMobility[own]*wf*lambdaPdiff*discreteSf[facei];
+        const vector h7Nei =
+            primalPressureMobility[nei]*(1.0 - wf)*lambdaPdiff
+           *discreteSf[facei];
+        h7Gx[own] += h7Own.x(); h7Gy[own] += h7Own.y(); h7Gz[own] += h7Own.z();
+        h7Gx[nei] += h7Nei.x(); h7Gy[nei] += h7Nei.y(); h7Gz[nei] += h7Nei.z();
     }
 
     // boundary: reduced boundary-flux transpose (lambdaP -> hA) and
@@ -956,6 +1104,14 @@ auto applyDiscreteFlowJT =
                 output[discreteUIndex(celli, 0)] += dB.x();
                 output[discreteUIndex(celli, 1)] += dB.y();
                 output[discreteUIndex(celli, 2)] += dB.z();
+
+                // BFINAL-024 (H7 channel, boundary stage 1):
+                //   g_c += mob_c*lambdaPc*S_b
+                const vector h7B =
+                    primalPressureMobility[celli]*lambdaPc*patchSf[facei];
+                h7Gx[celli] += h7B.x();
+                h7Gy[celli] += h7B.y();
+                h7Gz[celli] += h7B.z();
             }
 
             if (!pressureFixed)
@@ -982,6 +1138,46 @@ auto applyDiscreteFlowJT =
                    *mesh.magSf().boundaryField()[patchi][facei]
                    *input[discretePIndex(celli)];
             }
+        }
+    }
+
+    // BFINAL-024 (H7 channel, stage 2): transpose of the Gauss-linear
+    // gradient (owner +, neighbour -, zeroGradient-p boundary self term;
+    // fixedValue-p -> dp_b = 0):
+    //   q_f' = S_f'&(g_o'/V_o' - g_n'/V_n')
+    //   out[P(o')] -= w'*q_f' ; out[P(n')] -= (1-w')*q_f'
+    //   out[P(c)]  -= (g_c&S_b)/V_c   (zeroGradient-p boundary faces)
+    forAll(discreteUpper, facei)
+    {
+        const label own = discreteOwner[facei];
+        const label nei = discreteNeighbour[facei];
+        const scalar Vinvo = 1.0/Foam::max(mesh.V()[own], SMALL);
+        const scalar Vinn = 1.0/Foam::max(mesh.V()[nei], SMALL);
+        const vector gOwn(h7Gx[own], h7Gy[own], h7Gz[own]);
+        const vector gNei(h7Gx[nei], h7Gy[nei], h7Gz[nei]);
+        const scalar q =
+            discreteSf[facei] & (gOwn*Vinvo - gNei*Vinn);
+        output[discretePIndex(own)] -= discreteWeights[facei]*q;
+        output[discretePIndex(nei)] -=
+            (1.0 - discreteWeights[facei])*q;
+    }
+    forAll(mesh.boundary(), patchi)
+    {
+        if (p.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& patchCells =
+            mesh.boundary()[patchi].faceCells();
+        const vectorField& patchSf =
+            mesh.Sf().boundaryField()[patchi];
+        forAll(patchCells, facei)
+        {
+            const label celli = patchCells[facei];
+            const vector gC(h7Gx[celli], h7Gy[celli], h7Gz[celli]);
+            output[discretePIndex(celli)] -=
+                (gC & patchSf[facei])
+               /Foam::max(mesh.V()[celli], SMALL);
         }
     }
 
@@ -2628,6 +2824,144 @@ forAll(discreteUpper, facei)
                     addCoo(discreteUIndex(own, c), discreteUIndex(down2, c2d),
                         -lowerF*Vinn*convCo*sf2.component(c)*vj2.component(c2d));
                 }
+            }
+        }
+    }
+}
+
+// ---- BFINAL-024 (H7): explicit phiHbyA pressure-channel J^T entries ----
+// Mirrors applyDiscreteFlowJT stage 1/stage 2 slot by slot:
+//   stage 1: g_c = mob_c*( sum_{f int of c} kappa(c,f)*lambdaPdiff_f*S_f
+//                        + sum_{b assignable(c)} lambdaP(c)*S_b )
+//   stage 2: out[P(o')] -= w'*q ; out[P(n')] -= (1-w')*q,
+//             q = S_f'&(g_{o'}/V_{o'} - g_{n'}/V_{n'})
+//           out[P(c)]  -= (g_c&S_b)/V_c   (zeroGradient-p boundary faces)
+// with lambdaPdiff_f = lambdaP(owner(f)) - lambdaP(neighbour(f)).
+{
+    const label h7N = mesh.nCells();
+    std::vector<std::vector<label>> h7CellFaces(h7N);
+    forAll(discreteUpper, fi)
+    {
+        h7CellFaces[discreteOwner[fi]].push_back(fi);
+        h7CellFaces[discreteNeighbour[fi]].push_back(fi);
+    }
+    // per-cell assignable-U boundary faces as (patch, face) pairs
+    std::vector<std::vector<label>> h7CellBndFace(h7N);
+    std::vector<std::vector<label>> h7CellBndPatch(h7N);
+    forAll(mesh.boundary(), patchi)
+    {
+        if (!U.boundaryField()[patchi].assignable())
+        {
+            continue;
+        }
+        const labelUList& fc = mesh.boundary()[patchi].faceCells();
+        forAll(fc, f)
+        {
+            h7CellBndFace[fc[f]].push_back(f);
+            h7CellBndPatch[fc[f]].push_back(patchi);
+        }
+    }
+    auto h7BndSf = [&](label celli, label ib) -> vector
+    {
+        return mesh.Sf().boundaryField()
+            [h7CellBndPatch[celli][ib]][h7CellBndFace[celli][ib]];
+    };
+    forAll(discreteUpper, fp)
+    {
+        const label op = discreteOwner[fp];
+        const label np = discreteNeighbour[fp];
+        const scalar wp = discreteWeights[fp];
+        const vector sfp = discreteSf[fp];
+        const scalar VinvO = 1.0/Foam::max(mesh.V()[op], SMALL);
+        const scalar VinvN = 1.0/Foam::max(mesh.V()[np], SMALL);
+
+        // internal faces of the OWNER cell (through g_{o'}/V_{o'})
+        for (const label fq : h7CellFaces[op])
+        {
+            const label oq = discreteOwner[fq];
+            const label nq = discreteNeighbour[fq];
+            const scalar kap =
+                (oq == op)
+              ? discreteWeights[fq]
+              : (1.0 - discreteWeights[fq]);
+            const scalar mO =
+                primalPressureMobility[op]*kap*VinvO
+               *(discreteSf[fq] & sfp);
+            addCoo(discretePIndex(op), discretePIndex(oq), -wp*mO);
+            addCoo(discretePIndex(op), discretePIndex(nq),  wp*mO);
+            addCoo(discretePIndex(np), discretePIndex(oq), -(1.0 - wp)*mO);
+            addCoo(discretePIndex(np), discretePIndex(nq),  (1.0 - wp)*mO);
+        }
+        // internal faces of the NEIGHBOUR cell (through -g_{n'}/V_{n'})
+        for (const label fq : h7CellFaces[np])
+        {
+            const label oq = discreteOwner[fq];
+            const label nq = discreteNeighbour[fq];
+            const scalar kap =
+                (oq == np)
+              ? discreteWeights[fq]
+              : (1.0 - discreteWeights[fq]);
+            const scalar mN =
+                primalPressureMobility[np]*kap*VinvN
+               *(discreteSf[fq] & sfp);
+            addCoo(discretePIndex(op), discretePIndex(oq),  wp*mN);
+            addCoo(discretePIndex(op), discretePIndex(nq), -wp*mN);
+            addCoo(discretePIndex(np), discretePIndex(oq),  (1.0 - wp)*mN);
+            addCoo(discretePIndex(np), discretePIndex(nq), -(1.0 - wp)*mN);
+        }
+        // assignable-U boundary faces of the OWNER cell
+        for (label ib = 0; ib < label(h7CellBndFace[op].size()); ++ib)
+        {
+            const scalar mO =
+                primalPressureMobility[op]*VinvO*(h7BndSf(op, ib) & sfp);
+            addCoo(discretePIndex(op), discretePIndex(op), -wp*mO);
+            addCoo(discretePIndex(np), discretePIndex(op), -(1.0 - wp)*mO);
+        }
+        // assignable-U boundary faces of the NEIGHBOUR cell
+        for (label ib = 0; ib < label(h7CellBndFace[np].size()); ++ib)
+        {
+            const scalar mN =
+                primalPressureMobility[np]*VinvN*(h7BndSf(np, ib) & sfp);
+            addCoo(discretePIndex(op), discretePIndex(np),  wp*mN);
+            addCoo(discretePIndex(np), discretePIndex(np),  (1.0 - wp)*mN);
+        }
+    }
+    // zeroGradient-p boundary self terms: out[P(c)] -= (g_c&S_b)/V_c
+    forAll(mesh.boundary(), patchi)
+    {
+        if (p.boundaryField()[patchi].fixesValue())
+        {
+            continue;
+        }
+        const labelUList& fc = mesh.boundary()[patchi].faceCells();
+        const vectorField& pSf = mesh.Sf().boundaryField()[patchi];
+        forAll(fc, fb)
+        {
+            const label c = fc[fb];
+            const scalar VinvC = 1.0/Foam::max(mesh.V()[c], SMALL);
+            for (const label fq : h7CellFaces[c])
+            {
+                const label oq = discreteOwner[fq];
+                const label nq = discreteNeighbour[fq];
+                const scalar kap =
+                    (oq == c)
+                  ? discreteWeights[fq]
+                  : (1.0 - discreteWeights[fq]);
+                const scalar mC =
+                    primalPressureMobility[c]*kap*VinvC
+                   *(discreteSf[fq] & pSf[fb]);
+                addCoo(discretePIndex(c), discretePIndex(oq), -mC);
+                addCoo(discretePIndex(c), discretePIndex(nq),  mC);
+            }
+            for (label ib = 0; ib < label(h7CellBndFace[c].size()); ++ib)
+            {
+                addCoo
+                (
+                    discretePIndex(c),
+                    discretePIndex(c),
+                    -primalPressureMobility[c]*VinvC
+                       *(h7BndSf(c, ib) & pSf[fb])
+                );
             }
         }
     }

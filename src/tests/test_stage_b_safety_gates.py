@@ -420,6 +420,54 @@ class StageBSafetyGateTests(unittest.TestCase):
         self.assertIn("gsenshPressureDropPressureRow = -rxPressureRowT"
                       "*dAlphaDxh;", self.sensitivity)
 
+    def test_bfinal024_h7_phihbya_pressure_channel(self):
+        # BFINAL-024 (H7; first CONFIRMED production-operator defect, B23 T7
+        # verdict: corr(correction,residual) -0.996/-0.879/-0.948, right sign
+        # improves the value gate 3.01->2.60%, D2 45.34->35.68).  The true
+        # forward phi carries -interp(rAtU*grad p).Sf through the UEqn source
+        # copy == -fvc::grad(p) (ONE -V*grad(p) stays in UEqn.source(); the
+        # second copy in solve(UEqn == -fvc::grad(p)) enters the temporary
+        # only; SIMPLE dict has no "consistent" entry -> rAtU == rAU ==
+        # primalPressureMobility == alphaRel*prodRAU, B23 machine-verified).
+        # The channel must be present slot by slot in BOTH operators (forward
+        # J flux tangent + J^T transpose), the external face-functional
+        # folding, and the explicit COO/CSR export:
+        #   stage 1: g_c += mob_c*kappa(c,f)*lambdaPdiff_f*S_f
+        #                   + mob_c*lambdaPc*S_b   (assignable-U boundary)
+        #   stage 2: q = S_f'&(g_o'/V_o' - g_n'/V_n'); out[P(o')] -= w'*q;
+        #            out[P(n')] -= (1-w')*q; out[P(c)] -= (g_c&S_b)/V_c
+        #            on zeroGradient-p boundary faces (fixedValue-p -> dp_b=0)
+        for text in (self.production, self.diagnostic):
+            self.assertIn("BFINAL-024 (H7 channel, stage 1)", text)
+            self.assertIn("BFINAL-024 (H7 channel, stage 2)", text)
+            self.assertIn("BFINAL-024 (H7 channel, boundary stage 1)", text)
+            self.assertIn(
+                "BFINAL-024 (H7): stage 2 of the face-functional folding",
+                text,
+            )
+        self.assertIn(
+            "primalPressureMobility[own]*weight*lambdaPdiff",
+            self.production,
+        )
+        self.assertIn(
+            "primalPressureMobility[own]*wf*lambdaPdiff",
+            self.diagnostic,
+        )
+        # forward J flux tangent (diagnostic path) carries the channel into
+        # deltaPhiFacePU and the assignable-U boundary flux
+        self.assertIn("h7InterpMobGrad", self.diagnostic)
+        # the explicit COO/CSR oracle export must replicate the channel
+        self.assertIn(
+            "BFINAL-024 (H7): explicit phiHbyA pressure-channel J^T entries",
+            self.diagnostic,
+        )
+        # the pressureGAMG preconditioner stays the kf-Laplacian
+        # APPROXIMATION (an fvMatrix laplacian cannot represent the H7
+        # distance-2 coupling); the equivalence gate scope is declared and
+        # the share of the excluded channel is quantified at runtime
+        self.assertIn("BFINAL-024 scope note", self.production)
+        self.assertIn("PRODH7SHARE", self.production)
+
     def test_bfinal022_b2_module_refreshes_kf_basis_at_state_b(self):
         # BFINAL-022 W1 (SLOT-2): the stage-B2 module must re-capture
         # primalPressureMobility at the full-SST baseline (state B)
