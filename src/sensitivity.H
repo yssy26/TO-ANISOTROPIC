@@ -1,5 +1,30 @@
 Info<< "sensitivity analysis" << endl << flush;
 
+// BFINAL-032: dictionary-persisted invocation counter.  A static local label
+// would be per-include-site here (sensitivity.H is spliced into the main-loop
+// body AND into the runFullB2Chain lambda), so the invocation number is
+// persisted through optProperties instead.  Invocation 1 = main-loop round,
+// invocation 2 = stage-B2 validation-chain round; these produce the
+// deterministic _r1/_r2 suffixes used by the gated decomposition export.
+const bool b32WriteDecomposition =
+    optProperties.lookupOrDefault<Switch>("stageB31WriteDecomposition", false);
+label b32SensCall =
+    optProperties.lookupOrDefault<label>("b32SensInvocationCount", 0);
+const label b32CallNumber = b32SensCall + 1;
+optProperties.add("b32SensInvocationCount", b32CallNumber, true);
+const word b32RoundTag = word("_r") + Foam::name(b32CallNumber);
+
+// Round attribution declaration: the /1/ plain-name adjoint fields
+// (Uc Ub pc pb Tb) were written by writeOptimizationState.H BEFORE this
+// invocation, so they ALWAYS hold the round-1 values; the sensitivity-family
+// fields written below belong to THIS invocation.  This documents the
+// cross-round mixing on-disk directly in the log.
+Info<< "BFINAL-032 declaration: on-disk /1/ Uc Ub pc pb Tb are round-1"
+    << " values (written by writeOptimizationState.H); sensitivity-family"
+    << " fields written by this invocation are round " << b32CallNumber
+    << " (stageB31WriteDecomposition=" << b32WriteDecomposition << ")"
+    << endl << flush;
+
 volScalarField dAlphaDxh
 (
     IOobject
@@ -283,6 +308,228 @@ if (adjointMode == "discrete")
             << " |pressureRow(pb)|L2=" << Foam::sqrt(rxJnPRow)
             << " |fluxDirect(Gx)|L2=" << Foam::sqrt(rxJnFx)
             << " |thermalC|L2=" << Foam::sqrt(rxJnC) << endl;
+    }
+
+    // BFINAL-032: gated decomposition export (stageB31WriteDecomposition,
+    // default false).  All writes are ROUND-TAGGED named copies so that the
+    // r1 (main-loop) and r2 (stage-B2 chain) invocations do not clobber each
+    // other on disk.  Placed BEFORE the freeze block (and before
+    // filter_chainrule.H below) so the exported segment values are the true
+    // production pre-filter quantities.  Default-off keeps the computation
+    // path bit-identical to b25.
+    if (b32WriteDecomposition)
+    {
+        // --- gDP-side two segments + raw pre-filter total ---
+        volScalarField gpdMomR
+        (
+            IOobject
+            (
+                "gsenshPressureDropMomentum" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            gsenshPressureDropMomentum
+        );
+        gpdMomR.write();
+        volScalarField gpdPRowR
+        (
+            IOobject
+            (
+                "gsenshPressureDropPressureRow" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            gsenshPressureDropPressureRow
+        );
+        gpdPRowR.write();
+        volScalarField gpdRawR
+        (
+            IOobject
+            (
+                "gsenshPressureDropRaw" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            gsenshPressureDrop
+        );
+        gpdRawR.write();
+
+        // --- T-ring bases (pc and pb contractions) ---
+        volScalarField rxTR
+        (
+            IOobject
+            (
+                "rxPressureRowT" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            rxPressureRowT
+        );
+        rxTR.write();
+        volScalarField rxTbR
+        (
+            IOobject
+            (
+                "rxPressureRowTb" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            rxPressureRowTb
+        );
+        rxTbR.write();
+        volScalarField rxFxR
+        (
+            IOobject
+            (
+                "rxFluxDirectT" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            rxFluxDirectT
+        );
+        rxFxR.write();
+
+        // --- J-side four segments (momentum / pressureRow(pb) / fluxDirect
+        // / thermalC).  thermalC is the raw per-cell thermal-diffusion
+        // derivative, wrapped here into a volScalarField. ---
+        volScalarField gmtMomR
+        (
+            IOobject
+            (
+                "gsenshMeanTMomentum" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            gsenshMeanTMomentum
+        );
+        gmtMomR.write();
+        volScalarField gmtPRowR
+        (
+            IOobject
+            (
+                "gsenshMeanTPressureRow" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            gsenshMeanTPressureRow
+        );
+        gmtPRowR.write();
+        volScalarField gmtFxR
+        (
+            IOobject
+            (
+                "gsenshMeanTFluxDirect" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            gsenshMeanTFluxDirect
+        );
+        gmtFxR.write();
+        volScalarField gmtCR
+        (
+            IOobject
+            (
+                "gsenshMeanTThermalC" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh,
+            dimensionedScalar("zeroGMTThermalC", fsenshMeanT.dimensions(), 0.0),
+            zeroGradientFvPatchScalarField::typeName
+        );
+        gmtCR.primitiveFieldRef() = thermalDiffusionDerivativeDTCell;
+        gmtCR.write();
+
+        // --- round-tagged copies of the plain-name adjoint fields so each
+        // round's on-disk values are unambiguous.  writeOptimizationState.H
+        // wrote the PLAIN names (/1/Uc etc.) with the round-1 values BEFORE
+        // this invocation; these copies capture the in-memory values of THIS
+        // invocation. ---
+        volVectorField ucR
+        (
+            IOobject
+            (
+                "Uc" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            Uc
+        );
+        ucR.write();
+        volVectorField ubR
+        (
+            IOobject
+            (
+                "Ub" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            Ub
+        );
+        ubR.write();
+        volScalarField pcR
+        (
+            IOobject
+            (
+                "pc" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            pc
+        );
+        pcR.write();
+        volScalarField pbR
+        (
+            IOobject
+            (
+                "pb" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            pb
+        );
+        pbR.write();
+        volScalarField tbR
+        (
+            IOobject
+            (
+                "Tb" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            Tb
+        );
+        tbR.write();
     }
 
     if (freezeColdFlowForValidation)

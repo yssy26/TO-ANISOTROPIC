@@ -268,6 +268,70 @@ volScalarField rxFluxDirectT
         RX_OUTPUT_FIELD.primitiveFieldRef()[celli] = rxT[celli];
     }
 
+    // BFINAL-032: gated export of the internal-face segment (the raw
+    // J_P operator ingredients) so the offline B32 decomposition can
+    // compare them against the coordinator reconstruction.  The values
+    // are identical between the pc and pb contractions (same primal
+    // rebuild), so the writes fire only on the pc contraction (the pc
+    // include is the only one WITHOUT RX_FLUX_DIRECT_SOURCE) to avoid
+    // duplication.  Names carry the deterministic _r1/_r2 round tag (see
+    // sensitivity.H top); rxrAU/rxG0Field are written as named copies
+    // because their IOobjects were tmp-constructed.
+#ifndef RX_FLUX_DIRECT_SOURCE
+    if (b32WriteDecomposition)
+    {
+        volScalarField rxrAUR
+        (
+            IOobject
+            (
+                "rxrAU" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            rxrAU
+        );
+        rxrAUR.write();
+        surfaceScalarField rxG0FieldR
+        (
+            IOobject
+            (
+                "rxG0Field" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            rxG0Field
+        );
+        rxG0FieldR.write();
+        // rxDHbyA is a raw vectorField; wrap it in a volVectorField for
+        // a regular ascii field write (b31b-style parser reads ascii).
+        volVectorField rxDHbyAField
+        (
+            IOobject
+            (
+                "rxDHbyA" + b32RoundTag,
+                runTime.timeName(),
+                mesh,
+                IOobject::NO_READ,
+                IOobject::NO_WRITE
+            ),
+            mesh,
+            dimensionedVector
+            (
+                "rxDHbyA",
+                dimensionSet(0, 1, -1, 0, 0, 0, 0),
+                vector::zero
+            ),
+            zeroGradientFvPatchVectorField::typeName
+        );
+        rxDHbyAField.primitiveFieldRef() = rxDHbyA;
+        rxDHbyAField.write();
+    }
+#endif  // !RX_FLUX_DIRECT_SOURCE (pc-only internal-face write)
+
 #ifdef RX_FLUX_DIRECT_SOURCE
     // ---- (e) BFINAL-019 Gx direct-term basis: per-cell field whose
     // contraction with dAlphaDxh*z equals g^T phi_x (see file header).

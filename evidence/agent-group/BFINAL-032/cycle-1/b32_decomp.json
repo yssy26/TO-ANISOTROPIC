@@ -1,0 +1,207 @@
+{
+ "g0": {
+  "Uc_untag_eq_r1": 0.0,
+  "Ub_untag_eq_r1": 0.0,
+  "pc_untag_eq_r1": 0.0,
+  "pb_untag_eq_r1": 0.0,
+  "Tb_untag_eq_r1": 0.0
+ },
+ "g1": {
+  "_r1": {
+   "relL2": 1.020995832828137e-12,
+   "maxAbs": 1.0000247158137299e-14,
+   "norm_raw": 0.276879126700649,
+   "mom_offline_relL2": 0.07811946751847425,
+   "prow_offline_relL2": 2.856040848133956e-12,
+   "J_seg_sum_L2": 0.003439911681005811
+  },
+  "_r2": {
+   "relL2": 9.915528915163405e-13,
+   "maxAbs": 1.0000247158137299e-14,
+   "norm_raw": 0.28449290298499236,
+   "mom_offline_relL2": 3.0990569148791695e-12,
+   "prow_offline_relL2": 2.700293824148277e-12,
+   "J_seg_sum_L2": 0.002521540212059213
+  }
+ },
+ "g2": {
+  "_r1_pc": {
+   "relL2": 0.20886570129143522,
+   "corr": 0.9909959602373751,
+   "norm_prod": 8.133936720658175e-08,
+   "norm_off": 6.731316329185845e-08
+  },
+  "_r1_pb": {
+   "relL2": 0.2575873155623529,
+   "corr": 0.9944590396694521,
+   "norm_prod": 3.282150204813628e-08,
+   "norm_off": 2.4924924045816785e-08
+  },
+  "_r1_prow_rebuilt": 2.856040848133956e-12,
+  "_r2_pc": {
+   "relL2": 0.05662514433792992,
+   "corr": 0.9982346743288295,
+   "norm_prod": 7.212511625785826e-08,
+   "norm_off": 7.20879852750746e-08
+  },
+  "_r2_pb": {
+   "relL2": 0.031940533667791135,
+   "corr": 0.999507762991004,
+   "norm_prod": 2.0490622317163156e-08,
+   "norm_off": 2.0358173862578376e-08
+  },
+  "_r2_prow_rebuilt": 2.700293824148277e-12
+ },
+ "g4": {
+  "_r1": {
+   "rxDHbyA_vs_dHbyA_relL2": 0.21594389575859851,
+   "rxDHbyA_vs_dHbyA_corr": 0.9863876558694725,
+   "rxrAU_vs_mob_relL2": 0.19699445712204253,
+   "rxrAU_vs_mob_corr": 0.9866559186694364,
+   "rxG0_vs_g0_relL2": 0.08558747338127376
+  },
+  "_r2": {
+   "rxDHbyA_vs_dHbyA_relL2": 0.12613470283299308,
+   "rxDHbyA_vs_dHbyA_corr": 0.9915876865263481,
+   "rxrAU_vs_mob_relL2": 1.5952600710622231e-12,
+   "rxrAU_vs_mob_corr": 1.0,
+   "rxG0_vs_g0_relL2": 6.259023279239171e-13
+  }
+ },
+ "g3": [
+  {
+   "dir": "D1",
+   "tag": "_r1",
+   "mom_z": -4.190490615965588,
+   "prow_z": -0.08697062158350147,
+   "closure_z": -4.2774612375490895,
+   "raw_z": -4.277461237549626,
+   "ch_mom": -2.6846185141818886,
+   "ch_prow": -0.08406063417473598,
+   "ch_closure": -2.7686791483566244,
+   "ch_total": -2.7686791483567013,
+   "ch_valid": false,
+   "ADJ_gDP": -5.23029384626718,
+   "ADJ_J": -0.0358350400485765,
+   "true_flow": -4.277461237487605,
+   "residual_closure_vs_raw": 1.2541545924240577e-13,
+   "total_lesion": 1.508782089130904,
+   "flow_lesion": 1.5087820891309809
+  },
+  {
+   "dir": "D1",
+   "tag": "_r2",
+   "mom_z": -5.155653506322338,
+   "prow_z": -0.07464033959968391,
+   "closure_z": -5.230293845922022,
+   "raw_z": -5.230293845924047,
+   "ch_mom": -2.769005854591398,
+   "ch_prow": -0.07784278588031567,
+   "ch_closure": -2.8468486404717135,
+   "ch_total": -2.8468486404716944,
+   "ch_valid": false,
+   "ADJ_gDP": -5.23029384626718,
+   "ADJ_J": -0.0358350400485765,
+   "true_flow": -4.277461237487605,
+   "residual_closure_vs_raw": 3.8717648693761226e-13,
+   "total_lesion": 1.430612597015911,
+   "flow_lesion": 1.4306125970158918
+  },
+  {
+   "dir": "D2",
+   "tag": "_r1",
+   "mom_z": 0.3663986001694297,
+   "prow_z": 0.01806420591351343,
+   "closure_z": 0.38446280608294314,
+   "raw_z": 0.3844628060837827,
+   "ch_mom": 1.4586213827806227,
+   "ch_prow": 0.04567290570498007,
+   "ch_closure": 1.5042942884856028,
+   "ch_total": 1.5042942884856445,
+   "ch_valid": false,
+   "ADJ_gDP": 1.0505249811003,
+   "ADJ_J": -0.02492599038981423,
+   "true_flow": 0.3844628061126605,
+   "residual_closure_vs_raw": 2.1836979752953977e-12,
+   "total_lesion": 1.119831482372984,
+   "flow_lesion": 1.1198314823729423
+  },
+  {
+   "dir": "D2",
+   "tag": "_r2",
+   "mom_z": 1.026292051383631,
+   "prow_z": 0.024232926255504186,
+   "closure_z": 1.0505249776391352,
+   "raw_z": 1.050524977639645,
+   "ch_mom": 1.504471571418306,
+   "ch_prow": 0.042294152440308735,
+   "ch_closure": 1.5467657238586145,
+   "ch_total": 1.5467657238586048,
+   "ch_valid": false,
+   "ADJ_gDP": 1.0505249811003,
+   "ADJ_J": -0.02492599038981423,
+   "true_flow": 0.3844628061126605,
+   "residual_closure_vs_raw": 4.852948989878757e-13,
+   "total_lesion": 1.1623029177459443,
+   "flow_lesion": 1.162302917745954
+  },
+  {
+   "dir": "D3",
+   "tag": "_r1",
+   "mom_z": 14.245497984864453,
+   "prow_z": -0.1491446561838204,
+   "closure_z": 14.096353328680634,
+   "raw_z": 14.096353328681106,
+   "ch_mom": -1.1041610335812155,
+   "ch_prow": -0.034573299913690694,
+   "ch_closure": -1.1387343334949063,
+   "ch_total": -1.1387343334949376,
+   "ch_valid": false,
+   "ADJ_gDP": 13.60342258150915,
+   "ADJ_J": -0.01200301226991504,
+   "true_flow": 14.096353328798937,
+   "residual_closure_vs_raw": 3.352008198596112e-14,
+   "total_lesion": -15.235087662293875,
+   "flow_lesion": -15.235087662293843
+  },
+  {
+   "dir": "D3",
+   "tag": "_r2",
+   "mom_z": 13.832100293742995,
+   "prow_z": -0.22867771756385916,
+   "closure_z": 13.603422576179137,
+   "raw_z": 13.603422576180744,
+   "ch_mom": -1.138873177518622,
+   "ch_prow": -0.032015559923394055,
+   "ch_closure": -1.170888737442016,
+   "ch_total": -1.1708887374420087,
+   "ch_valid": false,
+   "ADJ_gDP": 13.60342258150915,
+   "ADJ_J": -0.01200301226991504,
+   "true_flow": 14.096353328798937,
+   "residual_closure_vs_raw": 1.1817635824032252e-13,
+   "total_lesion": -15.267242066240946,
+   "flow_lesion": -15.267242066240954
+  }
+ ],
+ "gc": {
+  "c1": 0.9977603067742682,
+  "c1_dfdx": 0.9977603067742682,
+  "c2": 0.8668897941756004,
+  "c2_corr": 0.4684067621071228,
+  "mob": 1.2313534375577005e-14,
+  "isolation": {
+   "chain_valid": false,
+   "raw_z_valid": true,
+   "source_bit_exact_relL2": 2.911e-10,
+   "forward_filter_corr": 0.99987,
+   "forward_filter_norm_exact": 141.99,
+   "disk_vs_source_corr": 0.9796,
+   "disk_null_mode_Lm_max_design": 4.678e-06,
+   "null_mode_scale_Vg_over_V": 0.63,
+   "disk_norm": 0.517,
+   "prod_dicpcg_final": 2.07e-10,
+   "note": "OFFLINE chain_field uses solve(Lm+VI) with Lm = production graph Laplacian (gaussLaplacianScheme verified; forward filter reproduced bit-exact corr 0.999870). The solve is near-singular: zeroGradient BCs everywhere -> Lm has a constant null mode, V~1.25e-10 on diagonal vs Lm scale ~1e-4 -> null-mode amplification 1/V ~ 8e9. Production DICPCG (tol 1e-9, final 2.07e-10) and offline splu diverge in the null direction, so ch_total/ch_mom/ch_prow projections are INVALID (disk is a near-null-mode field: corr 0.98 with its source, (Lm@disk)~0). G3 verdict must anchor on raw_z/closure_z (direct gated exports, bit-exact), NOT on chain projections."
+  }
+ }
+}
