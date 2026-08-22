@@ -1,0 +1,4 @@
+dir	lhs	FD	C	Gx	rhs=FD-C-Gx	lhs/rhs	sign_lhs	sign_rhs	reldev|lhs/rhs-1|	lhs_pre	lhs_pre/lhs	|lhs-lhs_pre|/|lhs_pre|	H7share_anchor	verdict
+D1	-4.8840187007e-02	4.2524696236e-02	-3.0341656277e-02	-1.5704339057e-03	7.4436786419e-02	-0.65612971	-1	1	1.656130	-5.5051771421e-02	1.127182	0.112832	0.701948	O(1)-MISMATCH (lesion in T-elimination folding c segment)
+D2	-6.4409989540e-03	-3.5289725180e-03	-8.2108899666e-03	4.0431596817e-03	6.3875776689e-04	-10.08363309	-1	1	11.083633	2.6921723667e-03	-0.417974	3.392491	0.701948	O(1)-MISMATCH (lesion in T-elimination folding c segment)
+D3	1.1566617519e-02	-4.4495118952e-04	-1.9791957452e-02	8.4067076831e-03	1.0940298579e-02	1.05724880	1	1	0.057249	1.6153868513e-02	1.396594	0.283972	0.701948	SOURCE-CLEAN (lesion in lambda_T solve / thermalC contraction a/b)

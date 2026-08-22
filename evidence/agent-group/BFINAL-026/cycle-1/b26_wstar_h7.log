@@ -1,0 +1,14 @@
+=== BFINAL-026: clean unpinned w* on the H7 operator ===
+M loaded nnz=6395416 shape=(134400, 134400) (t=19.0s)
+declared coordinate entries: 15092525 -> unique CSC nnz: 6395416 (duplicates summed)
+pattern asymmetry entries: 8254864 / 6395416 (129.07%)
+MMD splu failed ('diag_pivot_thresh' is an invalid keyword argument for this function); falling back to default COLAMD
+splu default done (t=1006.2s)
+rxc loaded (403200,) (t=1006.2s)
+  D1: |r_P(w*)|/|rxdP|=1.037e-11  cos=0.998698 relL2=0.6849 (relU=0.1714 relP=0.6849)
+  (t=1007.7s)
+  D2: |r_P(w*)|/|rxdP|=9.649e-12  cos=0.990351 relL2=0.9023 (relU=0.3746 relP=0.9023)
+  (t=1008.9s)
+  D3: |r_P(w*)|/|rxdP|=2.428e-11  cos=0.998768 relL2=1.0893 (relU=0.1891 relP=1.0893)
+  (t=1010.2s)
+DONE t=1010.2s
