@@ -1,0 +1,6 @@
+cmp	relL2	maxabs	signflips
+rxpr_momentum vs mom_recomp_b8	2.843890e-12	3.461380e-14	0
+rxpr_momentum vs mom_recomp_b25	1.009310e+00	1.050804e-02	2756
+rxpr_total vs gsenshPressureDrop_disk_b25	1.001882e+00	2.134126e-02	2470
+rxpr_total vs mom+prow?? (mom_b8 only)	3.902851e-01	3.418030e-03	160
+rxpr_gsens(post,b8run) vs gsensPressureDrop_disk_b25	1.040927e+00	3.522057e-02	1580

@@ -1,0 +1,22 @@
+[0.0s] === B31 M2: chain replication + itemized reconciliation matrix ===
+[5.7s] V gate relL2=2.719e-14
+b31_recon.py:311: RuntimeWarning: overflow encountered in exp
+  eta * (np.exp(-DEL * (1.0 - xpv / eta)) - (1.0 - xpv / eta) * np.exp(-DEL)),
+b31_recon.py:312: RuntimeWarning: overflow encountered in exp
+  eta + (1.0 - eta) * (1.0 - np.exp(-DEL * (xpv - eta) / (1.0 - eta))
+[5.8s] G1 eta5 bisected: eta5=0.7480051615837531  diffvol=-8.939e-21
+[5.8s] G2 xh projection replication vs disk: relL2=1.301e-10 maxabs=1.363e-10
+[10.3s] G0 forward filter replication: (L-I)xp=-x vs disk xp: relL2=2.620e-03 maxabs=1.717e-02
+[10.3s] chain replication ready (denom=-3.138600e-06)
+[10.4s] [CHAIN] D1: gdp recomp=-1.935047e+01 disk=-5.230294e+00 tsv=-5.230294e+00 (fieldrel=5.85e+00) | J recomp=-2.787855e-01 disk=-3.583504e-02 tsv=-3.583504e-02 (fieldrel=1.01e+01)
+[10.4s] [CHAIN] D2: gdp recomp=-3.597785e+00 disk=+1.050525e+00 tsv=+1.050525e+00 (fieldrel=5.85e+00) | J recomp=-2.308835e-01 disk=-2.492599e-02 tsv=-2.492599e-02 (fieldrel=1.01e+01)
+[10.4s] [CHAIN] D3: gdp recomp=+9.261333e+01 disk=+1.360342e+01 tsv=+1.360342e+01 (fieldrel=5.85e+00) | J recomp=-2.304827e-01 disk=-1.200301e-02 tsv=-1.200301e-02 (fieldrel=1.01e+01)
+[10.4s] CHAIN VERDICT: H2: production chain itself deviates from replication
+[10.4s] loading /home/ys/dsH/b24_diag/explicitJT_H7.mtx (523MB MM coordinate) ...
+[17.4s] explicitJT_H7 loaded: nnz=6395416 (duplicates summed by tocsr)
+Traceback (most recent call last):
+  File "b31_recon.py", line 666, in <module>
+    m2()
+  File "b31_recon.py", line 430, in m2
+    prow_gdp = -T_pd * dAlphaDxh
+ValueError: operands could not be broadcast together with shapes (134400,) (33600,) 

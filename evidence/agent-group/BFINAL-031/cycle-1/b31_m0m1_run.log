@@ -1,0 +1,16 @@
+[0.0s] === B31 M0M1: gates + M4 three-caliber gate ===
+[8.1s] mesh: nIF=96860 nB=7880 patches=['inlet', 'outlet', 'hotInlet', 'hotOutlet', 'solidEndWalls', 'bottomWall', 'topWall', 'sideWalls']
+[8.1s] V gate (pyramid) relL2=2.719e-14 (need <1e-12)
+[8.7s] b25 fields loaded
+[8.8s] b8 adjoints loaded: |Uc8|L2=4.6984e+04 |pc8|L2=1.9832e+07 (pb8 uniform=True)
+[8.8s] directions rebuilt; |z| rows: [175.75538923276588, 252.2467217468298, 244.96548264937275]
+[8.8s] CMP rxpr_momentum vs mom_recomp_b8             relL2=2.843890e-12 maxabs=3.4614e-14 signflips=0
+[8.8s] CMP rxpr_momentum vs mom_recomp_b25            relL2=1.009310e+00 maxabs=1.0508e-02 signflips=2756
+[8.8s] CMP rxpr_total vs gsenshPressureDrop_disk_b25  relL2=1.001882e+00 maxabs=2.1341e-02 signflips=2470
+[8.8s] CMP rxpr_total vs mom+prow?? (mom_b8 only)     relL2=3.902851e-01 maxabs=3.4180e-03 signflips=160
+[8.8s] CMP rxpr_gsens(post,b8run) vs gsensPressureDrop_disk_b25 relL2=1.040927e+00 maxabs=3.5221e-02 signflips=1580
+[8.8s] [D1] rxprT.z=-5.623563e-02 gsenshDisk.z=-1.611612e+01 | gsensPDisk.D=-5.230294e+00(tsv -5.230294e+00) dfdx.D=-3.583504e-02(tsv -3.583504e-02) | z.D=5098.7684
+[8.8s] [D2] rxprT.z=+2.976724e-01 gsenshDisk.z=-3.524777e+00 | gsensPDisk.D=+1.050525e+00(tsv +1.050525e+00) dfdx.D=-2.492599e-02(tsv -2.492599e-02) | z.D=10333.6332
+[8.8s] [D3] rxprT.z=-3.634143e-02 gsenshDisk.z=+8.040999e+01 | gsensPDisk.D=+1.360342e+01(tsv +1.360342e+01) dfdx.D=-1.200301e-02(tsv -1.200301e-02) | z.D=11242.6958
+[8.8s] M4 GATE VERDICT: H1: rxpr exports are self-consistent with the b8-run lambda, NOT state-B
+[9.1s] saved stage cache; M0M1 done t=9.1s
