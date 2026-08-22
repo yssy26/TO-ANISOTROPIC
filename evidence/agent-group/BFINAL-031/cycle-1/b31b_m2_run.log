@@ -1,0 +1,29 @@
+[  0.0s] === b31b_m2: assembly-chain accounting (coordinator) ===
+[  5.7s] mesh ready: nIF=96860 nB=7880
+[  6.1s] b25 fields loaded (primal from SB baseline family, b29-gated)
+[  6.1s] G-mob: relL2=1.231e-14
+[  6.3s] dHbyA/drAU built (|dHbyA|L2=1.2638e-02 |drAU|L2=2.4728e-10)
+[  6.4s] segments built: |prow_gDP|L2=7.3023e-03 |mom_gDP|L2=2.7226e-01 |prow_J|L2=4.1626e-04 |mom_J|L2=3.6810e-03
+[  6.4s] G-z1 D1: fsenshMT.z=-0.22993014 vs ADJ_J=-0.03583504  rel=5.42e+00
+[  6.4s] G-z2 D1: gsenshPD.z=-16.11612007 vs ADJ_gDP=-5.23029385  rel=2.08e+00
+[  6.4s] G-z1 D2: fsenshMT.z=-0.22726328 vs ADJ_J=-0.02492599  rel=8.12e+00
+[  6.4s] G-z2 D2: gsenshPD.z=-3.52477668 vs ADJ_gDP=+1.05052498  rel=4.36e+00
+[  6.4s] G-z1 D3: fsenshMT.z=-0.21718891 vs ADJ_J=-0.01200301  rel=1.71e+01
+[  6.4s] G-z2 D3: gsenshPD.z=+80.40999347 vs ADJ_gDP=+13.60342258  rel=4.91e+00
+[  6.4s] D1 gDP: mom=-4.253786 prow_prod=-0.077828 closure=-4.331615 vs prod=-16.116120 | true_prow=-0.023675 prow_lesion=-0.054153 total_lesion=-11.838659
+[  6.4s] D1 J  : mom=+0.091311 prow_prod=+0.003461 flow_prod=+0.094772 direct_prod=-0.324702 | true: C-0.030342 Gx-0.001570 flow-0.048840 => FD+0.042525 | prod-FDtruth=-0.149178
+[  6.4s] D2 gDP: mom=+0.546842 prow_prod=+0.009376 closure=+0.556219 vs prod=-3.524777 | true_prow=-0.162380 prow_lesion=+0.171756 total_lesion=-3.909239
+[  6.4s] D2 J  : mom=-0.037540 prow_prod=-0.001923 flow_prod=-0.039463 direct_prod=-0.187801 | true: C-0.008211 Gx+0.004043 flow-0.006441 => FD-0.003529 | prod-FDtruth=-0.216655
+[  6.4s] D3 gDP: mom=+12.874940 prow_prod=-0.209061 closure=+12.665879 vs prod=+80.409993 | true_prow=+1.221413 prow_lesion=-1.430475 total_lesion=+66.313640
+[  6.4s] D3 J  : mom=-0.043540 prow_prod=-0.009702 flow_prod=-0.053242 direct_prod=-0.163947 | true: C-0.019792 Gx+0.008407 flow+0.011567 => FD-0.000445 | prod-FDtruth=-0.217370
+[  6.8s] G-b8: prow8 vs rxpr_pressurerow relL2=6.122e-03 (target <1e-6; note b8 boundary-src approximation may limit)
+[  6.8s] MATRIX WRITTEN. DONE t=6.8s
+[  7.2s] G-c1: chain(fsenshMT_disk) vs dfdx_disk relL2=8.149e+01
+[  7.2s] G-c2: chain(gsenshPD_disk) vs gsensPD_disk relL2=3.538e+01
+[  7.2s] D1 gDP(chain): mom=-5.882090 prow=-0.077230 closure=-5.959320 total=-28.512867 ADJ=-5.230294 | true_flow=-4.277461 flow_lesion=-1.681859 total_lesion=-24.235406
+[  7.2s] D1 J(chain):  mom=+0.163654 prow=+0.004815 flow_prod=+0.168468 direct=-0.531905 total=-0.363437 ADJ=-0.035835 | true: C-0.030342 Gx-0.001570 flow-0.048840 => FD+0.042525 | prod-FD=-0.405962
+[  7.2s] D2 gDP(chain): mom=+0.517864 prow=+0.009025 closure=+0.526889 total=-3.645948 ADJ=+1.050525 | true_flow=+0.384463 flow_lesion=+0.142427 total_lesion=-4.030411
+[  7.2s] D2 J(chain):  mom=-0.038955 prow=-0.002023 flow_prod=-0.040979 direct=-0.193379 total=-0.234357 ADJ=-0.024926 | true: C-0.008211 Gx+0.004043 flow-0.006441 => FD-0.003529 | prod-FD=-0.230829
+[  7.2s] D3 gDP(chain): mom=+20.158969 prow=-0.272019 closure=+19.886950 total=+128.362538 ADJ=+13.603423 | true_flow=+14.096353 flow_lesion=+5.790597 total_lesion=+114.266185
+[  7.2s] D3 J(chain):  mom=-0.093163 prow=-0.014341 flow_prod=-0.107505 direct=+0.115443 total=+0.007938 ADJ=-0.012003 | true: C-0.019792 Gx+0.008407 flow+0.011567 => FD-0.000445 | prod-FD=+0.008383
+[  7.2s] CHAIN MATRIX WRITTEN. DONE t=7.2s
