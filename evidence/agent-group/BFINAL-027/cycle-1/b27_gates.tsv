@@ -1,0 +1,3 @@
+gate	maxabs	relL2	scale	norm_ref
+a	6.841489e-13	1.184474e-11	1.801652e+00	op-scale
+b	1.089392e-16	1.909487e-11	1.952069e-04	dJdT

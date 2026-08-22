@@ -1,0 +1,30 @@
+[5.6s] mesh: N=33600 nIF=96860 nB=7880 nF=104740 patches=['inlet', 'outlet', 'hotInlet', 'hotOutlet', 'solidEndWalls', 'bottomWall', 'topWall', 'sideWalls'] sizes=[84, 84, 196, 196, 280, 1120, 1120, 4800]
+[5.7s] V gate (pyramid) relL2=2.719e-14
+[6.0s] phiTh_b per patch:
+[6.0s]   inlet            84 faces  min=-4.8492e-05 max=-4.8492e-05 type=fixedValue
+[6.0s]   outlet           84 faces  min=+2.8943e-05 max=+9.0720e-05 type=zeroGradient
+[6.0s]   hotInlet        196 faces  min=-3.8275e-05 max=-3.8275e-05 type=fixedValue
+[6.0s]   hotOutlet       196 faces  min=+3.8275e-05 max=+3.8275e-05 type=zeroGradient
+[6.0s]   solidEndWalls   280 faces  min=+0.0000e+00 max=+0.0000e+00 type=zeroGradient
+[6.0s]   bottomWall     1120 faces  min=+0.0000e+00 max=+0.0000e+00 type=mixed
+[6.0s]   topWall        1120 faces  min=+0.0000e+00 max=+0.0000e+00 type=zeroGradient
+[6.0s]   sideWalls      4800 faces  min=+0.0000e+00 max=+0.0000e+00 type=zeroGradient
+[6.0s] T patch types: {'inlet': 'fixedValue', 'outlet': 'zeroGradient', 'hotInlet': 'fixedValue', 'hotOutlet': 'zeroGradient', 'solidEndWalls': 'zeroGradient', 'bottomWall': 'mixed', 'topWall': 'zeroGradient', 'sideWalls': 'zeroGradient'}
+[6.0s] T mixed params: {'bottomWall': (0.00175607, 600.0, 0.0)}
+[6.0s] dJdT: nz=84 maxabs=3.711922e-05 L2=1.952069e-04  M_frozen=4.073370e-03 Tref=600.0
+[6.0s] assembling A_T ...
+[6.0s] A_T assembled: nnz=227320
+[6.0s] GATE (a) A_T*T - src - Q: maxabs=6.8415e-13 relL2(vs op scale)=1.184e-11  |Q|max=0.000e+00
+[6.0s] GATE (b) A_T^T*Tb - dJdT: maxabs=1.0894e-16 relL2=1.909e-11
+[6.0s] M3: recompute thermalC from production Tb ...
+[6.1s] M3 C_field L2=1.11307151e-03 (B19 anchor 1.11307151e-03) ratio=1.0000
+[6.2s] saved /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-027/cycle-1/b27_at.npz
+[6.2s] wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-027/cycle-1/b27_gates.tsv
+[6.2s] wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-027/cycle-1/b27_m3.tsv
+[6.2s] M2: splu solve A_T^T lambda_ref = b_Q (=dJdT) ...
+[14.0s] splu factorized (t=7.8s)
+[14.0s] lambda_ref solved (t=0.0s)
+[14.0s] solve residual |AT.T*lam_ref - b_Q|/|b_Q| = 7.006e-15
+[14.0s] M2 vs Tb: relL2=1.149494e-12 cos=1.00000000 sign_flips=0 (of 33600)
+[14.0s] wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-027/cycle-1/b27_m2_compare.tsv
+[14.1s] done (t=14.1s)
