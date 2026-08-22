@@ -1,0 +1,14 @@
+=== BFINAL-030 fp2 route rebuild ===
+mesh: nF=104740 nIF=96860 nB=7880 patches=['inlet', 'outlet', 'hotInlet', 'hotOutlet', 'solidEndWalls', 'bottomWall', 'topWall', 'sideWalls']
+V gate (pyramid) relL2=2.719e-14
+fields loaded (t=6.0s)
+MOBILITY GATE: relL2=2.187e-15 (need <1e-12)
+SELF-GATE [g1_Tmix, T8 off]: relL2=0.3970109364 cos=0.958266 (B26 route_V1 0.3970109364)
+variant T3=1.00_T6=keep06 relL2=0.296153 cos=0.967031 | Ublk=0.296152 Pblk=0.363071 | Uamp=1.1182 Pamp=1.1527
+variant T3=1.00_T6=corr  relL2=0.338331 cos=0.959621 | Ublk=0.338331 Pblk=0.363071 | Uamp=1.1476 Pamp=1.1527
+variant T3=1.09_T6=keep06 relL2=0.354571 cos=0.967159 | Ublk=0.354570 Pblk=0.363071 | Uamp=1.2144 Pamp=1.1527
+variant T3=1.09_T6=corr  relL2=0.403744 cos=0.959640 | Ublk=0.403744 Pblk=0.363071 | Uamp=1.2493 Pamp=1.1527
+variant T3=1.23_T6=keep06 relL2=0.471910 cos=0.967039 | Ublk=0.471912 Pblk=0.363071 | Uamp=1.3644 Pamp=1.1527
+variant T3=1.23_T6=corr  relL2=0.528823 cos=0.959662 | Ublk=0.528825 Pblk=0.363071 | Uamp=1.4076 Pamp=1.1527
+baseline t3=t6=0.6 relL2=0.386174 Uamp=0.6956 Pamp=1.1527
+wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-030/cycle-1/b30_fp2_results.json (t=7.4s)

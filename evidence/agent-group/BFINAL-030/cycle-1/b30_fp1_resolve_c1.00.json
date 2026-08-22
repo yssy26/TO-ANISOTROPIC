@@ -1,0 +1,37 @@
+{
+ "D1": {
+  "|r_P(w*)|/|rxdP|": 3.4541805047398133e-11,
+  "cos_w_wt": 0.9981081848549854,
+  "relL2": 0.6745093296176832,
+  "relU": 0.1879304007827015,
+  "relP": 0.6745217057308098
+ },
+ "D2": {
+  "|r_P(w*)|/|rxdP|": 2.2372106226318913e-11,
+  "cos_w_wt": 0.990009717934607,
+  "relL2": 0.8756946426537275,
+  "relU": 0.3882251320858607,
+  "relP": 0.8756958069729478
+ },
+ "D3": {
+  "|r_P(w*)|/|rxdP|": 5.229157584320454e-11,
+  "cos_w_wt": 0.9986074816702053,
+  "relL2": 0.6746982952878793,
+  "relU": 0.2001096771835476,
+  "relP": 0.6747037355928318
+ },
+ "meta": {
+  "cstar": 1.0,
+  "base_coef": 0.6,
+  "scale": 0.4,
+  "nnz_M": 6345529,
+  "nnz_T3_offdiag": 193720,
+  "gate_offdiag_medianrel": 1.0482032722272139e-14,
+  "gate_offdiag_maxrel": 0.3983730119438933,
+  "gate_offdiag_frac_exact": 0.9488540161057196,
+  "n_pure_patched": 183812,
+  "n_excluded_composite": 9908,
+  "patch": "internal off-diagonal U-row/P-col slots, |rel|<1e-6 position mask",
+  "solver": "scipy splu default COLAMD"
+ }
+}

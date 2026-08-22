@@ -1,0 +1,16 @@
+=== BFINAL-030 fp1 patch-resolve (off-diag only) c*=1.000 ===
+mesh: nIF=96860 nB=7880 assignable=84 (t=4.5s)
+T3_offdiag nnz=193720 (internal off-diagonal only) (t=4.8s)
+M raw coo nnz=15092525 (t=23.2s)
+OFFDIAG purity gate: sig=193720/193720 medianrel=1.048e-14 maxrel=3.984e-01 frac_exact=0.948854 pure=183812
+positions excluded (hA/hB-contaminated off-diagonal): 9908 (5.1146%)
+M_corrected csc nnz=6345529 (t=23.5s)
+splu default COLAMD done (t=1335.9s)
+rxc loaded (403200,) (t=1335.9s)
+  D1: |r_P(w*)|/|rxdP|=3.454e-11  cos=0.998108 relL2=0.6745 (relU=0.1879 relP=0.6745)
+  (t=1337.4s)
+  D2: |r_P(w*)|/|rxdP|=2.237e-11  cos=0.990010 relL2=0.8757 (relU=0.3882 relP=0.8757)
+  (t=1338.6s)
+  D3: |r_P(w*)|/|rxdP|=5.229e-11  cos=0.998607 relL2=0.6747 (relU=0.2001 relP=0.6747)
+  (t=1339.8s)
+wrote /home/ys/dsH/TO-ANISOTROPIC/evidence/agent-group/BFINAL-030/cycle-1/b30_fp1_wcorr_c1.00.npz and b30_fp1_resolve_c1.00.json (t=1339.8s)
