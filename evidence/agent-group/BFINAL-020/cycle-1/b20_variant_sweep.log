@@ -20,4 +20,4 @@ K_dev built nnz=2877135 (t=26.9s)
   D1: relL2 0.7247 -> 0.5021 (relP 0.725 -> 0.502) gDPf 1.7049 -> 1.4180 Jf 1.0885 lamdir-ratio -> 1.4180
   D2: relL2 1.0223 -> 1.0092 (relP 1.022 -> 1.009) gDPf 0.8142 -> 0.2414 Jf 0.6105 lamdir-ratio -> 0.2414
   D3: relL2 1.1292 -> 1.1679 (relP 1.129 -> 1.168) gDPf 2.2003 -> 2.0786 Jf 1.3246 lamdir-ratio -> 2.0786
-SWEEP_DONE t=7329.8s
+SWEEP_DONE t=8166.3s
